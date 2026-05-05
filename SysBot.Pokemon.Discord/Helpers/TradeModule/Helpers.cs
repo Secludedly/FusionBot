@@ -850,6 +850,38 @@ public static class Helpers<T> where T : PKM, new()
         // END OF ZA NATURE LEGALITY ENFORCEMENT
         // ============================================================================
 
+        // ============================================================================
+        // USER-SPECIFIED IV RE-APPLICATION (POST-GENERATION)
+        // ============================================================================
+        // The "IVs:" line in a Showdown set is used by ALM as an encounter-search
+        // constraint, but the encounter selected may override those values during
+        // generation. Re-applying the user's IVs directly after generation mirrors
+        // how .IV_HP=X batch commands work, giving the Showdown-format IVs line the
+        // same reliability as the direct batch command approach.
+        // Only reverts if the user's IV spread is genuinely illegal for this encounter
+        // ============================================================================
+        if (userSpecifiedIVs)
+        {
+            int[] requestedIVs = ParseShowdownIVLine(contentLines);
+            if (requestedIVs.Any(v => v >= 0))
+            {
+                var ivBackup = pk.Clone();
+                if (requestedIVs[0] >= 0) pk.IV_HP  = requestedIVs[0];
+                if (requestedIVs[1] >= 0) pk.IV_ATK = requestedIVs[1];
+                if (requestedIVs[2] >= 0) pk.IV_DEF = requestedIVs[2];
+                if (requestedIVs[3] >= 0) pk.IV_SPA = requestedIVs[3];
+                if (requestedIVs[4] >= 0) pk.IV_SPD = requestedIVs[4];
+                if (requestedIVs[5] >= 0) pk.IV_SPE = requestedIVs[5];
+                pk.RefreshChecksum();
+
+                if (!new LegalityAnalysis(pk).Valid)
+                    pk = (T)ivBackup;
+            }
+        }
+        // ============================================================================
+        // END OF USER-SPECIFIED IV RE-APPLICATION
+        // ============================================================================
+
         // Final preparation — use effectiveLanguage so the FIXED-OT FALLBACK's language
         // choice is not overwritten by finalLanguage here.
         PrepareForTrade(pk, set, effectiveLanguage);
@@ -1413,6 +1445,38 @@ public static class Helpers<T> where T : PKM, new()
         await QueueHelper<T>.AddToQueueAsync(context, code, trainerName, sig, pk!, PokeRoutineType.LinkTrade,
             tradeType, usr, isBatchTrade, batchTradeNumber, totalBatchTrades, isHiddenTrade, isMysteryEgg,
             lgcode: lgcode, ignoreAutoOT: ignoreAutoOT, setEdited: setEdited, isNonNative: isNonNative).ConfigureAwait(false);
+    }
+
+    /// <summary>Parses the "IVs:" Showdown line; returns -1 for any stat not explicitly specified.</summary>
+    /// <remarks>Index order: 0=HP, 1=Atk, 2=Def, 3=SpA, 4=SpD, 5=Spe</remarks>
+    private static int[] ParseShowdownIVLine(string[] lines)
+    {
+        int[] result = [-1, -1, -1, -1, -1, -1];
+        var ivsLine = lines.FirstOrDefault(l => l.TrimStart().StartsWith("IVs:", StringComparison.OrdinalIgnoreCase));
+        if (ivsLine == null)
+            return result;
+
+        var value = ivsLine[(ivsLine.IndexOf(':') + 1)..];
+        foreach (var part in value.Split('/'))
+        {
+            var tokens = part.Trim().Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            if (tokens.Length < 2 || !int.TryParse(tokens[0], out int val))
+                continue;
+            val = Math.Clamp(val, 0, 31);
+            int idx = tokens[1].ToUpperInvariant() switch
+            {
+                "HP"  => 0,
+                "ATK" => 1,
+                "DEF" => 2,
+                "SPA" => 3,
+                "SPD" => 4,
+                "SPE" => 5,
+                _     => -1
+            };
+            if (idx >= 0)
+                result[idx] = val;
+        }
+        return result;
     }
 
 }
