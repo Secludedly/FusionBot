@@ -1248,13 +1248,22 @@ class BotControlPanel {
      * Refresh instances
      */
     async refresh() {
+        if (this.state.get('isRefreshing')) return;
+        this.state.set('isRefreshing', true);
         try {
             const data = await this.api.get(this.api.endpoints.instances);
             this.state.set('instances', data.instances || []);
             this.instanceRenderer.render(this.state.get('instances'));
             this.dashboardManager.update(this.state.get('instances'));
+            this.state.set('lastRefreshErrorAt', 0);
         } catch (error) {
-            this.toastManager.error('Failed to load bot instances');
+            const lastErrorAt = this.state.get('lastRefreshErrorAt') || 0;
+            if (Date.now() - lastErrorAt > 30000) {
+                this.toastManager.error('Failed to load bot instances');
+                this.state.set('lastRefreshErrorAt', Date.now());
+            }
+        } finally {
+            this.state.set('isRefreshing', false);
         }
     }
 
@@ -1360,6 +1369,7 @@ class RefreshManager {
         this.stop();
         this.interval = setInterval(() => {
             if (!this.shouldRefresh()) return;
+            this.app.state.set('lastRefreshTime', Date.now());
             this.app.refresh();
         }, 1000);
     }
