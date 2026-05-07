@@ -1287,6 +1287,8 @@ namespace SysBot.Pokemon.WinForms
 
             glitterTimer.Start();
 
+            FormClosed += (_, __) => { glitterTimer.Stop(); glitterTimer.Dispose(); };
+
             // Paint handler
             panelTitleBar.Paint += (s, e) =>
             {

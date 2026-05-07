@@ -117,20 +117,9 @@ public sealed partial class SysCord<T> where T : PKM, new()
 
         _client = new DiscordSocketClient(new DiscordSocketConfig
         {
-            // How much logging do you want to see?
             LogLevel = LogSeverity.Info,
             GatewayIntents = Guilds | GuildMessages | DirectMessages | GuildMembers | GuildPresences | MessageContent,
-
-            // If you or another service needs to do anything with messages
-            // (ex. checking Reactions, checking the content of edited/deleted messages),
-            // you must set the MessageCacheSize. You may adjust the number as needed.
             //MessageCacheSize = 50,
-        });
-
-        _client = new DiscordSocketClient(new DiscordSocketConfig
-        {
-            LogLevel = LogSeverity.Info,
-            GatewayIntents = Guilds | GuildMessages | DirectMessages | GuildMembers | GuildPresences | MessageContent,
         });
 
         // ===== DM Relay Setup =====
@@ -292,7 +281,7 @@ public sealed partial class SysCord<T> where T : PKM, new()
             return;
 
         // Check if client is connected before attempting to announce
-        if (_client == null || _client.ConnectionState != ConnectionState.Connected)
+        if (_client.ConnectionState != ConnectionState.Connected)
         {
             LogUtil.LogInfo("SysCord", "Cannot announce bot status: Discord client is not connected");
             return;

@@ -33,6 +33,13 @@ public class TwitchBot<T> : IChatBot where T : PKM, new()
     private Action<string>? echoForwarder;
     private System.Timers.Timer? userCommandCleanupTimer;
 
+    // Stored delegate references so anonymous lambdas can be properly unsubscribed
+    private EventHandler<OnMessageSentArgs>? _logMessageSent;
+    private EventHandler<OnWhisperSentArgs>? _logWhisperSent;
+    private EventHandler<OnMessageThrottledEventArgs>? _logMessageThrottled;
+    private EventHandler<OnWhisperThrottledEventArgs>? _logWhisperThrottled;
+    private EventHandler<OnErrorEventArgs>? _logError;
+
     public TwitchBot(TwitchSettings settings, PokeTradeHubConfig config)
     {
         Settings = settings;
@@ -151,16 +158,17 @@ public class TwitchBot<T> : IChatBot where T : PKM, new()
         client.OnFailureToReceiveJoinConfirmation += OnFailureToReceiveJoinConfirmation;
         client.OnLeftChannel += OnLeftChannel;
 
-        client.OnMessageSent += (_, e)
-            => LogUtil.LogText($"[{client.TwitchUsername}] - Message Sent in {e.SentMessage.Channel}: {e.SentMessage.Message}");
-        client.OnWhisperSent += (_, e)
-            => LogUtil.LogText($"[{client.TwitchUsername}] - Whisper Sent to @{e.Receiver}: {e.Message}");
-        client.OnMessageThrottled += (_, e)
-            => LogUtil.LogError($"Message Throttled: {e.Message}", "TwitchBot");
-        client.OnWhisperThrottled += (_, e)
-            => LogUtil.LogError($"Whisper Throttled: {e.Message}", "TwitchBot");
-        client.OnError += (_, e) =>
-            LogUtil.LogError(e.Exception.Message + Environment.NewLine + e.Exception.StackTrace, "TwitchBot");
+        _logMessageSent = (_, e) => LogUtil.LogText($"[{client.TwitchUsername}] - Message Sent in {e.SentMessage.Channel}: {e.SentMessage.Message}");
+        _logWhisperSent = (_, e) => LogUtil.LogText($"[{client.TwitchUsername}] - Whisper Sent to @{e.Receiver}: {e.Message}");
+        _logMessageThrottled = (_, e) => LogUtil.LogError($"Message Throttled: {e.Message}", "TwitchBot");
+        _logWhisperThrottled = (_, e) => LogUtil.LogError($"Whisper Throttled: {e.Message}", "TwitchBot");
+        _logError = (_, e) => LogUtil.LogError(e.Exception.Message + Environment.NewLine + e.Exception.StackTrace, "TwitchBot");
+
+        client.OnMessageSent += _logMessageSent;
+        client.OnWhisperSent += _logWhisperSent;
+        client.OnMessageThrottled += _logMessageThrottled;
+        client.OnWhisperThrottled += _logWhisperThrottled;
+        client.OnError += _logError;
 
         // Store the forwarder reference so we can remove it later
         echoForwarder = msg => SendMessage(msg);
@@ -559,12 +567,11 @@ public class TwitchBot<T> : IChatBot where T : PKM, new()
                 client.OnFailureToReceiveJoinConfirmation -= OnFailureToReceiveJoinConfirmation;
                 client.OnLeftChannel -= OnLeftChannel;
 
-                // Remove anonymous event handlers
-                client.OnMessageSent -= (_, e) => LogUtil.LogText($"[{client.TwitchUsername}] - Message Sent in {e.SentMessage.Channel}: {e.SentMessage.Message}");
-                client.OnWhisperSent -= (_, e) => LogUtil.LogText($"[{client.TwitchUsername}] - Whisper Sent to @{e.Receiver}: {e.Message}");
-                client.OnMessageThrottled -= (_, e) => LogUtil.LogError($"Message Throttled: {e.Message}", "TwitchBot");
-                client.OnWhisperThrottled -= (_, e) => LogUtil.LogError($"Whisper Throttled: {e.Message}", "TwitchBot");
-                client.OnError -= (_, e) => LogUtil.LogError(e.Exception.Message + Environment.NewLine + e.Exception.StackTrace, "TwitchBot");
+                if (_logMessageSent != null) { client.OnMessageSent -= _logMessageSent; _logMessageSent = null; }
+                if (_logWhisperSent != null) { client.OnWhisperSent -= _logWhisperSent; _logWhisperSent = null; }
+                if (_logMessageThrottled != null) { client.OnMessageThrottled -= _logMessageThrottled; _logMessageThrottled = null; }
+                if (_logWhisperThrottled != null) { client.OnWhisperThrottled -= _logWhisperThrottled; _logWhisperThrottled = null; }
+                if (_logError != null) { client.OnError -= _logError; _logError = null; }
             }
             catch (Exception ex)
             {

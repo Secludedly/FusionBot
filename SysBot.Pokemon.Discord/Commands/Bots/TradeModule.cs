@@ -542,7 +542,8 @@ public partial class TradeModule<T> : ModuleBase<SocketCommandContext> where T :
             }
 
             // Supports sets being separated by "---" or by double new lines
-            var data = await new HttpClient().GetStringAsync(file.Url);
+            using var httpClient = new HttpClient();
+            var data = await httpClient.GetStringAsync(file.Url);
             var rawBlocks = Regex.Split(data, @"(?:---|\r?\n\s*\r?\n)+")
                  .Select(b => b.Trim())
                  .Where(b => !string.IsNullOrWhiteSpace(b))

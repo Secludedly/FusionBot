@@ -1123,12 +1123,9 @@ public class PokeTradeBotBS : PokeRoutineExecutor8BS, ICountBot, ITradeBot, IDis
         }
 
         // As long as we got rid of our inject in b1s1, assume the trade went through.
-        // As long as we got rid of our inject in b1s1, assume the trade went through.
         Log("User completed the trade.");
         poke.TradeFinished(this, received);
         TradeProgressChanged?.Invoke(100);
-
-        poke.TradeFinished(this, received);
 
         // Only log if we completed the trade.
         UpdateCountsAndExport(poke, received, toSend);

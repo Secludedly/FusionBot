@@ -10,20 +10,21 @@ using YouTube.Base.Clients;
 
 namespace SysBot.Pokemon.YouTube;
 
-public class YouTubeBot<T> where T : PKM, new()
+public class YouTubeBot<T> : IDisposable where T : PKM, new()
 {
     private readonly PokeTradeHub<T> Hub;
 
     private readonly YouTubeSettings Settings;
 
-    private ChatClient client;
+    private ChatClient? client;
+    private Action<string>? _echoForwarder;
+    private bool _disposed;
 
     public YouTubeBot(YouTubeSettings settings, PokeTradeHub<T> hub)
     {
         Hub = hub;
         Settings = settings;
         Logger.LogOccurred += Logger_LogOccurred;
-        client = default!;
 
         Task.Run(async () =>
         {
@@ -39,7 +40,9 @@ public class YouTubeBot<T> where T : PKM, new()
 
                 client = new ChatClient(connection);
                 client.OnMessagesReceived += Client_OnMessagesReceived;
-                EchoUtil.Forwarders.Add(msg => client.SendMessage(msg));
+
+                _echoForwarder = msg => client.SendMessage(msg);
+                EchoUtil.Forwarders.Add(_echoForwarder);
 
                 if (await client.Connect().ConfigureAwait(false))
                     await Task.Delay(-1).ConfigureAwait(false);
@@ -51,12 +54,31 @@ public class YouTubeBot<T> where T : PKM, new()
         });
     }
 
+    public void Dispose()
+    {
+        if (_disposed)
+            return;
+        _disposed = true;
+
+        Logger.LogOccurred -= Logger_LogOccurred;
+
+        if (client != null)
+            client.OnMessagesReceived -= Client_OnMessagesReceived;
+
+        if (_echoForwarder != null)
+        {
+            EchoUtil.Forwarders.Remove(_echoForwarder);
+            _echoForwarder = null;
+        }
+    }
+
     private TradeQueueInfo<T> Info => Hub.Queues.Info;
 
     public void StartingDistribution(string message)
     {
         Task.Run(async () =>
         {
+            if (client == null) return;
             await client.SendMessage("5...").ConfigureAwait(false);
             await Task.Delay(1_000).ConfigureAwait(false);
             await client.SendMessage("4...").ConfigureAwait(false);
@@ -94,7 +116,7 @@ public class YouTubeBot<T> where T : PKM, new()
                 var response = HandleCommand(message, cmd, args);
                 if (response.Length == 0)
                     return;
-                client.SendMessage(response);
+                client?.SendMessage(response);
             }
             catch
             {
