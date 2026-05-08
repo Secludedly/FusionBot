@@ -29,7 +29,7 @@ public static class SysCordSettings
     public static DiscordSettings Settings => Manager.Config;
 }
 
-public sealed partial class SysCord<T> where T : PKM, new()
+public sealed partial class SysCord<T> : IDisposable where T : PKM, new()
 {
     public readonly PokeTradeHub<T> Hub;
     private readonly ProgramConfig _config;
@@ -40,7 +40,10 @@ public sealed partial class SysCord<T> where T : PKM, new()
     private readonly HashSet<ITradeBot> _connectedBots = [];
     private readonly object _botConnectionLock = new object();
 
-    private readonly IServiceProvider _services;
+    private readonly ServiceProvider _services;
+    private readonly List<Action> _tradeBotUnsubscribers = [];
+    private DMRelayService? _dmRelayService;
+    private bool _disposed;
 
     private readonly HashSet<string> _validCommands =
     [
@@ -71,7 +74,7 @@ public sealed partial class SysCord<T> where T : PKM, new()
         {
             if (bot is ITradeBot tradeBot)
             {
-                tradeBot.ConnectionSuccess += async (sender, e) =>
+                EventHandler successHandler = async (sender, e) =>
                 {
                     bool shouldHandleStart = false;
 
@@ -91,7 +94,7 @@ public sealed partial class SysCord<T> where T : PKM, new()
                     }
                 };
 
-                tradeBot.ConnectionError += async (sender, ex) =>
+                EventHandler<Exception> errorHandler = async (sender, ex) =>
                 {
                     bool shouldHandleStop = false;
 
@@ -109,6 +112,16 @@ public sealed partial class SysCord<T> where T : PKM, new()
                         await HandleBotStop();
                     }
                 };
+
+                tradeBot.ConnectionSuccess += successHandler;
+                tradeBot.ConnectionError += errorHandler;
+
+                var capturedBot = tradeBot;
+                _tradeBotUnsubscribers.Add(() =>
+                {
+                    capturedBot.ConnectionSuccess -= successHandler;
+                    capturedBot.ConnectionError -= errorHandler;
+                });
             }
         }
 
@@ -134,7 +147,7 @@ public sealed partial class SysCord<T> where T : PKM, new()
 
         if (forwardTargetId != 0)
         {
-            _ = new DMRelayService(_client, forwardTargetId);
+            _dmRelayService = new DMRelayService(_client, forwardTargetId);
             LogUtil.LogInfo("SysCord", $"DM relay active -> forwarding bot DMs to {forwardTargetId}");
         }
 
@@ -167,12 +180,14 @@ public sealed partial class SysCord<T> where T : PKM, new()
 
         _client.PresenceUpdated += Client_PresenceUpdated;
 
-        _client.Disconnected += (exception) =>
-        {
-            LogUtil.LogText($"Discord connection lost. Reason: {exception?.Message ?? "Unknown"}");
-            Task.Run(() => ReconnectAsync());
-            return Task.CompletedTask;
-        };
+        _client.Disconnected += Client_Disconnected;
+    }
+
+    private Task Client_Disconnected(Exception exception)
+    {
+        LogUtil.LogText($"Discord connection lost. Reason: {exception?.Message ?? "Unknown"}");
+        Task.Run(() => ReconnectAsync());
+        return Task.CompletedTask;
     }
 
     public static PokeBotRunner<T> Runner { get; private set; } = default!;
@@ -538,16 +553,52 @@ public sealed partial class SysCord<T> where T : PKM, new()
         finally
         {
             // Cancel any ongoing reconnection attempts
-            _reconnectCts?.Cancel();
+            try { _reconnectCts?.Cancel(); } catch (ObjectDisposedException) { }
 
             // Disconnect the bot
-            await _client.StopAsync();
+            try { await _client.StopAsync(); } catch { }
 
-            // Dispose resources
-            _reconnectCts?.Dispose();
-            _reconnectSemaphore?.Dispose();
-            _client?.Dispose();
+            Dispose();
         }
+    }
+
+    public void Dispose()
+    {
+        if (_disposed)
+            return;
+        _disposed = true;
+
+        // Unsubscribe Discord client events to break references back to this SysCord
+        if (_client != null)
+        {
+            _client.Log -= Log;
+            _client.PresenceUpdated -= Client_PresenceUpdated;
+            _client.Disconnected -= Client_Disconnected;
+            _client.Ready -= LoadLoggingAndEcho;
+            _client.Ready -= RegisterSlashCommandsAsync;
+            _client.MessageReceived -= HandleMessageAsync;
+            _client.InteractionCreated -= HandleInteractionAsync;
+        }
+        _commands.Log -= Log;
+        _interactions.Log -= Log;
+
+        // Unsubscribe per-bot connection events
+        foreach (var unsubscribe in _tradeBotUnsubscribers)
+        {
+            try { unsubscribe(); } catch { }
+        }
+        _tradeBotUnsubscribers.Clear();
+
+        // Dispose owned resources
+        _dmRelayService?.Dispose();
+        _dmRelayService = null;
+
+        try { _reconnectCts?.Cancel(); } catch (ObjectDisposedException) { }
+        _reconnectCts?.Dispose();
+        _reconnectSemaphore?.Dispose();
+
+        _services?.Dispose();
+        _client?.Dispose();
     }
 
     // If any services require the client, or the CommandService, or something else you keep on hand,

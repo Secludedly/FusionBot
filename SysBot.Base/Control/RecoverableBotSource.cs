@@ -7,7 +7,7 @@ namespace SysBot.Base;
 /// <summary>
 /// Enhanced BotSource that integrates with the recovery service for automatic crash recovery.
 /// </summary>
-public class RecoverableBotSource<T> : BotSource<T>, IDisposable where T : class, IConsoleBotConfig
+public class RecoverableBotSource<T> : BotSource<T> where T : class, IConsoleBotConfig
 {
     private readonly BotRecoveryService<T>? _recoveryService;
     private volatile bool _isIntentionallyStopped;
@@ -174,23 +174,18 @@ public class RecoverableBotSource<T> : BotSource<T>, IDisposable where T : class
         _lastCrashException = null;
     }
     
-    public void Dispose()
-    {
-        Dispose(true);
-        GC.SuppressFinalize(this);
-    }
-    
-    protected virtual void Dispose(bool disposing)
+    protected override void Dispose(bool disposing)
     {
         if (_disposed)
             return;
-            
+
         if (disposing)
         {
             StopMonitoring();
         }
-        
+
         _disposed = true;
+        base.Dispose(disposing);
     }
 }
 
