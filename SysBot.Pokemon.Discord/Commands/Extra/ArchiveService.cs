@@ -1,7 +1,4 @@
 using SharpCompress.Archives;
-using SharpCompress.Archives.Rar;
-using SharpCompress.Archives.SevenZip;
-using SharpCompress.Archives.Zip;
 using SharpCompress.Common;
 using System.IO;
 using System.Linq;
@@ -14,18 +11,23 @@ public static class ArchiveService
         Directory.CreateDirectory(outputPath);
 
         var ext = Path.GetExtension(inputPath).ToLowerInvariant();
+        if (ext is not (".zip" or ".rar" or ".7z"))
+            throw new InvalidOperationException("Unsupported archive.");
 
-        IArchive archive = ext switch
-        {
-            ".zip" => ZipArchive.Open(inputPath),
-            ".rar" => RarArchive.Open(inputPath),
-            ".7z" => SevenZipArchive.Open(inputPath),
-            _ => throw new InvalidOperationException("Unsupported archive.")
-        };
+        using var archive = ArchiveFactory.OpenArchive(inputPath);
+
+        var rootFull = Path.GetFullPath(outputPath);
+        if (!rootFull.EndsWith(Path.DirectorySeparatorChar))
+            rootFull += Path.DirectorySeparatorChar;
 
         foreach (var entry in archive.Entries.Where(x => !x.IsDirectory))
         {
-            var outPath = Path.Combine(outputPath, entry.Key);
+            if (string.IsNullOrEmpty(entry.Key))
+                continue;
+
+            var outPath = Path.GetFullPath(Path.Combine(rootFull, entry.Key));
+            if (!outPath.StartsWith(rootFull, StringComparison.OrdinalIgnoreCase))
+                continue;
 
             Directory.CreateDirectory(Path.GetDirectoryName(outPath)!);
 
