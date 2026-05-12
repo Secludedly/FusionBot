@@ -259,7 +259,6 @@ namespace SysBot.Pokemon.WinForms
 
             InitializeFonts();         // Apply custom fonts after component initialization
             pictureLogo.Image = Resources.picture_logo; // load logo from PNG resource (kept out of Main.resx to avoid IUIService build notice)
-            SetupTitleBarButtonHoverEffects();
             panelTitleBar.Paint += panelTitleBar_Paint;
             InitGlitter();
 
