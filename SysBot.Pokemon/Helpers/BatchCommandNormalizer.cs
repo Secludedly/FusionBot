@@ -283,6 +283,10 @@ namespace SysBot.Pokemon.Discord.Helpers
                 }
             }
 
+            // Pre-pass: resolve "PPUps:" against the Showdown move list. The handler
+            // model is line-local, but PPUps needs the moves declared elsewhere in the set.
+            int? ppUpsRequest = ExtractPPUpsRequest(lines);
+
             for (int i = 0; i < lines.Length; i++)
             {
                 var line = lines[i].Trim();
@@ -324,6 +328,11 @@ namespace SysBot.Pokemon.Discord.Helpers
                 if (BatchCommandAliasMap.TryGetValue(key, out var normalizedKey))
                     key = normalizedKey;
 
+                // PPUps is handled by the pre-pass; drop the source line so it doesn't
+                // fall through to the generic "Key: Value" branch.
+                if (key.Equals("PPUps", StringComparison.OrdinalIgnoreCase))
+                    continue;
+
                 // Skip "Nickname: Suggest" if Pokemon already has a nickname in species line
                 if (hasExistingNickname &&
                     key.Equals("Nickname", StringComparison.OrdinalIgnoreCase) &&
@@ -352,8 +361,107 @@ namespace SysBot.Pokemon.Discord.Helpers
                 }
             }
 
+            // Emit per-move PP / PPUps lines if the set requested them via "PPUps:".
+            if (ppUpsRequest is int ppUps)
+            {
+                var moveNames = ExtractMoveNames(lines);
+                processed.AddRange(BuildPPBatchLines(moveNames, ppUps));
+            }
+
             // Always return at the end
             return string.Join("\n", processed);
+        }
+
+        //////////////////////////////////// PP UPS HELPERS //////////////////////////////////////
+
+        // Maps the runtime ProgramMode to the EntityContext used by MoveInfo.GetPP.
+        private static EntityContext GetPPContext(ProgramMode mode) => mode switch
+        {
+            ProgramMode.SV    => EntityContext.Gen9,
+            ProgramMode.SWSH  => EntityContext.Gen8,
+            ProgramMode.LA    => EntityContext.Gen8a,
+            ProgramMode.BDSP  => EntityContext.Gen8b,
+            ProgramMode.PLZA  => EntityContext.Gen9a,
+            ProgramMode.LGPE  => EntityContext.Gen7b,
+            _                 => EntityContext.Gen9,
+        };
+
+        // Scans the raw input for a "PPUps:" line and converts the value to a 0-3 count.
+        //   True  -> 3 (apply max PP Ups explicitly)
+        //   False -> 0 (no PP Ups; base PP only)
+        //   0..3  -> as written
+        //   out-of-range numerics -> clamped to 0..3
+        //   anything else -> null (treat as not specified)
+        private static int? ExtractPPUpsRequest(string[] lines)
+        {
+            foreach (var raw in lines)
+            {
+                var line = raw.Trim();
+                if (!line.Contains(':')) continue;
+                if (!TrySplitCommand(line, out var key, out var value)) continue;
+                if (!key.Equals("PPUps", StringComparison.OrdinalIgnoreCase)) continue;
+
+                value = value.Trim();
+                if (value.Equals("True", StringComparison.OrdinalIgnoreCase))  return 3;
+                if (value.Equals("False", StringComparison.OrdinalIgnoreCase)) return 0;
+                if (int.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out int n))
+                    return Math.Clamp(n, 0, 3);
+                return null;
+            }
+            return null;
+        }
+
+        // Extracts move names from Showdown set lines ("- Move Name"), in declaration order.
+        // Strips Hidden Power's "[Type]" suffix and takes the first alternative when slash-separated.
+        private static List<string> ExtractMoveNames(string[] lines)
+        {
+            var moves = new List<string>(4);
+            foreach (var raw in lines)
+            {
+                if (moves.Count >= 4) break;
+                var line = raw.Trim();
+                if (!line.StartsWith("- ", StringComparison.Ordinal) && !line.StartsWith("-\t", StringComparison.Ordinal))
+                    continue;
+
+                var name = line[1..].TrimStart();
+
+                // First alternative wins ("Earthquake / Stone Edge" -> "Earthquake")
+                var slashIdx = name.IndexOf(" / ", StringComparison.Ordinal);
+                if (slashIdx > 0) name = name[..slashIdx].Trim();
+
+                // Drop "[Type]" suffix from Hidden Power variants
+                var bracketIdx = name.IndexOf('[');
+                if (bracketIdx > 0) name = name[..bracketIdx].Trim();
+
+                if (name.Length == 0) continue;
+                moves.Add(name);
+            }
+            return moves;
+        }
+
+        // Builds ".MoveX_PP=N" and ".MoveX_PPUps=M" lines for each resolvable move.
+        // Unresolved move names are skipped silently, letting ALM defaults apply to that slot.
+        // PP formula matches PKHeX PKM.GetMovePP: BasePP * (5 + ppUps) / 5.
+        private static List<string> BuildPPBatchLines(List<string> moveNames, int ppUps)
+        {
+            var ctx = GetPPContext(CurrentGameMode);
+            var pp = MoveInfo.GetPPTable(ctx);
+            var movelist = GameInfo.Strings.movelist;
+            var lines = new List<string>(moveNames.Count * 2);
+
+            for (int i = 0; i < moveNames.Count && i < 4; i++)
+            {
+                int id = Array.IndexOf(movelist, moveNames[i]);
+                if (id <= 0 || id >= pp.Length) continue;
+
+                int basePP = pp[id];
+                if (basePP <= 0) continue;
+
+                int finalPP = basePP * (5 + ppUps) / 5;
+                lines.Add($".Move{i + 1}_PP={finalPP}");
+                lines.Add($".Move{i + 1}_PPUps={ppUps}");
+            }
+            return lines;
         }
 
         //////////////////////////////////// HANDLER METHODS //////////////////////////////////////
