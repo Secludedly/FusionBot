@@ -18,7 +18,7 @@ namespace SysBot.Pokemon.WinForms
         private static Random? _threadRng;
         private static Random Rng => _threadRng ??= new Random(Environment.TickCount + Thread.CurrentThread.ManagedThreadId);
 
-        public Sparkle(PointF pos)
+        public Sparkle(PointF pos, Color[]? palette = null)
         {
             Position = pos;
 
@@ -29,10 +29,17 @@ namespace SysBot.Pokemon.WinForms
             DX = (float)(Rng.NextDouble() - 0.5) * 0.5f; // tiny horizontal drift
             DY = (float)(Rng.NextDouble() - 0.5) * 0.5f; // tiny vertical drift
 
-            // Random color: white or light yellow (Alpha, Red, Green, Blue)
-            Color = Rng.NextDouble() < 0.5
-                ? Color.FromArgb(255, 255, 255, 255)      // pure white
-                : Color.FromArgb(255, 255, 240, 180);     // soft light yellow
+            if (palette != null && palette.Length > 0)
+            {
+                Color = palette[Rng.Next(palette.Length)];
+            }
+            else
+            {
+                // Default: white or soft light yellow (Alpha, Red, Green, Blue)
+                Color = Rng.NextDouble() < 0.5
+                    ? Color.FromArgb(255, 255, 255, 255)      // pure white
+                    : Color.FromArgb(255, 255, 240, 180);     // soft light yellow
+            }
         }
 
         public bool Tick()

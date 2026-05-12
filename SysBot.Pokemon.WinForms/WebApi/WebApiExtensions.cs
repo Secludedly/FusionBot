@@ -170,14 +170,14 @@ public static class WebApiExtensions
                 _portReservations.TryRemove(port, out _);
             }
 
-            var portFiles = Directory.GetFiles(exeDir, "ZE_FusionBot_*.port");
+            var portFiles = Directory.GetFiles(exeDir, "FusionBot_*.port");
 
             foreach (var portFile in portFiles)
             {
                 try
                 {
                     var fileName = Path.GetFileNameWithoutExtension(portFile);
-                    var pidStr = fileName.Substring("ZE_FusionBot_".Length);
+                    var pidStr = fileName.Substring("FusionBot_".Length);
 
                     if (int.TryParse(pidStr, out int pid))
                     {
@@ -188,7 +188,7 @@ public static class WebApiExtensions
                         {
                             var process = Process.GetProcessById(pid);
                             if (process.ProcessName.Contains("SysBot", StringComparison.OrdinalIgnoreCase) ||
-                                process.ProcessName.Contains("ZE_FusionBot", StringComparison.OrdinalIgnoreCase))
+                                process.ProcessName.Contains("FusionBot", StringComparison.OrdinalIgnoreCase))
                             {
                                 continue;
                             }
@@ -960,7 +960,7 @@ public static class WebApiExtensions
         {
             var exePath = System.Diagnostics.Process.GetCurrentProcess().MainModule?.FileName ?? "";
             var exeDir = Path.GetDirectoryName(exePath) ?? Program.WorkingDirectory;
-            var portFile = Path.Combine(exeDir, $"ZE_FusionBot_{Environment.ProcessId}.port");
+            var portFile = Path.Combine(exeDir, $"FusionBot_{Environment.ProcessId}.port");
             var tempFile = portFile + ".tmp";
 
             using (var fs = new FileStream(tempFile, FileMode.Create, FileAccess.Write, FileShare.None))
@@ -986,7 +986,7 @@ public static class WebApiExtensions
         {
             var exePath = System.Diagnostics.Process.GetCurrentProcess().MainModule?.FileName ?? "";
             var exeDir = Path.GetDirectoryName(exePath) ?? Program.WorkingDirectory;
-            var portFile = Path.Combine(exeDir, $"ZE_FusionBot_{Environment.ProcessId}.port");
+            var portFile = Path.Combine(exeDir, $"FusionBot_{Environment.ProcessId}.port");
 
             if (File.Exists(portFile))
                 File.Delete(portFile);
@@ -1014,7 +1014,7 @@ public static class WebApiExtensions
                 if (!IsPortInUse(port))
                 {
                     // Check if any port file claims this port
-                    var portFiles = Directory.GetFiles(exeDir, "ZE_FusionBot_*.port");
+                    var portFiles = Directory.GetFiles(exeDir, "FusionBot_*.port");
                     bool portClaimed = false;
 
                     foreach (var file in portFiles)
@@ -1190,7 +1190,7 @@ public static class WebApiExtensions
 
         try
         {
-            var processes = Process.GetProcessesByName("ZE_FusionBot")
+            var processes = Process.GetProcessesByName("FusionBot")
                 .Where(p => p.Id != Environment.ProcessId);
 
             foreach (var process in processes)
@@ -1201,7 +1201,7 @@ public static class WebApiExtensions
                     if (string.IsNullOrEmpty(exePath))
                         continue;
 
-                    var portFile = Path.Combine(Path.GetDirectoryName(exePath)!, $"ZE_FusionBot_{process.Id}.port");
+                    var portFile = Path.Combine(Path.GetDirectoryName(exePath)!, $"FusionBot_{process.Id}.port");
                     if (!File.Exists(portFile))
                         continue;
 

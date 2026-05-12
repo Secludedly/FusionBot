@@ -624,14 +624,14 @@ public static class UpdateManager
                                         int processId = 0;
                                         try
                                         {
-                                            var processes = Process.GetProcessesByName("ZE_FusionBot");
+                                            var processes = Process.GetProcessesByName("FusionBot");
                                             foreach (var proc in processes)
                                             {
                                                 try
                                                 {
                                                     var portFile = Path.Combine(
                                                         Path.GetDirectoryName(proc.MainModule?.FileName ?? "") ?? "",
-                                                        $"ZE_FusionBot_{proc.Id}.port"
+                                                        $"FusionBot_{proc.Id}.port"
                                                     );
 
                                                     if (File.Exists(portFile))
@@ -685,7 +685,7 @@ public static class UpdateManager
         // Also check for local PokeBot processes with port files (fallback method)
         try
         {
-            var otherProcesses = Process.GetProcessesByName("ZE_FusionBot")
+            var otherProcesses = Process.GetProcessesByName("FusionBot")
                 .Where(p => p.Id != Environment.ProcessId)
                 .Take(10); // Limit to prevent resource exhaustion
 
@@ -703,7 +703,7 @@ public static class UpdateManager
 
                     var portFile = Path.Combine(
                         Path.GetDirectoryName(sanitizedPath) ?? "",
-                        $"ZE_FusionBot_{process.Id}.port"
+                        $"FusionBot_{process.Id}.port"
                     );
 
                     var safePortFile = ValidateAndSanitizePath(portFile);
@@ -1472,7 +1472,7 @@ public static class UpdateManager
         try
         {
             var baseDir = Path.GetDirectoryName(Application.ExecutablePath) ?? "";
-            var portFile = Path.Combine(baseDir, $"ZE_FusionBot_{Environment.ProcessId}.port");
+            var portFile = Path.Combine(baseDir, $"FusionBot_{Environment.ProcessId}.port");
 
             var safePortFile = ValidateAndSanitizePath(portFile);
             if (safePortFile != null && File.Exists(safePortFile))
@@ -1643,7 +1643,7 @@ public static class UpdateManager
     /// </summary>
     private static async Task<string> DownloadUpdateAsync(string downloadUrl, CancellationToken cancellationToken)
     {
-        // Extract original filename from URL (e.g., "ZE_FusionBot.exe" from GitHub release)
+        // Extract original filename from URL (e.g., "  usionBot.exe" from GitHub release)
         var uri = new Uri(downloadUrl);
         var originalFileName = Path.GetFileName(uri.LocalPath);
 
@@ -1651,7 +1651,7 @@ public static class UpdateManager
         string tempPath = Path.Combine(Path.GetTempPath(), $"{Path.GetFileNameWithoutExtension(originalFileName)}_{Guid.NewGuid()}.exe");
 
         using var client = new HttpClient { Timeout = TimeSpan.FromMinutes(10) };
-        client.DefaultRequestHeaders.Add("User-Agent", "ZE-FusionBot");
+        client.DefaultRequestHeaders.Add("User-Agent", "FusionBot");
 
         var response = await client.GetAsync(downloadUrl, cancellationToken);
         response.EnsureSuccessStatusCode();
@@ -1674,8 +1674,8 @@ public static class UpdateManager
             string applicationDirectory = Path.GetDirectoryName(currentExePath) ?? "";
             string executableName = Path.GetFileName(currentExePath);
 
-            // Use ZE_FusionBot.exe as the target name (standardized name)
-            string targetExeName = "ZE_FusionBot.exe";
+            // Use FusionBot.exe as the target name (standardized name)
+            string targetExeName = "FusionBot.exe";
             string targetExePath = Path.Combine(applicationDirectory, targetExeName);
             string backupPath = Path.Combine(applicationDirectory, $"{executableName}.backup");
 
@@ -1684,7 +1684,7 @@ public static class UpdateManager
             string batchContent = @$"
 @echo off
 timeout /t 2 /nobreak >nul
-echo Updating ZE-FusionBot...
+echo Updating FusionBot...
 rem Backup current version
 if exist ""{currentExePath}"" (
     if exist ""{backupPath}"" (

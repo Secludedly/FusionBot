@@ -410,7 +410,7 @@ const API_BASE = '/api/bot';
             dashboardManager.update();
 
             if (instances.length === 0) {
-                container.innerHTML = '<div class="error-message">⚠️ No bot instances found. Make sure at least one instance of ZE_FusionBot is running.</div>';
+                container.innerHTML = '<div class="error-message">⚠️ No bot instances found. Make sure at least one instance of FusionBot is running.</div>';
                 this.renderedPorts.clear();
                 return;
             }
@@ -2105,7 +2105,7 @@ const API_BASE = '/api/bot';
 
     document.addEventListener('DOMContentLoaded', async () => {
         console.log('📱 ========================================');
-        console.log('📱 DOMContentLoaded - Initializing ZE_FusionBot Control Panel');
+        console.log('📱 DOMContentLoaded - Initializing FusionBot Control Panel');
         console.log('📱 User Agent:', navigator.userAgent);
         console.log('📱 Window size:', window.innerWidth, 'x', window.innerHeight);
         console.log('📱 Is Mobile:', isMobile());

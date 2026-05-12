@@ -753,7 +753,7 @@ class InstanceRenderer {
     renderEmptyState() {
         return `
             <div class="error-message">
-                ⚠️ No bot instances found. Make sure at least one instance of ZE_FusionBot is running.
+                ⚠️ No bot instances found. Make sure at least one instance of FusionBot is running.
             </div>
         `;
     }

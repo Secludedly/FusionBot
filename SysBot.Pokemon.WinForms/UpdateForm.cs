@@ -186,7 +186,7 @@ namespace SysBot.Pokemon.WinForms
             string tempPath = Path.Combine(Path.GetTempPath(), $"SysBot.Pokemon.WinForms_{Guid.NewGuid()}.exe");
             using (var client = new HttpClient())
             {
-                client.DefaultRequestHeaders.Add("User-Agent", "ZE-FusionBot");
+                client.DefaultRequestHeaders.Add("User-Agent", "FusionBot");
                 var response = await client.GetAsync(downloadUrl);
                 response.EnsureSuccessStatusCode();
                 var fileBytes = await response.Content.ReadAsByteArrayAsync();

@@ -208,7 +208,7 @@ namespace SysBot.Pokemon.WinForms
             lblTitle.Name = "lblTitle";
             lblTitle.Size = new Size(220, 32);
             lblTitle.TabIndex = 4;
-            lblTitle.Text = "ZE FusionBot | v0.0.0 | MODE: None";
+            lblTitle.Text = "FusionBot | v0.0.0 | MODE: None";
             lblTitle.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // panel4
@@ -313,7 +313,7 @@ namespace SysBot.Pokemon.WinForms
             MinimumSize = new Size(800, 422);
             Name = "Main";
             StartPosition = FormStartPosition.CenterScreen;
-            Text = "ZE FusionBot";
+            Text = "FusionBot";
             panelLeftSide.ResumeLayout(false);
             panelImageLogo.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)pictureLogo).EndInit();
