@@ -139,6 +139,94 @@ namespace SysBot.Pokemon.Discord
                 _ = Helpers<T>.DeleteMessagesAfterDelayAsync(userMessage, null, 2);
         }
 
+        [Command("batchTradeMysteryEgg")]
+        [Alias("btme")]
+        [Summary("Trades multiple Mystery Eggs via the standard batch trading flow with a single summary embed.")]
+        [RequireQueueRole(nameof(DiscordManager.RolesTrade))]
+        public async Task BatchTradeMysteryEggAsync([Summary("Number of Mystery Eggs")] int count)
+        {
+            var context = GetContext();
+            if (context == EntityContext.None || typeof(T).Name == "PB7")
+            {
+                await ReplyAsync("Mystery Eggs are not available for Let's Go Pikachu/Eevee as the game does not support breeding.").ConfigureAwait(false);
+                return;
+            }
+
+            var tradeConfig = SysCord<T>.Runner.Config.Trade.TradeConfiguration;
+
+            if (!tradeConfig.AllowBatchTrades)
+            {
+                var app = await Context.Client.GetApplicationInfoAsync().ConfigureAwait(false);
+                await Helpers<T>.ReplyAndDeleteAsync(Context,
+                    $"Batch trades are currently disabled by the bot administrator, @{app.Owner}.", 6);
+                return;
+            }
+
+            var userID = Context.User.Id;
+            if (!await Helpers<T>.EnsureUserNotInQueueAsync(userID))
+            {
+                await Helpers<T>.ReplyAndDeleteAsync(Context,
+                    "You already have an existing trade in the queue that cannot be cleared. Please wait until it is processed.", 5);
+                return;
+            }
+
+            int maxTradesAllowed = tradeConfig.MaxPkmsPerTrade > 0 ? tradeConfig.MaxPkmsPerTrade : 4;
+            if (count < 1 || count > maxTradesAllowed)
+            {
+                await Helpers<T>.ReplyAndDeleteAsync(Context,
+                    $"You can only request between 1 and {maxTradesAllowed} Mystery Eggs per batch.", 5);
+                return;
+            }
+
+            var processingMessage = await Context.Channel.SendMessageAsync($"{Context.User.Mention} Generating {count} Mystery Eggs...");
+
+            _ = Task.Run(async () =>
+            {
+                try
+                {
+                    var batchList = new List<T>(count);
+                    int failed = 0;
+                    for (int i = 0; i < count; i++)
+                    {
+                        var egg = GenerateLegalMysteryEgg();
+                        if (egg != null)
+                            batchList.Add(egg);
+                        else
+                            failed++;
+                    }
+
+                    try { await processingMessage.DeleteAsync(); } catch { }
+
+                    if (batchList.Count == 0)
+                    {
+                        await Context.Channel.SendMessageAsync($"{Context.User.Mention} Failed to generate any Mystery Eggs. Please try again.");
+                        return;
+                    }
+
+                    if (failed > 0)
+                    {
+                        await Context.Channel.SendMessageAsync($"{Context.User.Mention} Warning: failed to generate {failed} Mystery Egg(s). Proceeding with {batchList.Count}.");
+                    }
+
+                    var batchTradeCode = Info.GetRandomTradeCode(userID);
+                    var sig = Context.User.GetFavor();
+                    await QueueHelper<T>.AddMysteryEggBatchContainerToQueueAsync(
+                        Context, batchTradeCode, Context.User.Username,
+                        batchList[0], batchList, sig, Context.User, batchList.Count
+                    ).ConfigureAwait(false);
+                }
+                catch (Exception ex)
+                {
+                    try { await processingMessage.DeleteAsync(); } catch { }
+                    await Context.Channel.SendMessageAsync($"{Context.User.Mention} An error occurred while processing your Mystery Egg batch. Please try again.");
+                    LogUtil.LogError($"Batch MysteryEgg error: {ex.Message}", nameof(BatchTradeMysteryEggAsync));
+                }
+            });
+
+            if (Context.Message is IUserMessage userMessage)
+                _ = Helpers<T>.DeleteMessagesAfterDelayAsync(userMessage, null, 2);
+        }
+
         private static async Task ProcessBatchMysteryEggs(SocketCommandContext context, List<T> batchEggList, int batchTradeCode, int totalEggs)
         {
             var sig = context.User.GetFavor();

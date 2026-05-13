@@ -313,7 +313,7 @@ public static class QueueHelper<T> where T : PKM, new()
         return new TradeQueueResult(true);
     }
 
-    public static async Task AddBatchContainerToQueueAsync(SocketCommandContext context, int code, string trainer, T firstTrade, List<T> allTrades, RequestSignificance sig, SocketUser trader, int totalBatchTrades)
+    public static async Task AddBatchContainerToQueueAsync(SocketCommandContext context, int code, string trainer, T firstTrade, List<T> allTrades, RequestSignificance sig, SocketUser trader, int totalBatchTrades, string? customAuthorTitle = null)
     {
         var userID = trader.Id;
         var name = trader.Username;
@@ -405,6 +405,11 @@ public static class QueueHelper<T> where T : PKM, new()
                     pk, trader, false, false, false, false, false, true, batchTradeNumber, totalBatchTrades
                 );
 
+                if (!string.IsNullOrEmpty(customAuthorTitle))
+                {
+                    embedData.AuthorName = $"{trader.Username}'s {customAuthorTitle}";
+                }
+
                 try
                 {
                     // Prepare embed details
@@ -487,6 +492,122 @@ public static class QueueHelper<T> where T : PKM, new()
         }
 
         // Send milestone embed if applicable
+        if (SysCord<T>.Runner.Hub.Config.Trade.TradeConfiguration.StoreTradeCodes)
+        {
+            var tradeCodeStorage = new TradeCodeStorage();
+            int tradeCount = tradeCodeStorage.GetTradeCount(trader.Id);
+            _ = SendMilestoneEmbed(tradeCount, context.Channel, trader);
+        }
+    }
+
+    public static async Task AddMysteryEggBatchContainerToQueueAsync(SocketCommandContext context, int code, string trainer, T firstTrade, List<T> allTrades, RequestSignificance sig, SocketUser trader, int totalBatchTrades)
+    {
+        var userID = trader.Id;
+        var name = trader.Username;
+        var trainer_info = new PokeTradeTrainerInfo(trainer, userID);
+        var notifier = new DiscordTradeNotifier<T>(firstTrade, trainer_info, code, trader, 1, totalBatchTrades, true, lgcode: []);
+
+        int uniqueTradeID = GenerateUniqueTradeID();
+
+        var detail = new PokeTradeDetail<T>(firstTrade, trainer_info, notifier, PokeTradeType.Batch, code,
+            sig == RequestSignificance.Favored, null, 1, totalBatchTrades, true)
+        {
+            BatchTrades = allTrades
+        };
+
+        var trade = new TradeEntry<T>(detail, userID, PokeRoutineType.Batch, name, uniqueTradeID: uniqueTradeID);
+        var hub = SysCord<T>.Runner.Hub;
+        var Info = hub.Queues.Info;
+        var added = Info.AddToTradeQueue(trade, userID, false, sig == RequestSignificance.Owner);
+
+        await EmbedHelper.SendTradeCodeEmbedAsync(trader, code).ConfigureAwait(false);
+
+        if (added != QueueResultAdd.AlreadyInQueue && added != QueueResultAdd.NotAllowedItem && notifier is DiscordTradeNotifier<T> discordNotifier)
+        {
+            discordNotifier.UpdateUniqueTradeID(uniqueTradeID);
+            await discordNotifier.SendInitialQueueUpdate().ConfigureAwait(false);
+        }
+
+        if (added == QueueResultAdd.AlreadyInQueue)
+        {
+            await context.Channel.SendMessageAsync($"{trader.Mention} - You are already in the queue!").ConfigureAwait(false);
+            return;
+        }
+
+        if (added == QueueResultAdd.QueueFull)
+        {
+            var maxCount = SysCord<T>.Runner.Config.Queues.MaxQueueCount;
+            var fullEmbed = new EmbedBuilder()
+                .WithColor(DiscordColor.Red)
+                .WithTitle("🚫 Queue Full")
+                .WithDescription($"The queue is currently full ({maxCount}/{maxCount}). Please try again later when space becomes available.")
+                .WithFooter("Queue will open up as trades are completed")
+                .WithTimestamp(DateTimeOffset.Now)
+                .Build();
+
+            await context.Channel.SendMessageAsync(embed: fullEmbed).ConfigureAwait(false);
+            return;
+        }
+
+        if (added == QueueResultAdd.NotAllowedItem)
+        {
+            var held = firstTrade.HeldItem;
+            var blockedItemName = held > 0 ? PKHeX.Core.GameInfo.GetStrings("en").Item[held] : "(none)";
+            await context.Channel.SendMessageAsync($"{trader.Mention} - Trade blocked: the held item '{blockedItemName}' cannot be traded in PLZA.").ConfigureAwait(false);
+            return;
+        }
+
+        var position = Info.CheckPosition(userID, uniqueTradeID, PokeRoutineType.Batch);
+        var botct = Info.Hub.Bots.Count;
+        var baseEta = position.Position > botct ? Info.Hub.Config.Queues.EstimateDelay(position.Position, botct) : 0;
+
+        int totalTradeCount = 0;
+        TradeCodeStorage.TradeCodeDetails? tradeDetails = null;
+        if (SysCord<T>.Runner.Config.Trade.TradeConfiguration.StoreTradeCodes)
+        {
+            var tradeCodeStorage = new TradeCodeStorage();
+            totalTradeCount = tradeCodeStorage.GetTradeCount(trader.Id);
+            tradeDetails = tradeCodeStorage.GetTradeDetails(trader.Id);
+        }
+
+        if (SysCord<T>.Runner.Config.Trade.TradeEmbedSettings.UseEmbeds)
+        {
+            try
+            {
+                const string mysteryEggImageUrl = "https://raw.githubusercontent.com/Secludedly/ZE-FusionBot-Sprite-Images/main/mysteryegg3.png";
+                string description = $"You are currently receiving **{totalBatchTrades}** Mystery Egg{(totalBatchTrades == 1 ? string.Empty : "s")}!\nWhat could they be?";
+
+                string footerText = $"Current Queue Position: {(position.Position == -1 ? 1 : position.Position)}";
+                string userDetailsText = DetailsExtractor<T>.GetUserDetails(totalTradeCount, tradeDetails, trader.Mention);
+                if (!string.IsNullOrEmpty(userDetailsText))
+                    footerText += $"\n{userDetailsText}";
+                footerText += $"\nWait Estimate: {baseEta:F1} min(s) for batch";
+                footerText += $"\nFusionBot {TradeBot.Version}";
+
+                var embedBuilder = new EmbedBuilder()
+                    .WithColor(DiscordColor.Gold)
+                    .WithImageUrl(mysteryEggImageUrl)
+                    .WithDescription(description)
+                    .WithFooter(footerText)
+                    .WithAuthor(new EmbedAuthorBuilder()
+                        .WithName($"{trader.Username}'s Mystery Egg Batch Trade")
+                        .WithIconUrl(trader.GetAvatarUrl() ?? trader.GetDefaultAvatarUrl())
+                        .WithUrl("https://zepkm.com/pokecreator"));
+
+                DetailsExtractor<T>.AddAdditionalText(embedBuilder);
+
+                await context.Channel.SendMessageAsync(embed: embedBuilder.Build());
+            }
+            catch (HttpException ex)
+            {
+                await HandleDiscordExceptionAsync(context, trader, ex);
+            }
+        }
+        else
+        {
+            await context.Channel.SendMessageAsync($"{trader.Mention} - Added Mystery Egg batch ({totalBatchTrades}x) to queue! Position: {position.Position}. Estimated: {baseEta:F1} min(s).").ConfigureAwait(false);
+        }
+
         if (SysCord<T>.Runner.Hub.Config.Trade.TradeConfiguration.StoreTradeCodes)
         {
             var tradeCodeStorage = new TradeCodeStorage();

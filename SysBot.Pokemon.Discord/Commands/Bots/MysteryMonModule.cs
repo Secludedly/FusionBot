@@ -91,6 +91,92 @@ namespace SysBot.Pokemon.Discord
             await msg.DeleteAsync();
         }
 
+        // -------------------------------
+        // BATCH MYSTERY MON
+        // -------------------------------
+        [Command("batchTradeMysteryMon")]
+        [Alias("btmm")]
+        [Summary("Trades multiple Mystery Pokémon at once via the standard batch trading flow.")]
+        [RequireQueueRole(nameof(DiscordManager.RolesTrade))]
+        public async Task BatchTradeMysteryMonAsync([Summary("Number of Mystery Pokémon")] int count)
+        {
+            var tradeConfig = SysCord<T>.Runner.Config.Trade.TradeConfiguration;
+
+            if (!tradeConfig.AllowBatchTrades)
+            {
+                var app = await Context.Client.GetApplicationInfoAsync().ConfigureAwait(false);
+                await Helpers<T>.ReplyAndDeleteAsync(Context,
+                    $"Batch trades are currently disabled by the bot administrator, @{app.Owner}.", 6);
+                return;
+            }
+
+            var userID = Context.User.Id;
+            if (!await Helpers<T>.EnsureUserNotInQueueAsync(userID))
+            {
+                await Helpers<T>.ReplyAndDeleteAsync(Context,
+                    "You already have an existing trade in the queue that cannot be cleared. Please wait until it is processed.", 5);
+                return;
+            }
+
+            int maxTradesAllowed = tradeConfig.MaxPkmsPerTrade > 0 ? tradeConfig.MaxPkmsPerTrade : 4;
+            if (count < 1 || count > maxTradesAllowed)
+            {
+                await Helpers<T>.ReplyAndDeleteAsync(Context,
+                    $"You can only request between 1 and {maxTradesAllowed} Mystery Pokémon per batch.", 5);
+                return;
+            }
+
+            var processingMessage = await Context.Channel.SendMessageAsync($"{Context.User.Mention} Generating {count} Mystery Pokémon...");
+
+            _ = Task.Run(async () =>
+            {
+                try
+                {
+                    var batchList = new List<T>(count);
+                    int failed = 0;
+                    for (int i = 0; i < count; i++)
+                    {
+                        using var cancel = new System.Threading.CancellationTokenSource(TimeSpan.FromSeconds(6));
+                        var pk = GenerateMysteryMon(cancel.Token);
+                        if (pk is not null)
+                            batchList.Add(pk);
+                        else
+                            failed++;
+                    }
+
+                    try { await processingMessage.DeleteAsync(); } catch { }
+
+                    if (batchList.Count == 0)
+                    {
+                        await Context.Channel.SendMessageAsync($"{Context.User.Mention} Failed to generate any Mystery Pokémon. Please try again.");
+                        return;
+                    }
+
+                    if (failed > 0)
+                    {
+                        await Context.Channel.SendMessageAsync($"{Context.User.Mention} Warning: failed to generate {failed} Mystery Pokémon. Proceeding with {batchList.Count}.");
+                    }
+
+                    var batchTradeCode = Info.GetRandomTradeCode(userID);
+                    var sig = Context.User.GetFavor();
+                    await QueueHelper<T>.AddBatchContainerToQueueAsync(
+                        Context, batchTradeCode, Context.User.Username,
+                        batchList[0], batchList, sig, Context.User, batchList.Count,
+                        customAuthorTitle: "Mystery Mon Batch Trade"
+                    ).ConfigureAwait(false);
+                }
+                catch (Exception ex)
+                {
+                    try { await processingMessage.DeleteAsync(); } catch { }
+                    await Context.Channel.SendMessageAsync($"{Context.User.Mention} An error occurred while processing your Mystery Mon batch. Please try again.");
+                    LogUtil.LogError($"Batch MysteryMon error: {ex.Message}", nameof(BatchTradeMysteryMonAsync));
+                }
+            });
+
+            if (Context.Message is IUserMessage userMessage)
+                _ = Helpers<T>.DeleteMessagesAfterDelayAsync(userMessage, null, 2);
+        }
+
         // --------------------------------------------------------
         // RANDOMIZATION + LEGALITY PIPELINE
         // --------------------------------------------------------
