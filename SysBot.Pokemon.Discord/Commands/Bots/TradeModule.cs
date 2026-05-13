@@ -485,6 +485,109 @@ public partial class TradeModule<T> : ModuleBase<SocketCommandContext> where T :
             _ = Helpers<T>.DeleteMessagesAfterDelayAsync(userMessage, null, 2);
     }
 
+    [Command("itemBatchTrade")]
+    [Alias("ibt")]
+    [Summary("Makes the bot trade you the default item-trade species holding the requested item, multiple times in a batch.")]
+    [RequireQueueRole(nameof(DiscordManager.RolesTrade))]
+    public async Task ItemBatchTrade([Summary("Item Name and Count, e.g. 'Life Orb 6'")][Remainder] string content)
+    {
+        var tradeConfig = SysCord<T>.Runner.Config.Trade.TradeConfiguration;
+
+        if (!tradeConfig.AllowBatchTrades)
+        {
+            var app = await Context.Client.GetApplicationInfoAsync().ConfigureAwait(false);
+            await Helpers<T>.ReplyAndDeleteAsync(Context,
+                $"Batch trades are currently disabled by the bot administrator, @{app.Owner}.", 6);
+            return;
+        }
+
+        var userID = Context.User.Id;
+        if (!await Helpers<T>.EnsureUserNotInQueueAsync(userID))
+        {
+            await Helpers<T>.ReplyAndDeleteAsync(Context,
+                "You already have an existing trade in the queue that cannot be cleared. Please wait until it is processed.", 5);
+            return;
+        }
+
+        content = (content ?? string.Empty).Trim();
+        int lastSpace = content.LastIndexOf(' ');
+        if (lastSpace <= 0 || !int.TryParse(content[(lastSpace + 1)..], out int count) || count < 1)
+        {
+            await Helpers<T>.ReplyAndDeleteAsync(Context,
+                $"Usage: `{Prefix}ibt <ItemName> <Count>` — for example `{Prefix}ibt Life Orb 6`.", 6);
+            return;
+        }
+
+        int maxTradesAllowed = tradeConfig.MaxPkmsPerTrade > 0 ? tradeConfig.MaxPkmsPerTrade : 4;
+        if (count > maxTradesAllowed)
+        {
+            await Helpers<T>.ReplyAndDeleteAsync(Context,
+                $"You can only request up to {maxTradesAllowed} items per batch.\nPlease reduce the requested count.", 5);
+            return;
+        }
+
+        string itemName = content[..lastSpace].Trim();
+        if (string.IsNullOrWhiteSpace(itemName))
+        {
+            await Helpers<T>.ReplyAndDeleteAsync(Context,
+                $"Usage: `{Prefix}ibt <ItemName> <Count>` — for example `{Prefix}ibt Life Orb 6`.", 6);
+            return;
+        }
+
+        Species species = tradeConfig.ItemTradeSpecies == Species.None
+            ? Species.Diglett
+            : tradeConfig.ItemTradeSpecies;
+
+        var set = new ShowdownSet($"{SpeciesName.GetSpeciesNameGeneration((ushort)species, 2, 8)} @ {itemName}");
+        var template = AutoLegalityWrapper.GetTemplate(set);
+        var sav = AutoLegalityWrapper.GetTrainerInfo<T>();
+        var pkm = sav.GetLegal(template, out var result);
+
+        if (pkm == null)
+        {
+            await ReplyAsync("Set took too long to legalize.");
+            return;
+        }
+
+        pkm = EntityConverter.ConvertToType(pkm, typeof(T), out _) ?? pkm;
+
+        if (pkm.HeldItem == 0)
+        {
+            await Helpers<T>.ReplyAndDeleteAsync(Context, $"{Context.User.Username}, the item you entered wasn't recognized.", 5);
+            return;
+        }
+
+        if (pkm is T itemPk)
+        {
+            TryApplyEarlyAutoOT(itemPk, Context.User.Id);
+        }
+
+        var la = new LegalityAnalysis(pkm);
+        if (pkm is not T pk || !la.Valid)
+        {
+            var reason = result == "Timeout" ? "That set took too long to generate." : "I wasn't able to create something from that.";
+            var imsg = $"{reason}\nHere's my best attempt for that {species}!";
+            await Context.Channel.SendPKMAsync(pkm, imsg).ConfigureAwait(false);
+            return;
+        }
+
+        pk.ResetPartyStats();
+
+        var batchList = new List<T>(count) { pk };
+        for (int i = 1; i < count; i++)
+        {
+            batchList.Add((T)pk.Clone());
+        }
+
+        var batchTradeCode = Info.GetRandomTradeCode(userID);
+        var sig = Context.User.GetFavor();
+        await QueueHelper<T>.AddItemBatchContainerToQueueAsync(Context, batchTradeCode, Context.User.Username,
+            pk, batchList, sig, Context.User, count).ConfigureAwait(false);
+
+        if (Context.Message is IUserMessage userMessage)
+            _ = Helpers<T>.DeleteMessagesAfterDelayAsync(userMessage, null, 2);
+    }
+
     // Dictionaries for the TextTrade command's pending trades and queue status
     private static readonly ConcurrentDictionary<ulong, List<string>> _pendingTextTrades = new();
     private static readonly ConcurrentDictionary<ulong, bool> _usersInQueue = new();
