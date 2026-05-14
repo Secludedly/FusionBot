@@ -114,14 +114,19 @@ An independently evolved fork that shares ideas, structure, and inspiration with
 ## ✨ Highlights
 
 - One-click Game Restart, Hot Reload, and Updater.
-- Support for batch trades via Showdown format or archives.
+- Batch trading - trade more than one Pokémon at a time in multiple ways.
 - Mystery Pokémon and Eggs, Battle-Ready, HOME-Ready, and Event Pokémon trading modules.
-- Full GUI control for SysDVR and Switch Remote for PC integration.
+- Full GUI control for PKHeX, SysDVR and Switch Remote for PC.
 - DM embeds with GIFs, Channel Status notifications, Announcement System, Keyword Response.
 - Queue tracking, trade counters, medal system.
 - Multi-Language request support.
 - Live/Real-time log searches.
 - Read user DMs sent to the bot.
+- In-depth and detailed error logging with user info.
+- Batch Trade Commands to simple Showdown Set options.
+- Webserver control panel at https://localhost:8080 while bot is open and operational.
+- Linux supported version releases via Wine-Staging.
+- Always updating with new features and ideas, some from the community.
 
 ---
 
@@ -130,9 +135,15 @@ An independently evolved fork that shares ideas, structure, and inspiration with
 - Animated, hover-responsive buttons.
 - Color-coded UI themes.
 - Fully custom icons, fonts, buttons, and layout.
-- No native window titlebars. Drag by top panel.
-- Animated glow effects.
+- No native Windows titlebars. Drag by top panel.
+- Animated glow and shake effects on buttons.
 - Glowing visual progress bar during the trade process.
+- User-created custom logo option.
+- User-created custom background sparkle colors.
+- Separate sparkle colors for each game mode in the titlebar.
+- Custom UI images displayed per game mode.
+- One size UI with the ability to Maximize.
+- Bot Menu context menu with bot-specific command handling.
 
 ---
 
