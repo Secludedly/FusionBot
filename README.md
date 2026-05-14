@@ -7,26 +7,30 @@
     </a>
 </h1>
 
-> ⚠️ **Font Notice:** If the program's fonts are not displaying properly for you, download them [here](https://github.com/Secludedly/FusionBot/blob/main/.extra/Fonts.7z) and install them on your machine, or use the "Self-Contained" builds of the bot.
-
 <p align="center">
   <i>A community-driven SysBot.NET project with a gorgeous UI, supporting LGPE, SWSH, BDSP, PLA, SV, and PLZA</i><br>
     Now rebranded from <b>ZE FusionBot -> FusionBot</b>.
 </p>
 <h3 align="center">
-  Visit <a href="https://FreeMons.Org">FreeMons.Org</a> to join Zeraora's Emporium!
+  Visit <a href="https://FreeMons.Org">FreeMons.Org</a>!
 </h3>
 <p align="center">
     <img src="https://visitor-badge.laobi.icu/badge?page_id=Secludedly.FusionBot" alt="Visitors">
+</br>
+
+## 🎥 FusionBot Showcase Video
+
+<p align="center">
+  <a href="https://www.youtube.com/watch?v=kc6lRVt6M_0">
+    <img src="https://i.imgur.com/IdwuZwM.png" 
+         alt="FusionBot Showcase Video"
+         style="max-width: 100%; height: auto;">
+  </a>
 </p>
-<h4 align="center">
-  <a href="https://FreeMons.Org">
-    <img src="https://i.imgur.com/wbWzI2u.png" alt="discord" style="height: 20px;">
-  </a>
-  <a href="https://ko-fi.com/secludedly">
-    <img src="https://i.imgur.com/nDO4SgL.png" alt="ko-fi" style="height: 20px;">
-  </a>
-</h4>
+
+<p align="center">
+  ▶️ <i>Click the image above to watch the full FusionBot showcase video on YouTube.</i>
+</p>
 
 ---
 
@@ -129,115 +133,6 @@ An independently evolved fork that shares ideas, structure, and inspiration with
 - No native window titlebars. Drag by top panel.
 - Animated glow effects.
 - Glowing visual progress bar during the trade process.
-
-
----
-
-## 🖼️ GUI Previews
-
-<p align="center">
-    <img src="https://i.imgur.com/VZ2oeOy.gif" style="max-width: 100%; height: auto;">
-</p>
-<p align="center">
-    <img src="https://raw.githubusercontent.com/Secludedly/FusionBot/main/.readme/README_GeneralOverlook2.gif" style="max-width: 100%; height: auto;">
-</p>
-<p align="center">
-    <img src="https://raw.githubusercontent.com/Secludedly/FusionBot/main/.readme/README_Environment2.gif" style="max-width: 100%; height: auto;">
-</p>
-<p align="center">
-    <img src="https://raw.githubusercontent.com/Secludedly/FusionBot/main/.readme/README_Reload2.gif" style="max-width: 100%; height: auto;">
-</p>
-<p align="center">
-    <img src="https://raw.githubusercontent.com/Secludedly/FusionBot/main/.readme/README_Themes2.gif" style="max-width: 100%; height: auto;">
-</p>
-<p align="center">
-    <img src="https://raw.githubusercontent.com/Secludedly/FusionBot/main/.readme/README_Starting2.gif" style="max-width: 100%; height: auto;">
-</p>
-<p align="center">
-    <img src="https://raw.githubusercontent.com/Secludedly/FusionBot/main/.readme/README_Update2.gif" style="max-width: 100%; height: auto;">
-</p>
-
----
-
-## 🎥 GIF Previews
-
-<details open>
-<summary><strong>🎮 GIFS</strong></summary><br />
-
-<div align="center">
-
-<!-- Row 1 -->
-<table>
-  <tr>
-    <td align="center" width="50%">
-      <strong>Switch Remote for PC</strong><br />
-      <img src="https://raw.githubusercontent.com/Secludedly/FusionBot/main/.readme/README_SwitchRemoteForPC.gif" alt="Switch Remote for PC" width="100%" />
-    </td>
-    <td align="center" width="50%">
-      <strong>SysDVR</strong><br />
-      <img src="https://raw.githubusercontent.com/Secludedly/FusionBot/main/.readme/README_SysDVR.gif" alt="SysDVR" width="100%" />
-    </td>
-  </tr>
-
-<!-- Row 2 -->
-  <tr>
-    <td align="center" width="50%">
-      <strong>Batch Trading Archives</strong><br />
-      <img src="https://raw.githubusercontent.com/Secludedly/FusionBot/main/.readme/README_BatchArchive.gif" alt="Batch Trading Archives" width="100%" />
-    </td>
-    <td align="center" width="50%">
-      <strong>Batch Trading Showdown</strong><br />
-      <img src="https://raw.githubusercontent.com/Secludedly/FusionBot/main/.readme/README_BatchShowdown.gif" alt="Batch Trading Showdown" width="100%" />
-    </td>
-  </tr>
-
-<!-- Row 3 -->
-  <tr>
-    <td align="center" width="50%">
-      <strong>Peek & Video Feature</strong><br />
-      <img src="https://raw.githubusercontent.com/Secludedly/FusionBot/main/.readme/README_Peek+Video.gif" alt="Peek & Video Feature" width="100%" />
-    </td>
-    <td align="center" width="50%">
-      <strong>Mystery Mon</strong><br />
-      <img src="https://raw.githubusercontent.com/Secludedly/FusionBot/main/.readme/README_MysteryMon.gif" alt="Mystery Mon" width="100%" />
-    </td>
-  </tr>
-</table>
-
-</div>
-
-</details>
-
----
-
-## 🖼️ Image Previews
-
-<details open>
-<summary>
- IMAGES
-</summary> <br />
-
-<p align="center">
-    <img width="49%" src="https://i.imgur.com/hsh43rt.png" alt="img1"/>
-&nbsp;
-    <img width="49%" src="https://i.imgur.com/lWkBXLi.png" alt="img2"/>
-</p>
-<p align="center">
-    <img width="49%" src="https://i.imgur.com/pMdWfcT.png" alt="img3"/>
-&nbsp;
-    <img width="49%" src="https://i.imgur.com/rdOq4M7.png" alt="img4"/>
-</p>
-<p align="center">
-    <img width="49%" src="https://i.imgur.com/eWmTGCI.png" alt="img5"/>
-&nbsp;
-    <img width="49%" src="https://i.imgur.com/SPe1iOa.png" alt="img6"/>
-</p>
-<p align="center">
-    <img width="49%" src="https://i.imgur.com/Xn1IMJ6.png" alt="img7"/>
-&nbsp;
-	<img width="49%" src="https://i.imgur.com/N9n5jva.jpeg" alt="img8"/>
-</p>
-</details>
 
 ---
 
