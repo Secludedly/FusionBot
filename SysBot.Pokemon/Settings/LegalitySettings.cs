@@ -69,13 +69,13 @@ public class LegalitySettings
     [Category(Generate), Description("The order in which Pokémon encounter types are attempted.")]
     public List<EncounterTypeGroup> PrioritizeEncounters { get; set; } =
 [
-    EncounterTypeGroup.Slot, EncounterTypeGroup.Egg,
-        EncounterTypeGroup.Static, EncounterTypeGroup.Mystery,
-        EncounterTypeGroup.Trade,
+    EncounterTypeGroup.Trade, EncounterTypeGroup.Slot,
+        EncounterTypeGroup.Mystery, EncounterTypeGroup.Egg,
+        EncounterTypeGroup.Static,
     ];
 
     [Category(Generate), Description("Method of searching for encounters when generating Pokémon. \"NativeOnly\" searches current game pair only, \"NewestFirst\" searches from most recent game, and \"PriorityOrder\" uses the order designated in the \"PriorityOrder\" setting.")]
-    public GameVersionPriorityType GameVersionPriority { get; set; } = GameVersionPriorityType.NewestFirst;
+    public GameVersionPriorityType GameVersionPriority { get; set; } = GameVersionPriorityType.PriorityOrder;
 
     [Category(Generate), Description("The order of GameVersions ALM will attempt to legalize from.")]
     public List<GameVersion> PriorityOrder { get; set; } = Enum.GetValues<GameVersion>().Where(GameUtil.IsValidSavedVersion).Reverse().ToList();
@@ -96,7 +96,7 @@ public class LegalitySettings
     public bool SetMatchingBalls { get; set; } = true;
 
     [Category(Generate), Description("Maximum time in seconds to spend when generating a set before canceling. This prevents difficult sets from freezing the bot.")]
-    public int Timeout { get; set; } = 8;
+    public int Timeout { get; set; } = 20;
 
     [Category(Misc), Description("Apply valid pokemon with the trainers OT/SID/TID (AutoOT)")]
     public bool UseTradePartnerInfo { get; set; } = true;

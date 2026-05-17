@@ -39,6 +39,19 @@ public static class AutoLegalityWrapper
     private static readonly SemaphoreSlim s_wildRetryLock = new SemaphoreSlim(1, 1);
     private static readonly List<EncounterTypeGroup> s_wildAndEggPriority = [EncounterTypeGroup.Slot, EncounterTypeGroup.Egg];
 
+    // Used by TryGetAsShiny to re-run encounter search with shiny-friendly priorities.
+    // Static is intentionally last because newer-gen Static encounters are often shiny-locked
+    // (Shiny.Never), which causes ALM's SetShinyBoolean to silently return non-shiny.
+    private static readonly SemaphoreSlim s_shinyRetryLock = new SemaphoreSlim(1, 1);
+    private static readonly List<EncounterTypeGroup> s_shinyPriority =
+    [
+        EncounterTypeGroup.Slot,
+        EncounterTypeGroup.Egg,
+        EncounterTypeGroup.Mystery,
+        EncounterTypeGroup.Trade,
+        EncounterTypeGroup.Static,
+    ];
+
     private static void InitializeSettings(LegalitySettings cfg)
     {
         // Disable expensive PID+ validation for PLZA shiny Pokemon
@@ -222,6 +235,46 @@ public static class AutoLegalityWrapper
         }
     }
 
+    /// <summary>
+    /// Re-runs the encounter search with a shiny-friendly priority list (Slot/Egg/Mystery
+    /// first, Static last) when ALM returned a non-shiny pkm for a shiny request.
+    /// Root cause: ALM's <c>SetShinyBoolean</c> early-returns without modification when the
+    /// chosen encounter is <see cref="Shiny.Never"/> or <see cref="Shiny.FixedValue"/>, and
+    /// ALM accepts that non-shiny pkm as a successful legalization. By forcing types that
+    /// almost always permit shiny to be tried first, this retry bypasses shiny-locked
+    /// encounters that the user's <c>PrioritizeEncounters</c> setting may have surfaced
+    /// first. Returns null if no valid shiny encounter exists, or if another thread is
+    /// already performing a retry.
+    /// </summary>
+    public static PKM? TryGetAsShiny(ITrainerInfo sav, IBattleTemplate template)
+    {
+        if (!s_shinyRetryLock.Wait(200))
+            return null;
+
+        var originalPriority = EncounterMovesetGenerator.PriorityList;
+        var originalGVP = APILegality.GameVersionPriority;
+        try
+        {
+            EncounterMovesetGenerator.PriorityList = s_shinyPriority;
+            APILegality.GameVersionPriority = GameVersionPriorityType.PriorityOrder;
+            var pk = sav.GetLegal(template, out _);
+            if (pk == null || !pk.IsShiny)
+                return null;
+
+            var la = new LegalityAnalysis(pk);
+            if (!la.Valid)
+                return null;
+
+            return pk;
+        }
+        finally
+        {
+            EncounterMovesetGenerator.PriorityList = originalPriority;
+            APILegality.GameVersionPriority = originalGVP;
+            s_shinyRetryLock.Release();
+        }
+    }
+
     public static ITrainerInfo GetTrainerInfo<T>() where T : PKM, new()
     {
         ITrainerInfo trainerInfo;
@@ -336,26 +389,36 @@ public static class AutoLegalityWrapper
                     pk.RefreshChecksum();
                 }
 
-                // CRITICAL FIX: Force shiny if requested but not generated
-                // ALM in NET10 sometimes fails to generate shiny Pokemon even when requested
-                // This affects SV, PLA, BDSP, SWSH, and LGPE - check and force shiny if needed
+                // CRITICAL FIX: Force shiny if requested but not generated.
+                // ALM silently returns non-shiny when it picks a shiny-locked encounter:
+                // SetShinyBoolean early-returns on Shiny.Never/FixedValue, and ALM accepts
+                // the legal-but-non-shiny pkm as success. First try regenerating with a
+                // shiny-friendly priority list (bypasses shiny-locked Static encounters);
+                // only fall back to brute PID flip if that retry can't find a shiny encounter.
                 if (set.Shiny && !pk.IsShiny)
                 {
-                    // Pokemon should be shiny but isn't - force it to be shiny
-                    // Dynamax Adventures (Max Lair, MetLocation=244) REQUIRE Star shiny (XOR=1).
-                    // This applies to native PK8 (SWSH save) AND to PK9 that originated in
-                    // SWSH and were transferred to SV via HOME (Version=SW/SH, MetLocation=244).
-                    bool isMaxLairOrigin = pk switch
+                    var shinyRetry = TryGetAsShiny(sav, set);
+                    if (shinyRetry != null)
                     {
-                        PK8 { MetLocation: 244 } => true,
-                        PK9 { MetLocation: 244 } when pk.Version == GameVersion.SW || pk.Version == GameVersion.SH => true,
-                        _ => false,
-                    };
-                    var desiredXor = isMaxLairOrigin
-                        ? 1  // Max Lair: always Star shiny (Square is invalid for Dynamax Adventures)
-                        : pk is PK8 or PK9 ? 0 : 1;
-                    pk.PID = (uint)((pk.TID16 ^ pk.SID16 ^ (pk.PID & 0xFFFF) ^ desiredXor) << 16) | (pk.PID & 0xFFFF);
-                    pk.RefreshChecksum();
+                        pk = shinyRetry;
+                    }
+                    else
+                    {
+                        // Dynamax Adventures (Max Lair, MetLocation=244) REQUIRE Star shiny (XOR=1).
+                        // This applies to native PK8 (SWSH save) AND to PK9 that originated in
+                        // SWSH and were transferred to SV via HOME (Version=SW/SH, MetLocation=244).
+                        bool isMaxLairOrigin = pk switch
+                        {
+                            PK8 { MetLocation: 244 } => true,
+                            PK9 { MetLocation: 244 } when pk.Version == GameVersion.SW || pk.Version == GameVersion.SH => true,
+                            _ => false,
+                        };
+                        var desiredXor = isMaxLairOrigin
+                            ? 1  // Max Lair: always Star shiny (Square is invalid for Dynamax Adventures)
+                            : pk is PK8 or PK9 ? 0 : 1;
+                        pk.PID = (uint)((pk.TID16 ^ pk.SID16 ^ (pk.PID & 0xFFFF) ^ desiredXor) << 16) | (pk.PID & 0xFFFF);
+                        pk.RefreshChecksum();
+                    }
                 }
 
                 // Fix Square shiny at Max Lair: PKHeX requires Star shiny (ShinyXor 1-15) for MetLocation=244.
