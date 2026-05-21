@@ -197,7 +197,7 @@ An independently evolved fork that shares ideas, structure, and inspiration with
 | Command | Aliases | Summary | Example | Permission |
 |---------|---------|---------|---------|------------|
 | `batchTrade` | bt | Trade multiple Pokémon (max 6) from a list. | `bt <Set1> --- <Set2>` | Everyone |
-| `batchTradeZip` | btz | Trade multiple Pokémon from a ZIP file. | `btz <file.zip>` | Everyone |
+| `batchTradeZip` | btz | Trade multiple Pokémon from a ZIP/RAR/7z file. | `btz <file.7z>` | Everyone |
 | `batchInfo` | bei | Get info about a batch property. | `batchInfo <prop>` | Everyone |
 | `batchValidate` | bev | Validate a batch property. | `batchValidate <prop>` | Everyone |
 
