@@ -175,7 +175,7 @@ An independently evolved fork that shares ideas, structure, and inspiration with
 
 | Command | Aliases | Summary | Example | Permission |
 |---------|---------|---------|---------|------------|
-| `textTrade` | tt, text | Upload a .txt/.csv of Showdown sets for batch trading. | `tt <upload .txt/.csv file>` | Everyone |
+| `textTrade` | tt, text | Upload a .txt/.csv/.rtf/.pdf of Showdown sets for batch trading. | `tt <upload .txt/.csv file>` | Everyone |
 | `textView` | tv | View a specific Pokémon from your pending TextTrade file. | `tv 2` | Everyone |
 | `listEvents` | le | Lists available event files via DM. | `le <species> <page2>` | Everyone |
 | `eventRequest` | er | Downloads event attachments and adds to trade queue. | `eventRequest <file>` | Everyone |
