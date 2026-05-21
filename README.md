@@ -182,7 +182,7 @@ An independently evolved fork that shares ideas, structure, and inspiration with
 | `battleReadyList` | brl | Lists available battle-ready files via DM. | `brl <species> <page2>` | Everyone |
 | `battleReadyRequest` | br, brr | Downloads battle-ready attachments and adds to trade queue. | `battleReadyRequest <file>` | Everyone |
 | `pokepaste` | pp, Pokepaste, PP | Generates a team from a PokePaste URL. | `pp <URL>` | Everyone |
-| `dittoTrade` | dt, ditto | Trade a Ditto with requested stats, language, and nature. | `dt <LinkCode> <IVToBe0> <Lang> <Nature>` | Everyone |
+| `dittoTrade` | dt, ditto | Trade a Ditto with requested stats, language, and nature. | `dt <IVs> <Language> <Nature> <Shiny> <OT/TID/SID> <OriginGame>` | Everyone |
 | `mysteryegg` | me | Get a random shiny 6IV egg. | `mysteryegg` | Everyone |
 | `mysterymon` | mm, mystery, surprise | Get a fully random Pokémon. | `mysterymon` | Everyone |
 | `randomTeam` | rt, RandomTeam, Rt | Generates a random team. | `randomTeam` | Everyone |
