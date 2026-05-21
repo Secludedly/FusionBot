@@ -20,8 +20,6 @@ public class TradeSettings : IBotStateSettings, ICountSettings
 
     private const string Miscellaneous = nameof(Miscellaneous);
 
-    private const string RequestFolders = nameof(RequestFolders);
-
     private const string EmbedSettings = nameof(EmbedSettings);
 
     public override string ToString() => "Trade Configuration Settings";
@@ -43,9 +41,6 @@ public class TradeSettings : IBotStateSettings, ICountSettings
 
     [Category(EmbedSettings), Description("Settings related to the Trade Embed in Discord."), DisplayName("Trade Embed Settings"), Browsable(true)]
     public TradeEmbedSettingsCategory TradeEmbedSettings { get; set; } = new();
-
-    [Category(RequestFolders), Description("Settings related to Request Folders."), DisplayName("Request Folder Settings"), Browsable(true)]
-    public RequestFolderSettingsCategory RequestFolderSettings { get; set; } = new();
 
     [Category(CountStats), Description("Settings related to Trade Count Statistics."), DisplayName("Trade Count Statistics Settings"), Browsable(true)]
     public CountStatsSettingsCategory CountStatsSettings { get; set; } = new();
@@ -285,18 +280,6 @@ public class TradeSettings : IBotStateSettings, ICountSettings
 
         [Category(EmbedSettings), Description("Will show EVs in trade embed (Discord only)."), DisplayName("Show EVs")]
         public bool ShowEVs { get; set; } = true;
-    }
-
-    [Category(RequestFolders), TypeConverter(typeof(CategoryConverter<RequestFolderSettingsCategory>))]
-    public class RequestFolderSettingsCategory
-    {
-        public override string ToString() => "Request Folders Settings";
-
-        [Category("RequestFolders"), Description("Path to your Events Folder. Create a new folder called 'events' and copy the path here."), DisplayName("Events Folder Path")]
-        public string EventsFolder { get; set; } = string.Empty;
-
-        [Category("RequestFolders"), Description("Path to your BattleReady Folder. Create a new folder called 'battleready' and copy the path here."), DisplayName("Battle-Ready Folder Path")]
-        public string BattleReadyPKMFolder { get; set; } = string.Empty;
     }
 
     [Category(Miscellaneous)]

@@ -1078,7 +1078,7 @@ public partial class TradeModule<T> : ModuleBase<SocketCommandContext> where T :
     public Task ListEventsAsync([Remainder] string args = "")
         => ListHelpers<T>.HandleListCommandAsync(
             Context,
-            SysCord<T>.Runner.Config.Trade.RequestFolderSettings.EventsFolder,
+            SysCord<T>.Runner.Config.Folder.EventsFolder,
             "events",
             "er",
             args
@@ -1090,7 +1090,7 @@ public partial class TradeModule<T> : ModuleBase<SocketCommandContext> where T :
     public Task BattleReadyListAsync([Remainder] string args = "")
         => ListHelpers<T>.HandleListCommandAsync(
             Context,
-            SysCord<T>.Runner.Config.Trade.RequestFolderSettings.BattleReadyPKMFolder,
+            SysCord<T>.Runner.Config.Folder.BattleReadyPKMFolder,
             "battle-ready files",
             "brr",
             args
@@ -1107,7 +1107,7 @@ public partial class TradeModule<T> : ModuleBase<SocketCommandContext> where T :
     public Task EventRequestAsync(int index)
         => ListHelpers<T>.HandleRequestCommandAsync(
             Context,
-            SysCord<T>.Runner.Config.Trade.RequestFolderSettings.EventsFolder,
+            SysCord<T>.Runner.Config.Folder.EventsFolder,
             index,
             "event",
             "le"
@@ -1120,7 +1120,7 @@ public partial class TradeModule<T> : ModuleBase<SocketCommandContext> where T :
     public Task BattleReadyRequestAsync(int index)
         => ListHelpers<T>.HandleRequestCommandAsync(
             Context,
-            SysCord<T>.Runner.Config.Trade.RequestFolderSettings.BattleReadyPKMFolder,
+            SysCord<T>.Runner.Config.Folder.BattleReadyPKMFolder,
             index,
             "battle-ready file",
             "brl"
