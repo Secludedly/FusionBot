@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using SysBot.Pokemon.Localization;
 
 namespace SysBot.Pokemon;
 
@@ -14,29 +15,29 @@ public abstract class BaseConfig
     [Browsable(false)]
     private const string Debug = nameof(Debug);
 
-    [Category(FeatureToggle), Description("When enabled, the bot will press the B button occasionally when it is not processing anything (to avoid sleep).")]
+    [HubCategory(FeatureToggle), HubDescription("BaseConfig_AntiIdle_Description")]
     public bool AntiIdle { get; set; } = true;
 
-    [Category(Operation)]
+    [HubCategory(Operation)]
     [TypeConverter(typeof(ExpandableObjectConverter))]
     public FolderSettings Folder { get; set; } = new();
 
-    [Category(Operation)]
+    [HubCategory(Operation)]
     [TypeConverter(typeof(ExpandableObjectConverter))]
     public LegalitySettings Legality { get; set; } = new();
 
-    [Category(FeatureToggle), Description("Enables text logs. Restart to apply changes.")]
+    [HubCategory(FeatureToggle), HubDescription("BaseConfig_LoggingEnabled_Description")]
     public bool LoggingEnabled { get; set; } = true;
 
-    [Category(FeatureToggle), Description("Maximum number of old text log files to retain. Set this to <= 0 to disable log cleanup. Restart to apply changes.")]
+    [HubCategory(FeatureToggle), HubDescription("BaseConfig_MaxArchiveFiles_Description")]
     public int MaxArchiveFiles { get; set; } = 10;
 
     public abstract bool Shuffled { get; }
 
     [Browsable(false)]
-    [Category(Debug), Description("Skips creating bots when the program is started; helpful for testing integrations.")]
+    [HubCategory(Debug), HubDescription("BaseConfig_SkipConsoleBotCreation_Description")]
     public bool SkipConsoleBotCreation { get; set; }
 
-    [Category(FeatureToggle), Description("When enabled, the bot will Enter Link Trade Code via Keyboard (faster).")]
+    [HubCategory(FeatureToggle), HubDescription("BaseConfig_UseKeyboard_Description")]
     public bool UseKeyboard { get; set; } = true;
 }

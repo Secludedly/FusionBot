@@ -2,6 +2,7 @@ using SysBot.Base;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading;
+using SysBot.Pokemon.Localization;
 
 namespace SysBot.Pokemon;
 
@@ -21,48 +22,48 @@ public class EncounterSettings : IBotStateSettings, ICountSettings
 
     private int _completedWild;
 
-    [Category(Counts), Description("Eggs Retrieved")]
+    [HubCategory(Counts), HubDescription("EncounterSettings_CompletedEggs_Description")]
     public int CompletedEggs
     {
         get => _completedEggs;
         set => _completedEggs = value;
     }
 
-    [Category(Counts), Description("Encountered Wild Pokémon")]
+    [HubCategory(Counts), HubDescription("EncounterSettings_CompletedEncounters_Description")]
     public int CompletedEncounters
     {
         get => _completedWild;
         set => _completedWild = value;
     }
 
-    [Category(Counts), Description("Fossil Pokémon Revived")]
+    [HubCategory(Counts), HubDescription("EncounterSettings_CompletedFossils_Description")]
     public int CompletedFossils
     {
         get => _completedFossils;
         set => _completedFossils = value;
     }
 
-    [Category(Counts), Description("Encountered Legendary Pokémon")]
+    [HubCategory(Counts), HubDescription("EncounterSettings_CompletedLegends_Description")]
     public int CompletedLegends
     {
         get => _completedLegend;
         set => _completedLegend = value;
     }
 
-    [Category(Encounter), Description("When enabled, the bot will continue after finding a suitable match.")]
+    [HubCategory(Encounter), HubDescription("EncounterSettings_ContinueAfterMatch_Description")]
     public ContinueAfterMatch ContinueAfterMatch { get; set; } = ContinueAfterMatch.StopExit;
 
-    [Category(Counts), Description("When enabled, the counts will be emitted when a status check is requested.")]
+    [HubCategory(Counts), HubDescription("EncounterSettings_EmitCountsOnStatusCheck_Description")]
     public bool EmitCountsOnStatusCheck { get; set; }
 
-    [Category(Encounter), Description("The method used by the Line and Reset bots to encounter Pokémon.")]
+    [HubCategory(Encounter), HubDescription("EncounterSettings_EncounteringType_Description")]
     public EncounterMode EncounteringType { get; set; } = EncounterMode.VerticalLine;
 
-    [Category(Settings)]
+    [HubCategory(Settings)]
     [TypeConverter(typeof(ExpandableObjectConverter))]
     public FossilSettings Fossil { get; set; } = new();
 
-    [Category(Encounter), Description("When enabled, the screen will be turned off during normal bot loop operation to save power.")]
+    [HubCategory(Encounter), HubDescription("EncounterSettings_ScreenOff_Description")]
     public bool ScreenOff { get; set; }
 
     public int AddCompletedEggs() => Interlocked.Increment(ref _completedEggs);

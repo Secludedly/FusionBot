@@ -4,6 +4,7 @@ using System;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using SysBot.Pokemon.Localization;
 
 // ReSharper disable AutoPropertyCanBeMadeGetOnly.Global
 
@@ -27,104 +28,104 @@ public class StreamSettings
 
     public static Action<PKM, string>? CreateSpriteFile { get; set; }
 
-    [Category(Operation), Description("Format to display the Completed Trades. {0} = Count"), DisplayName("Completed Trades Formatting")]
+    [HubCategory(Operation), HubDescription("StreamSettings_CompletedTradesFormat_Description"), HubDisplayName("StreamSettings_CompletedTradesFormat_DisplayName")]
     public string CompletedTradesFormat { get; set; } = "Completed Trades: {0}";
 
-    [Category(Operation), Description("Copies the TradeBlockFile if it exists, otherwise, a placeholder image is copied instead."), DisplayName("Link Code Block Image")]
+    [HubCategory(Operation), HubDescription("StreamSettings_CopyImageFile_Description"), HubDisplayName("StreamSettings_CopyImageFile_DisplayName")]
     public bool CopyImageFile { get; set; } = true;
 
-    [Category(Operation), Description("Generate stream assets; turning off will prevent generation of assets."), DisplayName("Create Enabled Streaming Files")]
+    [HubCategory(Operation), HubDescription("StreamSettings_CreateAssets_Description"), HubDisplayName("StreamSettings_CreateAssets_DisplayName")]
     public bool CreateAssets { get; set; }
 
-    [Category(Operation), Description("Create a file indicating the count of completed trades when a new trade starts."), DisplayName("Create Completed Trades File")]
+    [HubCategory(Operation), HubDescription("StreamSettings_CreateCompletedTrades_Description"), HubDisplayName("StreamSettings_CreateCompletedTrades_DisplayName")]
     public bool CreateCompletedTrades { get; set; } = true;
 
-    [Category(Operation), Description("Create a file listing the estimated amount of time a user will have to wait if they joined the queue."), DisplayName("Create ETA File")]
+    [HubCategory(Operation), HubDescription("StreamSettings_CreateEstimatedTime_Description"), HubDisplayName("StreamSettings_CreateEstimatedTime_DisplayName")]
     public bool CreateEstimatedTime { get; set; } = true;
 
-    [Category(Operation), Description("Generate a list of People currently on-deck."), DisplayName("Create On Deck File")]
+    [HubCategory(Operation), HubDescription("StreamSettings_CreateOnDeck_Description"), HubDisplayName("StreamSettings_CreateOnDeck_DisplayName")]
     public bool CreateOnDeck { get; set; } = true;
 
-    [Category(Operation), Description("Generate a list of People currently on-deck #2."), DisplayName("Create On Deck File 2")]
+    [HubCategory(Operation), HubDescription("StreamSettings_CreateOnDeck2_Description"), HubDisplayName("StreamSettings_CreateOnDeck2_DisplayName")]
     public bool CreateOnDeck2 { get; set; } = true;
 
-    [Category(Operation), Description("Generate trade start details, indicating who the bot is trading with."), DisplayName("Create Trade Start File")]
+    [HubCategory(Operation), HubDescription("StreamSettings_CreateTradeStart_Description"), HubDisplayName("StreamSettings_CreateTradeStart_DisplayName")]
     public bool CreateTradeStart { get; set; } = true;
 
-    [Category(Operation), Description("Generate trade start details, indicating what the bot is trading."), DisplayName("Create Trade Start Sprite")]
+    [HubCategory(Operation), HubDescription("StreamSettings_CreateTradeStartSprite_Description"), HubDisplayName("StreamSettings_CreateTradeStartSprite_DisplayName")]
     public bool CreateTradeStartSprite { get; set; } = true;
 
-    [Category(Operation), Description("Generate a list of People currently being traded."), DisplayName("Create User List File")]
+    [HubCategory(Operation), HubDescription("StreamSettings_CreateUserList_Description"), HubDisplayName("StreamSettings_CreateUserList_DisplayName")]
     public bool CreateUserList { get; set; } = true;
 
-    [Category(Operation), Description("Create a file indicating the count of users in the queue."), DisplayName("Create User Queue File")]
+    [HubCategory(Operation), HubDescription("StreamSettings_CreateUsersInQueue_Description"), HubDisplayName("StreamSettings_CreateUsersInQueue_DisplayName")]
     public bool CreateUsersInQueue { get; set; } = true;
 
-    [Category(Operation), Description("Create a file listing the amount of time the most recently dequeued user has waited."), DisplayName("Create Time Waited File")]
+    [HubCategory(Operation), HubDescription("StreamSettings_CreateWaitedTime_Description"), HubDisplayName("StreamSettings_CreateWaitedTime_DisplayName")]
     public bool CreateWaitedTime { get; set; } = true;
 
-    [Category(Operation), Description("Format to display the Estimated Wait Timestamp."), DisplayName("Create Waited Time File")]
+    [HubCategory(Operation), HubDescription("StreamSettings_EstimatedFulfillmentFormat_Description"), HubDisplayName("StreamSettings_EstimatedFulfillmentFormat_DisplayName")]
     public string EstimatedFulfillmentFormat { get; set; } = @"hh\:mm\:ss";
 
     // Estimated Time
-    [Category(Operation), Description("Format to display the Estimated Wait Time."), DisplayName("Create Estimated Wait File")]
+    [HubCategory(Operation), HubDescription("StreamSettings_EstimatedTimeFormat_Description"), HubDisplayName("StreamSettings_EstimatedTimeFormat_DisplayName")]
     public string EstimatedTimeFormat { get; set; } = "Estimated time: {0:F1} minutes";
 
-    [Category(Operation), Description("Format to display the on-deck list users. {0} = ID, {3} = User"), DisplayName("On Deck Formatting")]
+    [HubCategory(Operation), HubDescription("StreamSettings_OnDeckFormat_Description"), HubDisplayName("StreamSettings_OnDeckFormat_DisplayName")]
     public string OnDeckFormat { get; set; } = "(ID {0}) - {3}";
 
-    [Category(Operation), Description("Format to display the on-deck #2 list users. {0} = ID, {3} = User"), DisplayName("On Deck 2 Formatting")]
+    [HubCategory(Operation), HubDescription("StreamSettings_OnDeckFormat2_Description"), HubDisplayName("StreamSettings_OnDeckFormat2_DisplayName")]
     public string OnDeckFormat2 { get; set; } = "(ID {0}) - {3}";
 
-    [Category(Operation), Description("Separator to split the on-deck list users."), DisplayName("On Deck Separator Image")]
+    [HubCategory(Operation), HubDescription("StreamSettings_OnDeckSeparator_Description"), HubDisplayName("StreamSettings_OnDeckSeparator_DisplayName")]
     public string OnDeckSeparator { get; set; } = "\n";
 
-    [Category(Operation), Description("Separator to split the on-deck #2 list users."), DisplayName("On Deck Separator Image 2")]
+    [HubCategory(Operation), HubDescription("StreamSettings_OnDeckSeparator2_Description"), HubDisplayName("StreamSettings_OnDeckSeparator2_DisplayName")]
     public string OnDeckSeparator2 { get; set; } = "\n";
 
-    [Category(Operation), Description("Number of on-deck users to skip at the top. If you want to hide people being processed, set this to your number of consoles."), DisplayName("On Deck Skips")]
+    [HubCategory(Operation), HubDescription("StreamSettings_OnDeckSkip_Description"), HubDisplayName("StreamSettings_OnDeckSkip_DisplayName")]
     public int OnDeckSkip { get; set; }
 
-    [Category(Operation), Description("Number of on-deck #2 users to skip at the top. If you want to hide people being processed, set this to your number of consoles."), DisplayName("On Deck 2 Skips")]
+    [HubCategory(Operation), HubDescription("StreamSettings_OnDeckSkip2_Description"), HubDisplayName("StreamSettings_OnDeckSkip2_DisplayName")]
     public int OnDeckSkip2 { get; set; }
 
     // On Deck
-    [Category(Operation), Description("Number of users to show in the on-deck list."), DisplayName("On Deck User Amount")]
+    [HubCategory(Operation), HubDescription("StreamSettings_OnDeckTake_Description"), HubDisplayName("StreamSettings_OnDeckTake_DisplayName")]
     public int OnDeckTake { get; set; } = 5;
 
     // On Deck 2
-    [Category(Operation), Description("Number of users to show in the on-deck #2 list."), DisplayName("On Deck 2 User Amount")]
+    [HubCategory(Operation), HubDescription("StreamSettings_OnDeckTake2_Description"), HubDisplayName("StreamSettings_OnDeckTake2_DisplayName")]
     public int OnDeckTake2 { get; set; } = 5;
 
     // TradeCodeBlock
-    [Category(Operation), Description("Source File name of the image to be copied when a trade code is being entered. If left empty, will create a placeholder image."), DisplayName("Trade Block Image")]
+    [HubCategory(Operation), HubDescription("StreamSettings_TradeBlockFile_Description"), HubDisplayName("StreamSettings_TradeBlockFile_DisplayName")]
     public string TradeBlockFile { get; set; } = string.Empty;
 
-    [Category(Operation), Description("Destination file name of the Link Code blocking image. {0} gets replaced with the local IP address."), DisplayName("Link Code Block Image")]
+    [HubCategory(Operation), HubDescription("StreamSettings_TradeBlockFormat_Description"), HubDisplayName("StreamSettings_TradeBlockFormat_DisplayName")]
     public string TradeBlockFormat { get; set; } = "block_{0}.png";
 
-    [Category(Operation), Description("Format to display the Now Trading details. {0} = ID, {1} = User"), DisplayName("Now Trading Format")]
+    [HubCategory(Operation), HubDescription("StreamSettings_TrainerTradeStart_Description"), HubDisplayName("StreamSettings_TrainerTradeStart_DisplayName")]
     public string TrainerTradeStart { get; set; } = "(ID {0}) {1}";
 
-    [Category(Operation), Description("Format to display the list users. {0} = ID, {3} = User"), DisplayName("User List Format")]
+    [HubCategory(Operation), HubDescription("StreamSettings_UserListFormat_Description"), HubDisplayName("StreamSettings_UserListFormat_DisplayName")]
     public string UserListFormat { get; set; } = "(ID {0}) - {3}";
 
-    [Category(Operation), Description("Separator to split the list users."), DisplayName("User List Separator")]
+    [HubCategory(Operation), HubDescription("StreamSettings_UserListSeparator_Description"), HubDisplayName("StreamSettings_UserListSeparator_DisplayName")]
     public string UserListSeparator { get; set; } = ", ";
 
-    [Category(Operation), Description("Number of users to skip at the top. If you want to hide people being processed, set this to your number of consoles."), DisplayName("Skipped User List")]
+    [HubCategory(Operation), HubDescription("StreamSettings_UserListSkip_Description"), HubDisplayName("StreamSettings_UserListSkip_DisplayName")]
     public int UserListSkip { get; set; }
 
     // User List
-    [Category(Operation), Description("Number of users to show in the list."), DisplayName("User List Amount")]
+    [HubCategory(Operation), HubDescription("StreamSettings_UserListTake_Description"), HubDisplayName("StreamSettings_UserListTake_DisplayName")]
     public int UserListTake { get; set; } = -1;
 
     // Users in Queue
-    [Category(Operation), Description("Format to display the Users in Queue. {0} = Count"), DisplayName("User in Queue Format")]
+    [HubCategory(Operation), HubDescription("StreamSettings_UsersInQueueFormat_Description"), HubDisplayName("StreamSettings_UsersInQueueFormat_DisplayName")]
     public string UsersInQueueFormat { get; set; } = "Users in Queue: {0}";
 
     // Waited Time
-    [Category(Operation), Description("Format to display the Waited Time for the most recently dequeued user."), DisplayName("Waited Time Format")]
+    [HubCategory(Operation), HubDescription("StreamSettings_WaitedTimeFormat_Description"), HubDisplayName("StreamSettings_WaitedTimeFormat_DisplayName")]
     public string WaitedTimeFormat { get; set; } = @"hh\:mm\:ss";
 
     public void EndEnterCode(PokeRoutineExecutorBase b)

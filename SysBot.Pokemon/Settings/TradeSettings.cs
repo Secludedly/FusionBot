@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading;
+using SysBot.Pokemon.Localization;
 
 namespace SysBot.Pokemon;
 
@@ -27,7 +28,7 @@ public class TradeSettings : IBotStateSettings, ICountSettings
     [TypeConverter(typeof(ExpandableObjectConverter))]
     public class EmojiInfo
     {
-        [Description("The full string for the emoji.")]
+        [HubDescription("EmojiInfo_EmojiString_Description")]
         public string EmojiString { get; set; } = string.Empty;
 
         public override string ToString()
@@ -36,66 +37,66 @@ public class TradeSettings : IBotStateSettings, ICountSettings
         }
     }
 
-    [Category(TradeConfig), Description("Settings related to Trade Configuration."), DisplayName("Trade Configuration"), Browsable(true)]
+    [HubCategory(TradeConfig), HubDescription("EmojiInfo_TradeConfiguration_Description"), HubDisplayName("EmojiInfo_TradeConfiguration_DisplayName"), Browsable(true)]
     public TradeSettingsCategory TradeConfiguration { get; set; } = new();
 
-    [Category(EmbedSettings), Description("Settings related to the Trade Embed in Discord."), DisplayName("Trade Embed Settings"), Browsable(true)]
+    [HubCategory(EmbedSettings), HubDescription("EmojiInfo_TradeEmbedSettings_Description"), HubDisplayName("EmojiInfo_TradeEmbedSettings_DisplayName"), Browsable(true)]
     public TradeEmbedSettingsCategory TradeEmbedSettings { get; set; } = new();
 
-    [Category(CountStats), Description("Settings related to Trade Count Statistics."), DisplayName("Trade Count Statistics Settings"), Browsable(true)]
+    [HubCategory(CountStats), HubDescription("EmojiInfo_CountStatsSettings_Description"), HubDisplayName("EmojiInfo_CountStatsSettings_DisplayName"), Browsable(true)]
     public CountStatsSettingsCategory CountStatsSettings { get; set; } = new();
 
-    [Category(TradeConfig), TypeConverter(typeof(CategoryConverter<TradeSettingsCategory>))]
+    [HubCategory(TradeConfig), TypeConverter(typeof(CategoryConverter<TradeSettingsCategory>))]
     public class TradeSettingsCategory
     {
         public override string ToString() => "Trade Configuration Settings";
 
-        [Category(TradeConfig), Description("Minimum Link Code."), DisplayName("Minimum Trade Link Code")]
+        [HubCategory(TradeConfig), HubDescription("TradeSettingsCategory_MinTradeCode_Description"), HubDisplayName("TradeSettingsCategory_MinTradeCode_DisplayName")]
         public int MinTradeCode { get; set; } = 0;
 
-        [Category(TradeConfig), Description("Maximum Link Code."), DisplayName("Maximum Trade Link Code")]
+        [HubCategory(TradeConfig), HubDescription("TradeSettingsCategory_MaxTradeCode_Description"), HubDisplayName("TradeSettingsCategory_MaxTradeCode_DisplayName")]
         public int MaxTradeCode { get; set; } = 9999_9999;
 
-        [Category(TradeConfig), Description("If set to True, Discord Users trade code will be stored and used repeatedly without changing."), DisplayName("Store and Reuse Trade Codes")]
+        [HubCategory(TradeConfig), HubDescription("TradeSettingsCategory_StoreTradeCodes_Description"), HubDisplayName("TradeSettingsCategory_StoreTradeCodes_DisplayName")]
         public bool StoreTradeCodes { get; set; } = true;
 
-        [Category(TradeConfig), Description("Time to wait for a trade partner in seconds."), DisplayName("Trade Partner Wait Time (seconds)")]
+        [HubCategory(TradeConfig), HubDescription("TradeSettingsCategory_TradeWaitTime_Description"), HubDisplayName("TradeSettingsCategory_TradeWaitTime_DisplayName")]
         public int TradeWaitTime { get; set; } = 55;
 
-        [Category(TradeConfig), Description("Max amount of time in seconds pressing A to wait for a trade to process."), DisplayName("Maximum Trade Confirmation Time (seconds)")]
+        [HubCategory(TradeConfig), HubDescription("TradeSettingsCategory_MaxTradeConfirmTime_Description"), HubDisplayName("TradeSettingsCategory_MaxTradeConfirmTime_DisplayName")]
         public int MaxTradeConfirmTime { get; set; } = 45;
 
-        [Category(TradeConfig), Description("Select default species for \"ItemTrade\", if configured."), DisplayName("Default Species for Item Trades")]
+        [HubCategory(TradeConfig), HubDescription("TradeSettingsCategory_ItemTradeSpecies_Description"), HubDisplayName("TradeSettingsCategory_ItemTradeSpecies_DisplayName")]
         public Species ItemTradeSpecies { get; set; } = Species.None;
 
-        [Category(TradeConfig), Description("Default held item to send if none is specified."), DisplayName("Default Held Item for Trades")]
+        [HubCategory(TradeConfig), HubDescription("TradeSettingsCategory_DefaultHeldItem_Description"), HubDisplayName("TradeSettingsCategory_DefaultHeldItem_DisplayName")]
         public HeldItem DefaultHeldItem { get; set; } = HeldItem.None;
 
-        [Category(TradeConfig), Description("If set to True, each valid Pokemon will come with all suggested Relearnable Moves without the need for a batch command."), DisplayName("Suggest Relearnable Moves by Default")]
+        [HubCategory(TradeConfig), HubDescription("TradeSettingsCategory_SuggestRelearnMoves_Description"), HubDisplayName("TradeSettingsCategory_SuggestRelearnMoves_DisplayName")]
         public bool SuggestRelearnMoves { get; set; } = true;
 
-        [Category(TradeConfig), Description("Toggle to allow or disallow batch trades."), DisplayName("Allow Batch Trades")]
+        [HubCategory(TradeConfig), HubDescription("TradeSettingsCategory_AllowBatchTrades_Description"), HubDisplayName("TradeSettingsCategory_AllowBatchTrades_DisplayName")]
         public bool AllowBatchTrades { get; set; } = true;
 
-        [Category(TradeConfig), Description("Checks Nickname and OT for spam."), DisplayName("Enable Spam Check")]
+        [HubCategory(TradeConfig), HubDescription("TradeSettingsCategory_EnableSpamCheck_Description"), HubDisplayName("TradeSettingsCategory_EnableSpamCheck_DisplayName")]
         public bool EnableSpamCheck { get; set; } = true;
 
-        [Category(TradeConfig), Description("Maximum pokemons of single trade. Batch mode will be closed if this configuration is less than 1"), DisplayName("Maximum Pokémon per Trade")]
+        [HubCategory(TradeConfig), HubDescription("TradeSettingsCategory_MaxPkmsPerTrade_Description"), HubDisplayName("TradeSettingsCategory_MaxPkmsPerTrade_DisplayName")]
         public int MaxPkmsPerTrade { get; set; } = 6;
 
-        [Category(TradeConfig), Description("Dump Trade: Dumping routine will stop after a maximum number of dumps from a single user."), DisplayName("Maximum Dumps per Trade")]
+        [HubCategory(TradeConfig), HubDescription("TradeSettingsCategory_MaxDumpsPerTrade_Description"), HubDisplayName("TradeSettingsCategory_MaxDumpsPerTrade_DisplayName")]
         public int MaxDumpsPerTrade { get; set; } = 25;
 
-        [Category(TradeConfig), Description("Dump Trade: Dumping routine will stop after spending x seconds in trade."), DisplayName("Maximum Dump Trade Time (seconds)")]
+        [HubCategory(TradeConfig), HubDescription("TradeSettingsCategory_MaxDumpTradeTime_Description"), HubDisplayName("TradeSettingsCategory_MaxDumpTradeTime_DisplayName")]
         public int MaxDumpTradeTime { get; set; } = 60;
 
-        [Category(TradeConfig), Description("Dump Trade: If enabled, Dumping routine will output legality check information to the user."), DisplayName("Dump Trade Legality Check")]
+        [HubCategory(TradeConfig), HubDescription("TradeSettingsCategory_DumpTradeLegalityCheck_Description"), HubDisplayName("TradeSettingsCategory_DumpTradeLegalityCheck_DisplayName")]
         public bool DumpTradeLegalityCheck { get; set; } = true;
 
-        [Category(TradeConfig), Description("When enabled, the bot will automatically cancel a trade if offered a Pokémon that will evolve."), DisplayName("Disallow Trade Evolve Offers")]
+        [HubCategory(TradeConfig), HubDescription("TradeSettingsCategory_DisallowTradeEvolve_Description"), HubDisplayName("TradeSettingsCategory_DisallowTradeEvolve_DisplayName")]
         public bool DisallowTradeEvolve { get; set; } = true;
 
-        [Category(TradeConfig), Description("LGPE Setting.")]
+        [HubCategory(TradeConfig), Description("LGPE Setting.")]
         public int TradeAnimationMaxDelaySeconds = 25;
 
         public enum HeldItem
@@ -130,14 +131,14 @@ public class TradeSettings : IBotStateSettings, ICountSettings
         }
     }
 
-    [Category(EmbedSettings), TypeConverter(typeof(CategoryConverter<TradeEmbedSettingsCategory>))]
+    [HubCategory(EmbedSettings), TypeConverter(typeof(CategoryConverter<TradeEmbedSettingsCategory>))]
     public class TradeEmbedSettingsCategory
     {
         public override string ToString() => "Trade Embed Configuration Settings";
 
         private bool _useEmbeds = true;
 
-        [Category(EmbedSettings), Description("If true, will show beautiful embeds in your discord trade channels of what the user is trading. False will show default text."), DisplayName("Use Embeds")]
+        [HubCategory(EmbedSettings), HubDescription("TradeEmbedSettingsCategory_UseEmbeds_Description"), HubDisplayName("TradeEmbedSettingsCategory_UseEmbeds_DisplayName")]
         public bool UseEmbeds
         {
             get => _useEmbeds;
@@ -167,13 +168,13 @@ public class TradeSettings : IBotStateSettings, ICountSettings
             }
         }
 
-        [Category(EmbedSettings), Description("Preferred Species Image Size for Embeds."), DisplayName("Species Image Size")]
+        [HubCategory(EmbedSettings), HubDescription("TradeEmbedSettingsCategory_PreferredImageSize_Description"), HubDisplayName("TradeEmbedSettingsCategory_PreferredImageSize_DisplayName")]
         public ImageSize PreferredImageSize { get; set; } = ImageSize.Size128x128;
 
-        [Category(EmbedSettings), Description("Will show Move Type Icons next to moves in trade embed (Discord only). Requires user to upload the emojis to their server."), DisplayName("Show Move Type Emojis")]
+        [HubCategory(EmbedSettings), HubDescription("TradeEmbedSettingsCategory_MoveTypeEmojis_Description"), HubDisplayName("TradeEmbedSettingsCategory_MoveTypeEmojis_DisplayName")]
         public bool MoveTypeEmojis { get; set; } = true;
 
-        [Category(EmbedSettings), Description("Custom Emoji information for the move types."), DisplayName("Custom Type Emojis")]
+        [HubCategory(EmbedSettings), HubDescription("TradeEmbedSettingsCategory_CustomTypeEmojis_Description"), HubDisplayName("TradeEmbedSettingsCategory_CustomTypeEmojis_DisplayName")]
         public List<MoveTypeEmojiInfo> CustomTypeEmojis { get; set; } =
         [
             new(MoveType.Bug),
@@ -197,31 +198,31 @@ public class TradeSettings : IBotStateSettings, ICountSettings
             new(MoveType.Stellar)
         ];
 
-        [Category(EmbedSettings), Description("The full string for the male gender emoji."), DisplayName("Male Emoji")]
+        [HubCategory(EmbedSettings), HubDescription("TradeEmbedSettingsCategory_MaleEmoji_Description"), HubDisplayName("TradeEmbedSettingsCategory_MaleEmoji_DisplayName")]
         public EmojiInfo MaleEmoji { get; set; } = new EmojiInfo();
 
-        [Category(EmbedSettings), Description("The full string for the female gender emoji."), DisplayName("Female Emoji")]
+        [HubCategory(EmbedSettings), HubDescription("TradeEmbedSettingsCategory_FemaleEmoji_Description"), HubDisplayName("TradeEmbedSettingsCategory_FemaleEmoji_DisplayName")]
         public EmojiInfo FemaleEmoji { get; set; } = new EmojiInfo();
 
-        [Category(EmbedSettings), Description("The emoji information for displaying mystery gift status."), DisplayName("Mystery Gift Emoji")]
+        [HubCategory(EmbedSettings), HubDescription("TradeEmbedSettingsCategory_MysteryGiftEmoji_Description"), HubDisplayName("TradeEmbedSettingsCategory_MysteryGiftEmoji_DisplayName")]
         public EmojiInfo MysteryGiftEmoji { get; set; } = new EmojiInfo();
 
-        [Category(EmbedSettings), Description("The emoji information for displaying the alpha mark."), DisplayName("Alpha Mark Emoji")]
+        [HubCategory(EmbedSettings), HubDescription("TradeEmbedSettingsCategory_AlphaMarkEmoji_Description"), HubDisplayName("TradeEmbedSettingsCategory_AlphaMarkEmoji_DisplayName")]
         public EmojiInfo AlphaMarkEmoji { get; set; } = new EmojiInfo();
 
-        [Category(EmbedSettings), Description("The emoji information for displaying Plus Moves to applicable Moves in the Discord embed."), DisplayName("Plus Move Emoji")]
+        [HubCategory(EmbedSettings), HubDescription("TradeEmbedSettingsCategory_UsePlusMoveEmoji_Description"), HubDisplayName("TradeEmbedSettingsCategory_UsePlusMoveEmoji_DisplayName")]
         public EmojiInfo UsePlusMoveEmoji { get; set; } = new EmojiInfo();
 
-        [Category(EmbedSettings), Description("The emoji information for displaying the mightiest mark."), DisplayName("Mightiest Mark Emoji")]
+        [HubCategory(EmbedSettings), HubDescription("TradeEmbedSettingsCategory_MightiestMarkEmoji_Description"), HubDisplayName("TradeEmbedSettingsCategory_MightiestMarkEmoji_DisplayName")]
         public EmojiInfo MightiestMarkEmoji { get; set; } = new EmojiInfo();
 
-        [Category(EmbedSettings), Description("The emoji information for displaying the alpha emoji in Legends: Arceus."), DisplayName("Alpha PLA Emoji")]
+        [HubCategory(EmbedSettings), HubDescription("TradeEmbedSettingsCategory_AlphaPLAEmoji_Description"), HubDisplayName("TradeEmbedSettingsCategory_AlphaPLAEmoji_DisplayName")]
         public EmojiInfo AlphaPLAEmoji { get; set; } = new EmojiInfo();
 
-        [Category(EmbedSettings), Description("Will show Move Type Icons next to moves in trade embed (Discord only). Requires user to upload the emojis to their server."), DisplayName("Show Tera Type Emojis?")]
+        [HubCategory(EmbedSettings), HubDescription("TradeEmbedSettingsCategory_UseTeraEmojis_Description"), HubDisplayName("TradeEmbedSettingsCategory_UseTeraEmojis_DisplayName")]
         public bool UseTeraEmojis { get; set; } = true;
 
-        [Category(EmbedSettings), Description("Tera Type Emoji information for the tera types."), DisplayName("Custom Tera Type Emojis")]
+        [HubCategory(EmbedSettings), HubDescription("TradeEmbedSettingsCategory_TeraTypeEmojis_Description"), HubDisplayName("TradeEmbedSettingsCategory_TeraTypeEmojis_DisplayName")]
         public List<TeraTypeEmojiInfo> TeraTypeEmojis { get; set; } =
         [
             new(MoveType.Bug),
@@ -245,46 +246,46 @@ public class TradeSettings : IBotStateSettings, ICountSettings
             new(MoveType.Stellar)
         ];
 
-        [Category(EmbedSettings), Description("Will show Scale in trade embed (SV & Discord only). Requires user to upload the emojis to their server."), DisplayName("Show Scale")]
+        [HubCategory(EmbedSettings), HubDescription("TradeEmbedSettingsCategory_ShowScale_Description"), HubDisplayName("TradeEmbedSettingsCategory_ShowScale_DisplayName")]
         public bool ShowScale { get; set; } = true;
 
-        [Category(EmbedSettings), Description("Will show Tera Type in trade embed (SV & Discord only)."), DisplayName("Show Tera Type")]
+        [HubCategory(EmbedSettings), HubDescription("TradeEmbedSettingsCategory_ShowTeraType_Description"), HubDisplayName("TradeEmbedSettingsCategory_ShowTeraType_DisplayName")]
         public bool ShowTeraType { get; set; } = true;
 
-        [Category(EmbedSettings), Description("Will show Level in trade embed (Discord only)."), DisplayName("Show Level")]
+        [HubCategory(EmbedSettings), HubDescription("TradeEmbedSettingsCategory_ShowLevel_Description"), HubDisplayName("TradeEmbedSettingsCategory_ShowLevel_DisplayName")]
         public bool ShowLevel { get; set; } = true;
 
-        [Category(EmbedSettings), Description("Will show Ball in trade embed (Discord only)."), DisplayName("Show Ball")]
+        [HubCategory(EmbedSettings), HubDescription("TradeEmbedSettingsCategory_ShowBall_Description"), HubDisplayName("TradeEmbedSettingsCategory_ShowBall_DisplayName")]
         public bool ShowBall { get; set; } = true;
 
-        [Category(EmbedSettings), Description("Will show Met Level in trade embed (Discord only)."), DisplayName("Show Met Level")]
+        [HubCategory(EmbedSettings), HubDescription("TradeEmbedSettingsCategory_ShowMetLevel_Description"), HubDisplayName("TradeEmbedSettingsCategory_ShowMetLevel_DisplayName")]
         public bool ShowMetLevel { get; set; } = true;
 
-        [Category(EmbedSettings), Description("Will show MetDate in trade embed (Discord only)."), DisplayName("Show Met Date")]
+        [HubCategory(EmbedSettings), HubDescription("TradeEmbedSettingsCategory_ShowMetDate_Description"), HubDisplayName("TradeEmbedSettingsCategory_ShowMetDate_DisplayName")]
         public bool ShowMetDate { get; set; } = true;
 
-        [Category(EmbedSettings), Description("Will show Met Location in trade embed (Discord only)."), DisplayName("Show Met Location")]
+        [HubCategory(EmbedSettings), HubDescription("TradeEmbedSettingsCategory_ShowMetLocation_Description"), HubDisplayName("TradeEmbedSettingsCategory_ShowMetLocation_DisplayName")]
         public bool ShowMetLocation { get; set; } = true;
 
-        [Category(EmbedSettings), Description("Will show Ability in trade embed (Discord only)."), DisplayName("Show Ability")]
+        [HubCategory(EmbedSettings), HubDescription("TradeEmbedSettingsCategory_ShowAbility_Description"), HubDisplayName("TradeEmbedSettingsCategory_ShowAbility_DisplayName")]
         public bool ShowAbility { get; set; } = true;
 
-        [Category(EmbedSettings), Description("Will show Nature in trade embed (Discord only)."), DisplayName("Show Nature")]
+        [HubCategory(EmbedSettings), HubDescription("TradeEmbedSettingsCategory_ShowNature_Description"), HubDisplayName("TradeEmbedSettingsCategory_ShowNature_DisplayName")]
         public bool ShowNature { get; set; } = true;
 
-        [Category(EmbedSettings), Description("Will show PKM Language in trade embed (Discord only)."), DisplayName("Show Language")]
+        [HubCategory(EmbedSettings), HubDescription("TradeEmbedSettingsCategory_ShowLanguage_Description"), HubDisplayName("TradeEmbedSettingsCategory_ShowLanguage_DisplayName")]
         public bool ShowLanguage { get; set; } = true;
 
-        [Category(EmbedSettings), Description("Will show IVs in trade embed (Discord only)."), DisplayName("Show IVs")]
+        [HubCategory(EmbedSettings), HubDescription("TradeEmbedSettingsCategory_ShowIVs_Description"), HubDisplayName("TradeEmbedSettingsCategory_ShowIVs_DisplayName")]
         public bool ShowIVs { get; set; } = true;
 
-        [Category(EmbedSettings), Description("Will show EVs in trade embed (Discord only)."), DisplayName("Show EVs")]
+        [HubCategory(EmbedSettings), HubDescription("TradeEmbedSettingsCategory_ShowEVs_Description"), HubDisplayName("TradeEmbedSettingsCategory_ShowEVs_DisplayName")]
         public bool ShowEVs { get; set; } = true;
     }
 
-    [Category(Miscellaneous)]
-    [Description("Turns off the Switch's screen during trades")]
-    [DisplayName("Screen Off")]
+    [HubCategory(Miscellaneous)]
+    [HubDescription("TradeEmbedSettingsCategory_ScreenOff_Description")]
+    [HubDisplayName("TradeEmbedSettingsCategory_ScreenOff_DisplayName")]
     public bool ScreenOff { get; set; } = false;
 
     /// <summary>
@@ -315,7 +316,7 @@ public class TradeSettings : IBotStateSettings, ICountSettings
         return lgcode;
     }
 
-    [Category(CountStats), TypeConverter(typeof(CategoryConverter<CountStatsSettingsCategory>))]
+    [HubCategory(CountStats), TypeConverter(typeof(CategoryConverter<CountStatsSettingsCategory>))]
     public class CountStatsSettingsCategory
     {
         public override string ToString() => "Trade Count Statistics";
@@ -334,28 +335,28 @@ public class TradeSettings : IBotStateSettings, ICountSettings
 
         private int _completedFixOTs;
 
-        [Category(CountStats), Description("Completed Surprise Trades")]
+        [HubCategory(CountStats), HubDescription("CountStatsSettingsCategory_CompletedSurprise_Description")]
         public int CompletedSurprise
         {
             get => _completedSurprise;
             set => _completedSurprise = value;
         }
 
-        [Category(), Description("Completed Link Trades (Distribution)")]
+        [Category(), HubDescription("CountStatsSettingsCategory_CompletedDistribution_Description")]
         public int CompletedDistribution
         {
             get => _completedDistribution;
             set => _completedDistribution = value;
         }
 
-        [Category(CountStats), Description("Completed Link Trades (Specific User)")]
+        [HubCategory(CountStats), HubDescription("CountStatsSettingsCategory_CompletedTrades_Description")]
         public int CompletedTrades
         {
             get => _completedTrades;
             set => _completedTrades = value;
         }
 
-        [Category(CountStats), Description("Completed FixOT Trades (Specific User)")]
+        [HubCategory(CountStats), HubDescription("CountStatsSettingsCategory_CompletedFixOTs_Description")]
         public int CompletedFixOTs
         {
             get => _completedFixOTs;
@@ -363,28 +364,28 @@ public class TradeSettings : IBotStateSettings, ICountSettings
         }
 
         [Browsable(false)]
-        [Category(CountStats), Description("Completed Seed Check Trades")]
+        [HubCategory(CountStats), HubDescription("CountStatsSettingsCategory_CompletedSeedChecks_Description")]
         public int CompletedSeedChecks
         {
             get => _completedSeedChecks;
             set => _completedSeedChecks = value;
         }
 
-        [Category(CountStats), Description("Completed Clone Trades (Specific User)")]
+        [HubCategory(CountStats), HubDescription("CountStatsSettingsCategory_CompletedClones_Description")]
         public int CompletedClones
         {
             get => _completedClones;
             set => _completedClones = value;
         }
 
-        [Category(CountStats), Description("Completed Dump Trades (Specific User)")]
+        [HubCategory(CountStats), HubDescription("CountStatsSettingsCategory_CompletedDumps_Description")]
         public int CompletedDumps
         {
             get => _completedDumps;
             set => _completedDumps = value;
         }
 
-        [Category(CountStats), Description("When enabled, the counts will be emitted when a status check is requested.")]
+        [HubCategory(CountStats), HubDescription("CountStatsSettingsCategory_EmitCountsOnStatusCheck_Description")]
         public bool EmitCountsOnStatusCheck { get; set; }
 
         public void AddCompletedTrade() => Interlocked.Increment(ref _completedTrades);
@@ -475,9 +476,9 @@ public class TradeSettings : IBotStateSettings, ICountSettings
 
     public class MoveTypeEmojiInfo
     {
-        [Description("The type of move.")]
+        [HubDescription("MoveTypeEmojiInfo_MoveType_Description")]
         public MoveType MoveType { get; set; }
-        [Description("The Discord emoji string for this move type.")]
+        [HubDescription("MoveTypeEmojiInfo_EmojiCode_Description")]
         public string EmojiCode { get; set; } = string.Empty;
         public MoveTypeEmojiInfo()
         { }
@@ -496,9 +497,9 @@ public class TradeSettings : IBotStateSettings, ICountSettings
 
     public class TeraTypeEmojiInfo
     {
-        [Description("The Tera Type.")]
+        [HubDescription("TeraTypeEmojiInfo_MoveType_Description")]
         public MoveType MoveType { get; set; }
-        [Description("The Discord emoji string for this tera type.")]
+        [HubDescription("TeraTypeEmojiInfo_EmojiCode_Description")]
         public string EmojiCode { get; set; }
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         public TeraTypeEmojiInfo()

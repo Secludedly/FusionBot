@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using SysBot.Pokemon.Localization;
 
 namespace SysBot.Pokemon;
 
@@ -9,40 +10,40 @@ public class RecoverySettings
 {
     private const string Recovery = nameof(Recovery);
 
-    [Category(Recovery), Description("Enables automatic recovery attempts for crashed or stopped bots.")]
+    [HubCategory(Recovery), HubDescription("RecoverySettings_EnableRecovery_Description")]
     public bool EnableRecovery { get; set; } = true;
 
-    [Category(Recovery), Description("Maximum number of consecutive recovery attempts before giving up on a bot.")]
+    [HubCategory(Recovery), HubDescription("RecoverySettings_MaxRecoveryAttempts_Description")]
     public int MaxRecoveryAttempts { get; set; } = 3;
 
-    [Category(Recovery), Description("Initial delay in seconds before attempting to restart a crashed bot.")]
+    [HubCategory(Recovery), HubDescription("RecoverySettings_InitialRecoveryDelaySeconds_Description")]
     public int InitialRecoveryDelaySeconds { get; set; } = 5;
 
-    [Category(Recovery), Description("Maximum delay in seconds between recovery attempts (for exponential backoff).")]
+    [HubCategory(Recovery), HubDescription("RecoverySettings_MaxRecoveryDelaySeconds_Description")]
     public int MaxRecoveryDelaySeconds { get; set; } = 300; // 5 minutes
 
-    [Category(Recovery), Description("Multiplier for exponential backoff (e.g., 2.0 doubles the delay each time).")]
+    [HubCategory(Recovery), HubDescription("RecoverySettings_BackoffMultiplier_Description")]
     public double BackoffMultiplier { get; set; } = 2.0;
 
-    [Category(Recovery), Description("Time window in minutes to track crash history. Crashes outside this window are not counted.")]
+    [HubCategory(Recovery), HubDescription("RecoverySettings_CrashHistoryWindowMinutes_Description")]
     public int CrashHistoryWindowMinutes { get; set; } = 60; // 1 hour
 
-    [Category(Recovery), Description("Maximum number of crashes allowed within the history window before permanent shutdown.")]
+    [HubCategory(Recovery), HubDescription("RecoverySettings_MaxCrashesInWindow_Description")]
     public int MaxCrashesInWindow { get; set; } = 5;
 
-    [Category(Recovery), Description("Enables recovery for bots that were intentionally stopped (useful for network disconnections).")]
+    [HubCategory(Recovery), HubDescription("RecoverySettings_RecoverIntentionalStops_Description")]
     public bool RecoverIntentionalStops { get; set; } = false;
 
-    [Category(Recovery), Description("Delay in seconds to wait after a successful recovery before resetting the attempt counter.")]
+    [HubCategory(Recovery), HubDescription("RecoverySettings_SuccessfulRecoveryResetDelaySeconds_Description")]
     public int SuccessfulRecoveryResetDelaySeconds { get; set; } = 300; // 5 minutes
 
-    [Category(Recovery), Description("Send notifications when a bot crashes and recovery is attempted.")]
+    [HubCategory(Recovery), HubDescription("RecoverySettings_NotifyOnRecoveryAttempt_Description")]
     public bool NotifyOnRecoveryAttempt { get; set; } = true;
 
-    [Category(Recovery), Description("Send notifications when a bot fails to recover after all attempts.")]
+    [HubCategory(Recovery), HubDescription("RecoverySettings_NotifyOnRecoveryFailure_Description")]
     public bool NotifyOnRecoveryFailure { get; set; } = true;
 
-    [Category(Recovery), Description("Minimum uptime in seconds before a bot is considered stable (resets recovery attempts).")]
+    [HubCategory(Recovery), HubDescription("RecoverySettings_MinimumStableUptimeSeconds_Description")]
     public int MinimumStableUptimeSeconds { get; set; } = 600; // 10 minutes
 
     public override string ToString() => "Bot Recovery Settings";

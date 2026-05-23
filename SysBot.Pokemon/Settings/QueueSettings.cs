@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using SysBot.Pokemon.Localization;
 
 // ReSharper disable AutoPropertyCanBeMadeGetOnly.Global
 
@@ -29,74 +30,74 @@ public class QueueSettings
 
     private const string UserBias = nameof(UserBias);
 
-    [Category(FeatureToggle), Description("Allows users to dequeue while being traded.")]
+    [HubCategory(FeatureToggle), HubDescription("QueueSettings_CanDequeueIfProcessing_Description")]
     public bool CanDequeueIfProcessing { get; set; } = true;
 
-    [Category(FeatureToggle), Description("Toggles if users can join the queue.")]
+    [HubCategory(FeatureToggle), HubDescription("QueueSettings_CanQueue_Description")]
     public bool CanQueue { get; set; } = true;
 
-    [Category(TimeBias), Description("Multiplies the amount of users in queue to give an estimate of how much time it will take until the user is processed.")]
+    [HubCategory(TimeBias), HubDescription("QueueSettings_EstimatedDelayFactor_Description")]
     public float EstimatedDelayFactor { get; set; } = 1.2f;
 
-    [Category(FeatureToggle), Description("Determines how Flex Mode will process the queues.")]
+    [HubCategory(FeatureToggle), HubDescription("QueueSettings_FlexMode_Description")]
     public FlexYieldMode FlexMode { get; set; } = FlexYieldMode.Weighted;
 
-    [Category(QueueToggle), Description("Scheduled Mode: Seconds of being closed before the queue unlocks.")]
+    [HubCategory(QueueToggle), HubDescription("QueueSettings_IntervalCloseFor_Description")]
     public int IntervalCloseFor { get; set; } = 15 * 60;
 
-    [Category(QueueToggle), Description("Scheduled Mode: Seconds of being open before the queue locks.")]
+    [HubCategory(QueueToggle), HubDescription("QueueSettings_IntervalOpenFor_Description")]
     public int IntervalOpenFor { get; set; } = 5 * 60;
 
     // General
-    [Category(FeatureToggle), Description("Prevents adding users if there are this many users in the queue already.")]
+    [HubCategory(FeatureToggle), HubDescription("QueueSettings_MaxQueueCount_Description")]
     public int MaxQueueCount { get; set; } = 200;
 
-    [Category(FeatureToggle), Description("Determines when the queue is turned on and off.")]
+    [HubCategory(FeatureToggle), HubDescription("QueueSettings_QueueToggleMode_Description")]
     public QueueOpening QueueToggleMode { get; set; } = QueueOpening.Threshold;
 
-    [Category(FeatureToggle), Description("When enabled, sends an embed notification to announcement channels when the queue closes due to max capacity.")]
+    [HubCategory(FeatureToggle), HubDescription("QueueSettings_NotifyOnQueueClose_Description")]
     public bool NotifyOnQueueClose { get; set; } = true;
 
-    [Category(QueueToggle), Description("Threshold Mode: Count of users that will cause the queue to close.")]
+    [HubCategory(QueueToggle), HubDescription("QueueSettings_ThresholdLock_Description")]
     public int ThresholdLock { get; set; } = 200;
 
-    [Category(QueueToggle), Description("Threshold Mode: Count of users that will cause the queue to open.")]
+    [HubCategory(QueueToggle), HubDescription("QueueSettings_ThresholdUnlock_Description")]
     public int ThresholdUnlock { get; set; } = 0;
 
-    [Category(UserBias), Description("Biases the Clone Queue's weight based on how many users are in the queue.")]
+    [HubCategory(UserBias), HubDescription("QueueSettings_YieldMultCountClone_Description")]
     public int YieldMultCountClone { get; set; } = 100;
 
-    [Category(UserBias), Description("Biases the Dump Queue's weight based on how many users are in the queue.")]
+    [HubCategory(UserBias), HubDescription("QueueSettings_YieldMultCountDump_Description")]
     public int YieldMultCountDump { get; set; } = 100;
 
-    [Category(UserBias), Description("Biases the FixOT Queue's weight based on how many users are in the queue.")]
+    [HubCategory(UserBias), HubDescription("QueueSettings_YieldMultCountFixOT_Description")]
     public int YieldMultCountFixOT { get; set; } = 100;
 
-    [Category(UserBias), Description("Biases the Seed Check Queue's weight based on how many users are in the queue.")]
+    [HubCategory(UserBias), HubDescription("QueueSettings_YieldMultCountSeedCheck_Description")]
     public int YieldMultCountSeedCheck { get; set; } = 100;
 
-    [Category(UserBias), Description("Biases the Trade Queue's weight based on how many users are in the queue.")]
+    [HubCategory(UserBias), HubDescription("QueueSettings_YieldMultCountTrade_Description")]
     public int YieldMultCountTrade { get; set; } = 100;
 
-    [Category(TimeBias), Description("Determines whether the weight should be added or multiplied to the total weight.")]
+    [HubCategory(TimeBias), HubDescription("QueueSettings_YieldMultWait_Description")]
     public FlexBiasMode YieldMultWait { get; set; } = FlexBiasMode.Multiply;
 
-    [Category(TimeBias), Description("Checks time elapsed since the user joined the Clone queue, and increases the queue's weight accordingly.")]
+    [HubCategory(TimeBias), HubDescription("QueueSettings_YieldMultWaitClone_Description")]
     public int YieldMultWaitClone { get; set; } = 1;
 
-    [Category(TimeBias), Description("Checks time elapsed since the user joined the Dump queue, and increases the queue's weight accordingly.")]
+    [HubCategory(TimeBias), HubDescription("QueueSettings_YieldMultWaitDump_Description")]
     public int YieldMultWaitDump { get; set; } = 1;
 
-    [Category(TimeBias), Description("Checks time elapsed since the user joined the FixOT queue, and increases the queue's weight accordingly.")]
+    [HubCategory(TimeBias), HubDescription("QueueSettings_YieldMultWaitFixOT_Description")]
     public int YieldMultWaitFixOT { get; set; } = 1;
 
-    [Category(TimeBias), Description("Checks time elapsed since the user joined the Seed Check queue, and increases the queue's weight accordingly.")]
+    [HubCategory(TimeBias), HubDescription("QueueSettings_YieldMultWaitSeedCheck_Description")]
     public int YieldMultWaitSeedCheck { get; set; } = 1;
 
     // Queue Toggle
     // Flex Users
     // Flex Time
-    [Category(TimeBias), Description("Checks time elapsed since the user joined the Trade queue, and increases the queue's weight accordingly.")]
+    [HubCategory(TimeBias), HubDescription("QueueSettings_YieldMultWaitTrade_Description")]
     public int YieldMultWaitTrade { get; set; } = 1;
 
     /// <summary>

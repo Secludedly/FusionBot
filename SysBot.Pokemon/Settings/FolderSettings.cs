@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System.IO;
+using SysBot.Pokemon.Localization;
 
 namespace SysBot.Pokemon;
 
@@ -9,29 +10,29 @@ public class FolderSettings : IDumper
 
     private const string Files = nameof(Files);
 
-    [Category(Files), Description("Source folder: where PKM files to distribute are selected from."), DisplayName("Distribute Folder")]
+    [HubCategory(Files), HubDescription("FolderSettings_DistributeFolder_Description"), HubDisplayName("FolderSettings_DistributeFolder_DisplayName")]
     public string DistributeFolder { get; set; } = string.Empty;
 
-    [Category(FeatureToggle), Description("When enabled, dumps any received PKM files (trade results) to the DumpFolder."), DisplayName("Enable Dump")]
+    [HubCategory(FeatureToggle), HubDescription("FolderSettings_Dump_Description"), HubDisplayName("FolderSettings_Dump_DisplayName")]
     public bool Dump { get; set; }
 
-    [Category(Files), Description("Destination folder: where all received PKM files are dumped to."), DisplayName("Dump Folder")]
+    [HubCategory(Files), HubDescription("FolderSettings_DumpFolder_Description"), HubDisplayName("FolderSettings_DumpFolder_DisplayName")]
     public string DumpFolder { get; set; } = string.Empty;
 
-    [Category(Files), Description("Directory where your Switch Remote For PC is located."), DisplayName("Switch Remote for PC Location")]
-    public string SwitchRemoteForPC { get; set; } = string.Empty;
-
-    [Category(Files), Description("Directory where your HOME Tracked Pokémon are located."), DisplayName("HOME-Ready Folder")]
+    [HubCategory(Files), HubDescription("FolderSettings_HOMEReadyPKMFolder_Description"), HubDisplayName("FolderSettings_HOMEReadyPKMFolder_DisplayName")]
     public string HOMEReadyPKMFolder { get; set; } = string.Empty;
 
-    [Category(Files), Description("Path to your Events Folder. Create a new folder called 'events' and copy the path here."), DisplayName("Events Folder")]
+    [HubCategory(Files), HubDescription("FolderSettings_EventsFolder_Description"), HubDisplayName("FolderSettings_EventsFolder_DisplayName")]
     public string EventsFolder { get; set; } = string.Empty;
 
-    [Category(Files), Description("Path to your BattleReady Folder. Create a new folder called 'battleready' and copy the path here."), DisplayName("Battle-Ready Folder")]
+    [HubCategory(Files), HubDescription("FolderSettings_BattleReadyPKMFolder_Description"), HubDisplayName("FolderSettings_BattleReadyPKMFolder_DisplayName")]
     public string BattleReadyPKMFolder { get; set; } = string.Empty;
 
-    [Category(Files), Description("Directory where your PKHeX executable is located."), DisplayName("PKHeX Folder")]
+    [HubCategory(Files), HubDescription("FolderSettings_PKHeXDirectory_Description"), HubDisplayName("FolderSettings_PKHeXDirectory_DisplayName")]
     public string PKHeXDirectory { get; set; } = string.Empty;
+
+    [HubCategory(Files), HubDescription("FolderSettings_SwitchRemoteForPC_Description"), HubDisplayName("FolderSettings_SwitchRemoteForPC_DisplayName")]
+    public string SwitchRemoteForPC { get; set; } = string.Empty;
 
     public void CreateDefaults(string path)
     {

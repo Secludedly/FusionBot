@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using SysBot.Pokemon.Localization;
 
 namespace SysBot.Pokemon;
 
@@ -19,17 +20,17 @@ public class FavoredPrioritySettings : IFavoredCPQSetting
     private int _skipPercentage = 50;
     private int _minimumRegularUsersFirst = 3;
 
-    [Category(Operation), Description("Enable or disable priority user favoritism. When disabled, all users are treated equally."), DisplayName("Enable Favoritism")]
+    [HubCategory(Operation), HubDescription("FavoredPrioritySettings_EnableFavoritism_Description"), HubDisplayName("FavoredPrioritySettings_EnableFavoritism_DisplayName")]
     public bool EnableFavoritism { get; set; } = true;
 
-    [Category(Configure), Description("Percentage of regular users that priority users can skip (0-100). For example: 50% means a priority user joins halfway through the regular users in queue. Higher percentage = more favorable to priority users."), DisplayName("Skip Percentage")]
+    [HubCategory(Configure), HubDescription("FavoredPrioritySettings_SkipPercentage_Description"), HubDisplayName("FavoredPrioritySettings_SkipPercentage_DisplayName")]
     public int SkipPercentage
     {
         get => _skipPercentage;
         set => _skipPercentage = Math.Clamp(value, MinSkipPercentage, MaxSkipPercentage);
     }
 
-    [Category(Configure), Description("Minimum number of regular users that must be processed before any priority user can skip ahead. This prevents priority users from completely blocking regular users, even in large queues."), DisplayName("Minimum User Amount Before Favoritism")]
+    [HubCategory(Configure), HubDescription("FavoredPrioritySettings_MinimumRegularUsersFirst_Description"), HubDisplayName("FavoredPrioritySettings_MinimumRegularUsersFirst_DisplayName")]
     public int MinimumRegularUsersFirst
     {
         get => _minimumRegularUsersFirst;

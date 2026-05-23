@@ -28,4 +28,19 @@
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
   </PropertyGroup>
+  <ItemGroup>
+    <EmbeddedResource Update="Localization\HubStrings.resx">
+      <ManifestResourceName>SysBot.Pokemon.Localization.HubStrings</ManifestResourceName>
+    </EmbeddedResource>
+    <!-- Per-language siblings. The SDK detects the culture token in the filename and
+         packages them into satellite assemblies automatically. -->
+    <EmbeddedResource Update="Localization\HubStrings.ja.resx" Condition="Exists('Localization\HubStrings.ja.resx')" />
+    <EmbeddedResource Update="Localization\HubStrings.fr.resx" Condition="Exists('Localization\HubStrings.fr.resx')" />
+    <EmbeddedResource Update="Localization\HubStrings.it.resx" Condition="Exists('Localization\HubStrings.it.resx')" />
+    <EmbeddedResource Update="Localization\HubStrings.de.resx" Condition="Exists('Localization\HubStrings.de.resx')" />
+    <EmbeddedResource Update="Localization\HubStrings.es.resx" Condition="Exists('Localization\HubStrings.es.resx')" />
+    <EmbeddedResource Update="Localization\HubStrings.ko.resx" Condition="Exists('Localization\HubStrings.ko.resx')" />
+    <EmbeddedResource Update="Localization\HubStrings.zh-Hans.resx" Condition="Exists('Localization\HubStrings.zh-Hans.resx')" />
+    <EmbeddedResource Update="Localization\HubStrings.zh-Hant.resx" Condition="Exists('Localization\HubStrings.zh-Hant.resx')" />
+  </ItemGroup>
 </Project>

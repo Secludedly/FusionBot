@@ -1,3 +1,4 @@
+using SysBot.Pokemon.WinForms.Localization;
 using System;
 using System.Drawing;
 using System.IO;
@@ -34,6 +35,14 @@ namespace SysBot.Pokemon.WinForms
 
             // Set text rendering to be compatible
             Application.SetCompatibleTextRenderingDefault(false);
+
+            ///////////////////////////////////////////
+            /// Apply UI language BEFORE forms load ///
+            ///////////////////////////////////////////
+            // InitializeComponent pulls strings from resx by culture, so the culture must
+            // already be set when Main's constructor runs. The config isn't fully parsed
+            // until Main loads it, so we sniff just the Hub.Language field up front.
+            LanguageHelper.Apply(LanguageHelper.ReadConfiguredLanguage(ConfigPath));
 
             ///////////////////////////////////////////
             /// Load fonts before showing main form ///

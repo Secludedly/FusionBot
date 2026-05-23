@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using SysBot.Pokemon.Localization;
 
 namespace SysBot.Pokemon;
 
@@ -15,34 +16,34 @@ public class LegalitySettings
 
     private string DefaultTrainerName = "FreeMons.Org";
 
-    [Category(Generate), Description("Allow users to submit further customization with Batch Editor commands.")]
+    [HubCategory(Generate), HubDescription("LegalitySettings_AllowBatchCommands_Description")]
     public bool AllowBatchCommands { get; set; } = true;
 
-    [Category(Generate), Description("Allow users to submit custom OT, TID, SID, and OT Gender in Showdown sets.")]
+    [HubCategory(Generate), HubDescription("LegalitySettings_AllowTrainerDataOverride_Description")]
     public bool AllowTrainerDataOverride { get; set; } = true;
 
-    [Category(Generate), Description("Prevents trading Pokémon that require a HOME Tracker, even if the file has one already."), DisplayName("Disallow Non-Native Pokémon")]
+    [HubCategory(Generate), HubDescription("LegalitySettings_DisallowNonNatives_Description"), HubDisplayName("LegalitySettings_DisallowNonNatives_DisplayName")]
     public bool DisallowNonNatives { get; set; } = false;
 
-    [Category(Generate), Description("Prevents trading Pokémon that already have a HOME Tracker."), DisplayName("Disallow Home Tracked Pokémon")]
+    [HubCategory(Generate), HubDescription("LegalitySettings_DisallowTracked_Description"), HubDisplayName("LegalitySettings_DisallowTracked_DisplayName")]
     public bool DisallowTracked { get; set; } = false;
 
-    [Category(Generate), Description("Bot will create an Easter Egg Pokémon if provided an illegal set.")]
+    [HubCategory(Generate), HubDescription("LegalitySettings_EnableEasterEggs_Description")]
     public bool EnableEasterEggs { get; set; } = false;
 
-    [Category(Generate), Description("Requires HOME tracker when trading Pokémon that had to have traveled between the Switch games.")]
+    [HubCategory(Generate), HubDescription("LegalitySettings_EnableHOMETrackerCheck_Description")]
     public bool EnableHOMETrackerCheck { get; set; } = false;
 
-    [Category(Generate), Description("Assumes level 50 sets are level 100 competitive sets.")]
+    [HubCategory(Generate), HubDescription("LegalitySettings_ForceLevel100for50_Description")]
     public bool ForceLevel100for50 { get; set; } = false;
 
-    [Category(Generate), Description("Force the specified ball if legal.")]
+    [HubCategory(Generate), HubDescription("LegalitySettings_ForceSpecifiedBall_Description")]
     public bool ForceSpecifiedBall { get; set; } = true;
 
-    [Category(Generate), Description("Default language for PKM files that don't match any of the provided PKM files.")]
+    [HubCategory(Generate), HubDescription("LegalitySettings_GenerateLanguage_Description")]
     public LanguageID GenerateLanguage { get; set; } = LanguageID.English;
 
-    [Category(Generate), Description("Default Original Trainer name for PKM files that don't match any of the provided PKM files.")]
+    [HubCategory(Generate), HubDescription("LegalitySettings_GenerateOT_Description")]
     public string GenerateOT
     {
         get => DefaultTrainerName;
@@ -53,20 +54,20 @@ public class LegalitySettings
         }
     }
 
-    [Category(Generate), Description("Folder for PKM files with trainer data to use for regenerated PKM files.")]
+    [HubCategory(Generate), HubDescription("LegalitySettings_GeneratePathTrainerInfo_Description")]
     public string GeneratePathTrainerInfo { get; set; } = string.Empty;
 
-    [Category(Generate), Description("Default 16-bit Secret ID (SID) for requests that don't match any of the provided trainer data files. This should be a 5-digit number.")]
+    [HubCategory(Generate), HubDescription("LegalitySettings_GenerateSID16_Description")]
     public ushort GenerateSID16 { get; set; } = 54321;
 
-    [Category(Generate), Description("Default 16-bit Trainer ID (TID) for requests that don't match any of the provided trainer data files. This should be a 5-digit number.")]
+    [HubCategory(Generate), HubDescription("LegalitySettings_GenerateTID16_Description")]
     public ushort GenerateTID16 { get; set; } = 12345;
 
     // Generate
-    [Category(Generate), Description("MGDB directory path for Wonder Cards.")]
+    [HubCategory(Generate), HubDescription("LegalitySettings_MGDBPath_Description")]
     public string MGDBPath { get; set; } = string.Empty;
 
-    [Category(Generate), Description("The order in which Pokémon encounter types are attempted.")]
+    [HubCategory(Generate), HubDescription("LegalitySettings_PrioritizeEncounters_Description")]
     public List<EncounterTypeGroup> PrioritizeEncounters { get; set; } =
 [
     EncounterTypeGroup.Trade, EncounterTypeGroup.Slot,
@@ -74,31 +75,31 @@ public class LegalitySettings
         EncounterTypeGroup.Static,
     ];
 
-    [Category(Generate), Description("Method of searching for encounters when generating Pokémon. \"NativeOnly\" searches current game pair only, \"NewestFirst\" searches from most recent game, and \"PriorityOrder\" uses the order designated in the \"PriorityOrder\" setting.")]
+    [HubCategory(Generate), HubDescription("LegalitySettings_GameVersionPriority_Description")]
     public GameVersionPriorityType GameVersionPriority { get; set; } = GameVersionPriorityType.PriorityOrder;
 
-    [Category(Generate), Description("The order of GameVersions ALM will attempt to legalize from.")]
+    [HubCategory(Generate), HubDescription("LegalitySettings_PriorityOrder_Description")]
     public List<GameVersion> PriorityOrder { get; set; } = Enum.GetValues<GameVersion>().Where(GameUtil.IsValidSavedVersion).Reverse().ToList();
 
     // Misc
     [Browsable(false)]
-    [Category(Misc), Description("Zero out HOME trackers for cloned and user-requested PKM files. It is recommended to leave this disabled to avoid creating invalid HOME data.")]
+    [HubCategory(Misc), HubDescription("LegalitySettings_ResetHOMETracker_Description")]
     public bool ResetHOMETracker { get; set; } = false;
 
-    [Category(Generate), Description("Set all possible legal ribbons for any generated Pokémon.")]
+    [HubCategory(Generate), HubDescription("LegalitySettings_SetAllLegalRibbons_Description")]
     public bool SetAllLegalRibbons { get; set; } = false;
 
     [Browsable(false)]
-    [Category(Generate), Description("Adds Battle Version for games that support it (SWSH only) for using past-gen Pokémon in online competitive play.")]
+    [HubCategory(Generate), HubDescription("LegalitySettings_SetBattleVersion_Description")]
     public bool SetBattleVersion { get; set; } = false;
 
-    [Category(Generate), Description("Set a matching ball (based on color) for any generated Pokémon.")]
+    [HubCategory(Generate), HubDescription("LegalitySettings_SetMatchingBalls_Description")]
     public bool SetMatchingBalls { get; set; } = true;
 
-    [Category(Generate), Description("Maximum time in seconds to spend when generating a set before canceling. This prevents difficult sets from freezing the bot.")]
+    [HubCategory(Generate), HubDescription("LegalitySettings_Timeout_Description")]
     public int Timeout { get; set; } = 20;
 
-    [Category(Misc), Description("Apply valid pokemon with the trainers OT/SID/TID (AutoOT)")]
+    [HubCategory(Misc), HubDescription("LegalitySettings_UseTradePartnerInfo_Description")]
     public bool UseTradePartnerInfo { get; set; } = true;
 
     public override string ToString() => "Legality Generating Settings";

@@ -1,0 +1,314 @@
+<?xml version='1.0' encoding='utf-8'?>
+<root xmlns:ns1="urn:schemas-microsoft-com:xml-msdata" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:schema id="root">
+    <xs:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xs:element name="root" ns1:IsDataSet="true">
+      <xs:complexType>
+        <xs:choice maxOccurs="unbounded">
+          <xs:element name="metadata">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="value" type="xsd:string" minOccurs="0" />
+              </xs:sequence>
+              <xs:attribute name="name" use="required" type="xsd:string" />
+              <xs:attribute name="type" type="xsd:string" />
+              <xs:attribute name="mimetype" type="xsd:string" />
+              <xs:attribute ref="xml:space" />
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="assembly">
+            <xs:complexType>
+              <xs:attribute name="alias" type="xsd:string" />
+              <xs:attribute name="name" type="xsd:string" />
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="data">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="value" type="xsd:string" minOccurs="0" ns1:Ordinal="1" />
+                <xs:element name="comment" type="xsd:string" minOccurs="0" ns1:Ordinal="2" />
+              </xs:sequence>
+              <xs:attribute name="name" type="xsd:string" use="required" ns1:Ordinal="1" />
+              <xs:attribute name="type" type="xsd:string" ns1:Ordinal="3" />
+              <xs:attribute name="mimetype" type="xsd:string" ns1:Ordinal="4" />
+              <xs:attribute ref="xml:space" />
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="resheader">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="value" type="xsd:string" minOccurs="0" ns1:Ordinal="1" />
+              </xs:sequence>
+              <xs:attribute name="name" type="xsd:string" use="required" />
+            </xs:complexType>
+          </xs:element>
+        </xs:choice>
+      </xs:complexType>
+    </xs:element>
+  </xs:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e088</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e088</value>
+  </resheader>
+  <data name="Main_BtnLogs" xml:space="preserve">
+    <value>Protokolle</value>
+  </data>
+  <data name="Main_BtnHub" xml:space="preserve">
+    <value>Nabe</value>
+  </data>
+  <data name="Main_BtnBots" xml:space="preserve">
+    <value>Bots</value>
+  </data>
+  <data name="Main_TitleDefault" xml:space="preserve">
+    <value>FusionBot | v0.0.0 | MODUS: Keine</value>
+  </data>
+  <data name="Main_ChildLoading" xml:space="preserve">
+    <value>WIRD GELADEN ...</value>
+  </data>
+  <data name="Main_ModeLabel" xml:space="preserve">
+    <value>Modus:</value>
+    <comment>Prefix label shown before the current ProgramMode in the window title bar.</comment>
+  </data>
+  <data name="LogsForm_Title" xml:space="preserve">
+    <value>Bot-Protokolle</value>
+  </data>
+  <data name="LogsForm_Placeholder" xml:space="preserve">
+    <value>Derzeit ist nichts protokolliert...</value>
+  </data>
+  <data name="LogsForm_SearchPlaceholder" xml:space="preserve">
+    <value>Suchen...</value>
+  </data>
+  <data name="LogsForm_Next" xml:space="preserve">
+    <value>NÄCHSTE</value>
+  </data>
+  <data name="LogsForm_Prev" xml:space="preserve">
+    <value>VORHER</value>
+  </data>
+  <data name="LogsForm_Clear" xml:space="preserve">
+    <value>KLAR</value>
+  </data>
+  <data name="LogsForm_NoSearchTerm" xml:space="preserve">
+    <value>Kein Suchbegriff.</value>
+  </data>
+  <data name="LogsForm_NoMatches" xml:space="preserve">
+    <value>Keine Übereinstimmungen.</value>
+  </data>
+  <data name="LogsForm_EnterSearchTerm" xml:space="preserve">
+    <value>Geben Sie einen Suchbegriff ein.</value>
+  </data>
+  <data name="LogsForm_MatchOf" xml:space="preserve">
+    <value>Passen Sie {0} an {1} an</value>
+    <comment>{0} = 1-based index of current match; {1} = total matches.</comment>
+  </data>
+  <data name="LogsForm_MenuCopy" xml:space="preserve">
+    <value>Kopie</value>
+  </data>
+  <data name="LogsForm_MenuClear" xml:space="preserve">
+    <value>Klar</value>
+  </data>
+  <data name="LogsForm_MenuSelectAll" xml:space="preserve">
+    <value>Wählen Sie „Alle“ aus</value>
+  </data>
+  <data name="BotsForm_Title" xml:space="preserve">
+    <value>Bots</value>
+  </data>
+  <data name="BotsForm_Start" xml:space="preserve">
+    <value>START</value>
+  </data>
+  <data name="BotsForm_Stop" xml:space="preserve">
+    <value>STOPPEN</value>
+  </data>
+  <data name="BotsForm_Reboot" xml:space="preserve">
+    <value>NEUSTART</value>
+  </data>
+  <data name="BotsForm_Update" xml:space="preserve">
+    <value>AKTUALISIEREN</value>
+  </data>
+  <data name="BotsForm_Reload" xml:space="preserve">
+    <value>NEU LADEN</value>
+  </data>
+  <data name="BotsForm_Tooltip_Start" xml:space="preserve">
+    <value>Starten Sie alle aufgelisteten Bots gemeinsam.</value>
+  </data>
+  <data name="BotsForm_Tooltip_Stop" xml:space="preserve">
+    <value>Stoppen Sie alle aufgelisteten laufenden Bots gleichzeitig.</value>
+  </data>
+  <data name="BotsForm_Tooltip_Reboot" xml:space="preserve">
+    <value>Starten Sie das Spiel neu und stoppen Sie alle aufgelisteten Bots.</value>
+  </data>
+  <data name="BotsForm_Tooltip_Update" xml:space="preserve">
+    <value>Suchen Sie nach Programmaktualisierungen.</value>
+  </data>
+  <data name="BotsForm_Tooltip_New" xml:space="preserve">
+    <value>Erstellen Sie einen neuen Bot-Slot.</value>
+  </data>
+  <data name="BotsForm_Tooltip_Reload" xml:space="preserve">
+    <value>Laden Sie die Anwendung sauber neu.</value>
+  </data>
+  <data name="BotsForm_Tooltip_UpdateInfo" xml:space="preserve">
+    <value>Klicken Sie hier, um Update-Details anzuzeigen und die neueste Version herunterzuladen.</value>
+  </data>
+  <data name="BotsForm_GamePlaceholder" xml:space="preserve">
+    <value>Spiel</value>
+    <comment>Fallback text drawn in the game-mode combobox before the user picks a mode.</comment>
+  </data>
+  <data name="BotsForm_UpdateLabelFormat" xml:space="preserve">
+    <value>Jetzt auf {0} aktualisieren</value>
+    <comment>{0} = new version string, e.g. "v8.0.9".</comment>
+  </data>
+  <data name="BotsForm_ModeSwitchErrorBody" xml:space="preserve">
+    <value>Hauptformularinstanz nicht verfügbar. Bitte starten Sie das Programm neu.</value>
+  </data>
+  <data name="BotsForm_ModeSwitchErrorTitle" xml:space="preserve">
+    <value>Fehler beim Moduswechsel</value>
+  </data>
+  <data name="BotsForm_ErrorTitle" xml:space="preserve">
+    <value>Fehler</value>
+  </data>
+  <data name="BotsForm_FailedSwitchModeFormat" xml:space="preserve">
+    <value>Spielmodus konnte nicht gewechselt werden: {0}</value>
+  </data>
+  <data name="BotsForm_ConfigNotFoundFormat" xml:space="preserve">
+    <value>Konfigurationsdatei nicht gefunden unter: {0}</value>
+  </data>
+  <data name="BotsForm_LoadConfigFailedFormat" xml:space="preserve">
+    <value>Die Konfiguration für den Spielmodus konnte nicht geladen werden: {0}</value>
+  </data>
+  <data name="BotsForm_RestartFailedFormat" xml:space="preserve">
+    <value>Neustart fehlgeschlagen: {0}</value>
+  </data>
+  <data name="Main_StopBotsBodyLine1Format" xml:space="preserve">
+    <value>Derzeit laufen {0}-Bot(s).</value>
+  </data>
+  <data name="Main_StopBotsBodyLine2" xml:space="preserve">
+    <value>Durch das Wechseln des Spielmodus werden alle laufenden Bots gestoppt.</value>
+  </data>
+  <data name="Main_StopBotsBodyLine3" xml:space="preserve">
+    <value>Möchten Sie fortfahren?</value>
+  </data>
+  <data name="Main_StopBotsTitle" xml:space="preserve">
+    <value>Keine Bots mehr ausführen?</value>
+  </data>
+  <data name="Main_ModeSwitchSuccessBodyLine1Format" xml:space="preserve">
+    <value>Der Spielmodus wurde erfolgreich auf {0} geändert!</value>
+  </data>
+  <data name="Main_ModeSwitchSuccessBodyLine2" xml:space="preserve">
+    <value>Sie können Ihre Bots jetzt starten und sie werden im neuen Modus arbeiten.</value>
+  </data>
+  <data name="Main_ModeSwitchSuccessTitle" xml:space="preserve">
+    <value>Moduswechsel erfolgreich</value>
+  </data>
+  <data name="Main_ModeSwitchFailedBodyLine1" xml:space="preserve">
+    <value>Spielmodus konnte nicht gewechselt werden:</value>
+  </data>
+  <data name="Main_ModeSwitchFailedBodyLine2" xml:space="preserve">
+    <value>Bitte versuchen Sie, das Programm neu zu laden.</value>
+  </data>
+  <data name="Main_ModeSwitchFailedTitle" xml:space="preserve">
+    <value>Moduswechsel fehlgeschlagen</value>
+  </data>
+  <data name="Main_NoBotsAfterStart" xml:space="preserve">
+    <value>Keine Bots konfiguriert, aber alle unterstützenden Dienste wurden gestartet.</value>
+  </data>
+  <data name="Main_NoBotsAfterReboot" xml:space="preserve">
+    <value>Keine Bots konfiguriert, aber allen unterstützenden Diensten wurde der Neustartbefehl erteilt.</value>
+  </data>
+  <data name="Main_NothingRunning" xml:space="preserve">
+    <value>Nichts läuft, Genie.</value>
+  </data>
+  <data name="Main_IdleAllPrimary" xml:space="preserve">
+    <value>Alle Bots in den Leerlauf befehlen.</value>
+  </data>
+  <data name="Main_IdleAllSecondary" xml:space="preserve">
+    <value>Drücken Sie „Stopp“ (ohne Zusatztaste), um den Vorgang dauerhaft anzuhalten und die Steuerung freizugeben, oder drücken Sie erneut „Stopp“ mit der Zusatztaste, um fortzufahren.</value>
+  </data>
+  <data name="Main_ResumeAllPrimary" xml:space="preserve">
+    <value>Allen Bots befehlen, ihre ursprüngliche Aufgabe fortzusetzen.</value>
+  </data>
+  <data name="Main_ResumeAllSecondary" xml:space="preserve">
+    <value>Drücken Sie „Stopp“ (ohne Zusatztaste), um die Steuerung fest anzuhalten und zu entsperren.</value>
+  </data>
+  <data name="Main_AddBotInvalid" xml:space="preserve">
+    <value>Bot kann nicht hinzugefügt werden; Stellen Sie sicher, dass die Details gültig sind und nicht mit einem bereits vorhandenen Bot dupliziert werden.</value>
+  </data>
+  <data name="Main_ErrorIPEmpty" xml:space="preserve">
+    <value>Die IP-Adresse darf nicht leer sein.</value>
+  </data>
+  <data name="Main_ErrorIPInvalidFormat" xml:space="preserve">
+    <value>Ungültige IP-Adresse: {0}</value>
+  </data>
+  <data name="Main_ErrorSelectProtocol" xml:space="preserve">
+    <value>Bitte wählen Sie ein Protokoll aus.</value>
+  </data>
+  <data name="Main_ErrorSelectRoutine" xml:space="preserve">
+    <value>Bitte wählen Sie eine Routine aus.</value>
+  </data>
+  <data name="Main_ErrorShowFontsDialogLine1" xml:space="preserve">
+    <value>Fehler beim Anzeigen des Dialogfelds zum Herunterladen von Schriftarten:</value>
+  </data>
+  <data name="Main_ErrorStackTraceLabel" xml:space="preserve">
+    <value>Stacktrace:</value>
+  </data>
+  <data name="Main_FontsOverwriteBodyLine1" xml:space="preserve">
+    <value>Die Datei Fonts.7z existiert bereits an diesem Speicherort.</value>
+  </data>
+  <data name="Main_FontsOverwriteBodyLine2" xml:space="preserve">
+    <value>Möchten Sie es überschreiben?</value>
+  </data>
+  <data name="Main_FontsOverwriteTitle" xml:space="preserve">
+    <value>Datei existiert</value>
+  </data>
+  <data name="Main_FontsDownloadSuccessLine1" xml:space="preserve">
+    <value>Schriftarten erfolgreich heruntergeladen!</value>
+  </data>
+  <data name="Main_FontsDownloadSuccessLocFormat" xml:space="preserve">
+    <value>Standort: {0}</value>
+  </data>
+  <data name="Main_FontsDownloadSuccessLine3" xml:space="preserve">
+    <value>Bitte installieren Sie die Schriftarten und starten Sie das Programm neu.</value>
+  </data>
+  <data name="Main_FontsDownloadFailedLine1" xml:space="preserve">
+    <value>Schriftarten konnten nicht heruntergeladen werden:</value>
+  </data>
+  <data name="Main_FontsDownloadFolderDesc" xml:space="preserve">
+    <value>Wählen Sie aus, wo Sie Fonts.7z herunterladen möchten</value>
+  </data>
+  <data name="Main_SaveConfigFailedLine1" xml:space="preserve">
+    <value>Konfiguration konnte nicht gespeichert werden:</value>
+  </data>
+  <data name="FontDialog_Title" xml:space="preserve">
+    <value>Schriftarten herunterladen</value>
+  </data>
+  <data name="FontDialog_MessageLine1" xml:space="preserve">
+    <value>Möchten Sie die in diesem Programm verwendeten Schriftarten herunterladen, um sie für die korrekte Anzeige des Textes zu installieren?</value>
+  </data>
+  <data name="FontDialog_MessageLine2" xml:space="preserve">
+    <value>Stellen Sie sicher, dass Sie das Programm nach der Installation der Schriftarten neu laden.</value>
+  </data>
+  <data name="FontDialog_DontShowAgain" xml:space="preserve">
+    <value>Link zum Herunterladen von Schriftarten nicht erneut anzeigen</value>
+  </data>
+  <data name="FontDialog_Yes" xml:space="preserve">
+    <value>Ja</value>
+  </data>
+  <data name="FontDialog_No" xml:space="preserve">
+    <value>NEIN</value>
+  </data>
+  <data name="WinFormsUtil_ErrorTitle" xml:space="preserve">
+    <value>Fehler</value>
+  </data>
+  <data name="WinFormsUtil_AlertTitle" xml:space="preserve">
+    <value>Alarm</value>
+  </data>
+  <data name="WinFormsUtil_PromptTitle" xml:space="preserve">
+    <value>Prompt</value>
+  </data>
+</root>

@@ -1,3 +1,4 @@
+using SysBot.Pokemon.WinForms.Localization;
 using System;
 using System.ComponentModel;
 using System.Drawing;
@@ -63,7 +64,7 @@ namespace SysBot.Pokemon.WinForms
 
             placeholderLabel = new Label
             {
-                Text = "Nothing currently logged...",
+                Text = Strings.Get("LogsForm_Placeholder", "Nothing currently logged..."),
                 ForeColor = Color.Cyan,
                 BackColor = Color.Transparent,
                 AutoSize = false,
@@ -117,7 +118,7 @@ namespace SysBot.Pokemon.WinForms
                 BackColor = Color.FromArgb(40, 39, 77),
                 ForeColor = Color.Gray,
                 Font = searchFont,
-                Text = "Search...",
+                Text = Strings.Get("LogsForm_SearchPlaceholder", "Search..."),
                 Location = new Point(6, 5),
                 Size = new Size(198, 28),
             };
@@ -133,9 +134,11 @@ namespace SysBot.Pokemon.WinForms
                 searchFontRegular = new Font("Montserrat", 9, FontStyle.Regular);
             }
 
+            var searchPlaceholder = Strings.Get("LogsForm_SearchPlaceholder", "Search...");
+
             searchBox.Enter += (s, e) =>
             {
-                if (searchBox.Text == "Search...")
+                if (searchBox.Text == searchPlaceholder)
                 {
                     searchBox.Text = "";
                     searchBox.ForeColor = Color.White;
@@ -147,7 +150,7 @@ namespace SysBot.Pokemon.WinForms
             {
                 if (string.IsNullOrWhiteSpace(searchBox.Text))
                 {
-                    searchBox.Text = "Search...";
+                    searchBox.Text = searchPlaceholder;
                     searchBox.ForeColor = Color.Gray;
                     searchBox.Font = searchFont;
                 }
@@ -168,7 +171,7 @@ namespace SysBot.Pokemon.WinForms
 
             nextButton = new FancyButton
             {
-                Text = "NEXT",
+                Text = Strings.Get("LogsForm_Next", "NEXT"),
                 Location = new Point(210, 2 - 1), // was 210
                 Height = 25,
                 Font = buttonFont
@@ -177,7 +180,7 @@ namespace SysBot.Pokemon.WinForms
 
             prevButton = new FancyButton
             {
-                Text = "PREV",
+                Text = Strings.Get("LogsForm_Prev", "PREV"),
                 Location = new Point(290, 2 - 1), // was 290
                 Height = 25,
                 Font = buttonFont
@@ -186,7 +189,7 @@ namespace SysBot.Pokemon.WinForms
 
             var clearButton = new FancyButton
             {
-                Text = "CLEAR",
+                Text = Strings.Get("LogsForm_Clear", "CLEAR"),
                 Location = new Point(370, 2 - 1), // was 370
                 Height = 25,
                 Font = buttonFont
@@ -220,8 +223,7 @@ namespace SysBot.Pokemon.WinForms
 
         private void SearchBox_TextChanged(object? sender, EventArgs e)
         {
-            // Don’t trigger when it’s the placeholder text  
-            if (searchBox.Text == "Search logs...")
+            if (searchBox.Text == Strings.Get("LogsForm_SearchPlaceholder", "Search..."))
                 return;
 
             DoSearch(searchBox.Text);
@@ -235,7 +237,7 @@ namespace SysBot.Pokemon.WinForms
 
             if (string.IsNullOrWhiteSpace(term))
             {
-                resultLabel.Text = "No search term.";
+                resultLabel.Text = Strings.Get("LogsForm_NoSearchTerm", "No search term.");
                 return;
             }
 
@@ -249,7 +251,7 @@ namespace SysBot.Pokemon.WinForms
 
             if (matchIndices.Count == 0)
             {
-                resultLabel.Text = "No matches.";
+                resultLabel.Text = Strings.Get("LogsForm_NoMatches", "No matches.");
                 return;
             }
 
@@ -280,7 +282,10 @@ namespace SysBot.Pokemon.WinForms
                 LogsBox.Focus();
 
 
-            resultLabel.Text = $"Match {currentMatchIndex + 1} of {matchIndices.Count}";
+            resultLabel.Text = string.Format(
+                Strings.Get("LogsForm_MatchOf", "Match {0} of {1}"),
+                currentMatchIndex + 1,
+                matchIndices.Count);
         }
 
         private void ClearHighlights()
@@ -294,7 +299,7 @@ namespace SysBot.Pokemon.WinForms
 
         private void SearchBox_Enter(object sender, EventArgs e)
         {
-            if (searchBox.Text == "Search logs...")
+            if (searchBox.Text == Strings.Get("LogsForm_SearchPlaceholder", "Search..."))
             {
                 searchBox.Text = string.Empty;
                 searchBox.ForeColor = Color.White;
@@ -314,7 +319,7 @@ namespace SysBot.Pokemon.WinForms
         {
             if (string.IsNullOrWhiteSpace(searchBox.Text))
             {
-                searchBox.Text = "Search logs...";
+                searchBox.Text = Strings.Get("LogsForm_SearchPlaceholder", "Search...");
                 searchBox.ForeColor = Color.Gray;
                 // Use existing font or fallback
                 try
@@ -336,10 +341,11 @@ namespace SysBot.Pokemon.WinForms
         private void PerformSearch(SearchDirection direction)
         {
             string term = searchBox.Text;
+            var searchPlaceholder = Strings.Get("LogsForm_SearchPlaceholder", "Search...");
 
-            if (string.IsNullOrWhiteSpace(term) || term == "Search logs...")
+            if (string.IsNullOrWhiteSpace(term) || term == searchPlaceholder)
             {
-                resultLabel.Text = "Enter a search term.";
+                resultLabel.Text = Strings.Get("LogsForm_EnterSearchTerm", "Enter a search term.");
                 return;
             }
 
@@ -352,7 +358,7 @@ namespace SysBot.Pokemon.WinForms
 
             if (matchIndices.Count == 0)
             {
-                resultLabel.Text = "No matches.";
+                resultLabel.Text = Strings.Get("LogsForm_NoMatches", "No matches.");
                 return;
             }
 
@@ -364,9 +370,9 @@ namespace SysBot.Pokemon.WinForms
         private ContextMenuStrip CreateContextMenu()
         {
             var contextMenu = new ContextMenuStrip();
-            contextMenu.Items.Add(new ToolStripMenuItem("Copy", null, (sender, e) => LogsBox.Copy()));
-            contextMenu.Items.Add(new ToolStripMenuItem("Clear", null, (sender, e) => LogsBox.Clear()));
-            contextMenu.Items.Add(new ToolStripMenuItem("Select All", null, (sender, e) =>
+            contextMenu.Items.Add(new ToolStripMenuItem(Strings.Get("LogsForm_MenuCopy", "Copy"), null, (sender, e) => LogsBox.Copy()));
+            contextMenu.Items.Add(new ToolStripMenuItem(Strings.Get("LogsForm_MenuClear", "Clear"), null, (sender, e) => LogsBox.Clear()));
+            contextMenu.Items.Add(new ToolStripMenuItem(Strings.Get("LogsForm_MenuSelectAll", "Select All"), null, (sender, e) =>
             {
                 LogsBox.SelectAll();
             }));

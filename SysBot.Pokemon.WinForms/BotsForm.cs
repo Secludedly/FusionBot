@@ -1,15 +1,16 @@
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Windows.Forms;
 using SysBot.Base;
 using SysBot.Pokemon;
+using SysBot.Pokemon.WinForms.Controls;
+using SysBot.Pokemon.WinForms.Localization;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using SysBot.Pokemon.WinForms.Controls;
-using System.Diagnostics;
+using System.Windows.Forms;
 
 
 namespace SysBot.Pokemon.WinForms
@@ -76,32 +77,32 @@ namespace SysBot.Pokemon.WinForms
             };
 
             // Buttons
-            _B_Start = new FancyButton { Text = "START", Location = new Point(11, 7), Size = new Size(100, 40) };
+            _B_Start = new FancyButton { Text = Strings.Get("BotsForm_Start", "START"), Location = new Point(11, 7), Size = new Size(100, 40) };
             _B_Start.GlowColor = Color.LimeGreen;
-            _toolTips.SetToolTip(_B_Start, "Start all bots together that are listed.");
+            _toolTips.SetToolTip(_B_Start, Strings.Get("BotsForm_Tooltip_Start", "Start all bots together that are listed."));
             _toolTips.AutoPopDelay = 2500;      // How long it stays visible
             _toolTips.InitialDelay = 500;       // Delay before it shows up
             _toolTips.ReshowDelay = 1000;        // Delay between tooltips
             _toolTips.ShowAlways = true;        // Show even if the form isn’t active
 
-            _B_Stop = new FancyButton { Text = "STOP", Location = new Point(126, 7), Size = new Size(100, 40) };
+            _B_Stop = new FancyButton { Text = Strings.Get("BotsForm_Stop", "STOP"), Location = new Point(126, 7), Size = new Size(100, 40) };
             _B_Stop.GlowColor = Color.Red;
-            _toolTips.SetToolTip(_B_Stop, "Stop all running bots together that are listed.");
+            _toolTips.SetToolTip(_B_Stop, Strings.Get("BotsForm_Tooltip_Stop", "Stop all running bots together that are listed."));
             _toolTips.AutoPopDelay = 2500;      // How long it stays visible
             _toolTips.InitialDelay = 2000;       // Delay before it shows up
             _toolTips.ReshowDelay = 1000;        // Delay between tooltips
             _toolTips.ShowAlways = true;        // Show even if the form isn’t active
 
-            _B_RebootStop = new FancyButton { Text = "REBOOT", Location = new Point(241, 7), Size = new Size(100, 40) };
+            _B_RebootStop = new FancyButton { Text = Strings.Get("BotsForm_Reboot", "REBOOT"), Location = new Point(241, 7), Size = new Size(100, 40) };
             _B_RebootStop.GlowColor = Color.Magenta;
-            _toolTips.SetToolTip(_B_RebootStop, "Reboot game and stop all bots listed.");
+            _toolTips.SetToolTip(_B_RebootStop, Strings.Get("BotsForm_Tooltip_Reboot", "Reboot game and stop all bots listed."));
             _toolTips.AutoPopDelay = 2500;      // How long it stays visible
             _toolTips.InitialDelay = 2000;       // Delay before it shows up
             _toolTips.ReshowDelay = 1000;        // Delay between tooltips
             _toolTips.ShowAlways = true;        // Show even if the form isn’t active
 
-            _updater = new FancyButton { Text = "UPDATE", Location = new Point(356, 7), Size = new Size(100, 40) };
-            _toolTips.SetToolTip(_updater, "Check for program updates.");
+            _updater = new FancyButton { Text = Strings.Get("BotsForm_Update", "UPDATE"), Location = new Point(356, 7), Size = new Size(100, 40) };
+            _toolTips.SetToolTip(_updater, Strings.Get("BotsForm_Tooltip_Update", "Check for program updates."));
             _toolTips.AutoPopDelay = 2500;      // How long it stays visible
             _toolTips.InitialDelay = 2000;       // Delay before it shows up
             _toolTips.ReshowDelay = 1000;        // Delay between tooltips
@@ -110,15 +111,16 @@ namespace SysBot.Pokemon.WinForms
             _B_New = new FancyButton { Text = "+", Location = new Point(423, 56), Size = new Size(54, 30) };
             _B_New.GlowColor = Color.White;
             _B_New.Font = new Font(_B_New.Font.FontFamily, 10, FontStyle.Bold);
-            _toolTips.SetToolTip(_B_New, "Create a new bot slot.");
+            _toolTips.SetToolTip(_B_New, Strings.Get("BotsForm_Tooltip_New", "Create a new bot slot."));
             _toolTips.AutoPopDelay = 2500;      // How long it stays visible
             _toolTips.InitialDelay = 2000;       // Delay before it shows up
             _toolTips.ReshowDelay = 1000;        // Delay between tooltips
             _toolTips.ShowAlways = true;        // Show even if the form isn’t active
 
-            _B_Reload = new FancyButton { Text = "RELOAD", Location = new Point(356, 7), Size = new Size(100, 40) };
+            _B_Reload = new FancyButton { Text = Strings.Get("BotsForm_Reload", "RELOAD"), Location = new Point(356, 7), Size = new Size(100, 40) };
+
             _B_Reload.GlowColor = Color.DarkOrange;
-            _toolTips.SetToolTip(_B_Reload, "Reload the application cleanly.");
+            _toolTips.SetToolTip(_B_Reload, Strings.Get("BotsForm_Tooltip_Reload", "Reload the application cleanly."));
             _toolTips.AutoPopDelay = 2500;      // How long it stays visible
             _toolTips.InitialDelay = 2000;       // Delay before it shows up
             _toolTips.ReshowDelay = 1000;        // Delay between tooltips
@@ -161,7 +163,7 @@ namespace SysBot.Pokemon.WinForms
             }
 
             _updateNotificationLabel.Click += (s, e) => _updater.PerformClick();
-            _toolTips.SetToolTip(_updateNotificationLabel, "Click to view update details and download the latest version.");
+            _toolTips.SetToolTip(_updateNotificationLabel, Strings.Get("BotsForm_Tooltip_UpdateInfo", "Click to view update details and download the latest version."));
 
             // Update Version Label (displays version number above the image)
             _updateVersionLabel = new Label
@@ -176,7 +178,7 @@ namespace SysBot.Pokemon.WinForms
                 Cursor = Cursors.Hand
             };
             _updateVersionLabel.Click += (s, e) => _updater.PerformClick();
-            _toolTips.SetToolTip(_updateVersionLabel, "Click to view update details and download the latest version.");
+            _toolTips.SetToolTip(_updateVersionLabel, Strings.Get("BotsForm_Tooltip_UpdateInfo", "Click to view update details and download the latest version."));
 
             // Colors for boxes and controls
             Color darkBG = Color.FromArgb(20, 19, 57);
@@ -241,7 +243,7 @@ namespace SysBot.Pokemon.WinForms
                 _FLP_Bots
             });
 
-            Text = "Bots";
+            Text = Strings.Get("BotsForm_Title", "Bots");
             Size = new Size(722, 53);
         }
 
@@ -275,15 +277,19 @@ namespace SysBot.Pokemon.WinForms
                 else
                 {
                     MessageBox.Show(
-                        "Main form instance not available. Please restart the program.",
-                        "Mode Switch Error",
+                        Strings.Get("BotsForm_ModeSwitchErrorBody", "Main form instance not available. Please restart the program."),
+                        Strings.Get("BotsForm_ModeSwitchErrorTitle", "Mode Switch Error"),
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Error);
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Failed to switch game mode: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(
+                    string.Format(Strings.Get("BotsForm_FailedSwitchModeFormat", "Failed to switch game mode: {0}"), ex.Message),
+                    Strings.Get("BotsForm_ErrorTitle", "Error"),
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
             }
         }
 
@@ -297,7 +303,7 @@ namespace SysBot.Pokemon.WinForms
 
                 if (!File.Exists(configPath))
                 {
-                    MessageBox.Show($"Config file not found at: {configPath}");
+                    MessageBox.Show(string.Format(Strings.Get("BotsForm_ConfigNotFoundFormat", "Config file not found at: {0}"), configPath));
                     return;
                 }
 
@@ -325,7 +331,7 @@ namespace SysBot.Pokemon.WinForms
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Failed to load config for game mode: " + ex.Message);
+                MessageBox.Show(string.Format(Strings.Get("BotsForm_LoadConfigFailedFormat", "Failed to load config for game mode: {0}"), ex.Message));
             }
         }
 
@@ -340,7 +346,7 @@ namespace SysBot.Pokemon.WinForms
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Failed to restart: {ex.Message}");
+                MessageBox.Show(string.Format(Strings.Get("BotsForm_RestartFailedFormat", "Failed to restart: {0}"), ex.Message));
                 return;
             }
 
@@ -462,7 +468,7 @@ namespace SysBot.Pokemon.WinForms
 
             if (isUpdateAvailable && !string.IsNullOrWhiteSpace(newVersion))
             {
-                _updateVersionLabel.Text = $"Update now to {newVersion}";
+                _updateVersionLabel.Text = string.Format(Strings.Get("BotsForm_UpdateLabelFormat", "Update now to {0}"), newVersion);
                 _updateVersionLabel.Visible = true;
                 _updateVersionLabel.BringToFront();
                 _updateNotificationLabel.Visible = true;

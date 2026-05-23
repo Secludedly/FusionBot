@@ -1,3 +1,5 @@
+using SysBot.Pokemon.WinForms.Localization;
+
 namespace SysBot.Pokemon.WinForms
 {
     partial class LogsForm
@@ -37,7 +39,7 @@ namespace SysBot.Pokemon.WinForms
             ClientSize = new System.Drawing.Size(739, 305);
             ForeColor = System.Drawing.Color.White;
             Name = "LogsForm";
-            Text = "Bot Logs";
+            Text = Strings.Get("LogsForm_Title", "Bot Logs");
             ResumeLayout(false);
         }
 

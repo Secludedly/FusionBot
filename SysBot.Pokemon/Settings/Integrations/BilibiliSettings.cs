@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Linq;
+using SysBot.Pokemon.Localization;
 
 namespace SysBot.Pokemon
 {
@@ -12,10 +13,10 @@ namespace SysBot.Pokemon
 
         // Startup
 
-        [Category(Startup), Description("B站彈幕姬日志目录")]
+        [HubCategory(Startup), HubDescription("BilibiliSettings_LogUrl_Description")]
         public string LogUrl { get; set; } = string.Empty;
 
-        [Category(Startup), Description("直播间ID")]
+        [HubCategory(Startup), HubDescription("BilibiliSettings_RoomId_Description")]
         public int RoomId { get; set; } = 0;
     }
 }

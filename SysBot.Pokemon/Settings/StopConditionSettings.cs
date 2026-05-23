@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using SysBot.Pokemon.Localization;
 
 namespace SysBot.Pokemon;
 
@@ -10,40 +11,40 @@ public class StopConditionSettings
 {
     private const string StopConditions = nameof(StopConditions);
 
-    [Category(StopConditions), Description("Holds Capture button to record a 30 second clip when a matching Pokémon is found by EncounterBot or Fossilbot.")]
+    [HubCategory(StopConditions), HubDescription("StopConditionSettings_CaptureVideoClip_Description")]
     public bool CaptureVideoClip { get; set; }
 
-    [Category(StopConditions), Description("Extra time in milliseconds to wait after an encounter is matched before pressing Capture for EncounterBot or Fossilbot.")]
+    [HubCategory(StopConditions), HubDescription("StopConditionSettings_ExtraTimeWaitCaptureVideo_Description")]
     public int ExtraTimeWaitCaptureVideo { get; set; } = 10000;
 
-    [Category(StopConditions), Description("Stop only on Pokémon that have a mark.")]
+    [HubCategory(StopConditions), HubDescription("StopConditionSettings_MarkOnly_Description")]
     public bool MarkOnly { get; set; }
 
-    [Category(StopConditions), Description("If not empty, the provided string will be prepended to the result found log message to Echo alerts for whomever you specify. For Discord, use <@userIDnumber> to mention.")]
+    [HubCategory(StopConditions), HubDescription("StopConditionSettings_MatchFoundEchoMention_Description")]
     public string MatchFoundEchoMention { get; set; } = string.Empty;
 
-    [Category(StopConditions), Description("If set to TRUE, matches both ShinyTarget and TargetIVs settings. Otherwise, looks for either ShinyTarget or TargetIVs match.")]
+    [HubCategory(StopConditions), HubDescription("StopConditionSettings_MatchShinyAndIV_Description")]
     public bool MatchShinyAndIV { get; set; } = true;
 
-    [Category(StopConditions), Description("Selects the shiny type to stop on.")]
+    [HubCategory(StopConditions), HubDescription("StopConditionSettings_ShinyTarget_Description")]
     public TargetShinyType ShinyTarget { get; set; } = TargetShinyType.DisableOption;
 
-    [Category(StopConditions), Description("Stops only on Pokémon with this FormID. No restrictions if left blank.")]
+    [HubCategory(StopConditions), HubDescription("StopConditionSettings_StopOnForm_Description")]
     public int? StopOnForm { get; set; }
 
-    [Category(StopConditions), Description("Stops only on Pokémon of this species. No restrictions if set to \"None\".")]
+    [HubCategory(StopConditions), HubDescription("StopConditionSettings_StopOnSpecies_Description")]
     public Species StopOnSpecies { get; set; }
 
-    [Category(StopConditions), Description("Maximum accepted IVs in the format HP/Atk/Def/SpA/SpD/Spe. Use \"x\" for unchecked IVs and \"/\" as a separator.")]
+    [HubCategory(StopConditions), HubDescription("StopConditionSettings_TargetMaxIVs_Description")]
     public string TargetMaxIVs { get; set; } = "";
 
-    [Category(StopConditions), Description("Minimum accepted IVs in the format HP/Atk/Def/SpA/SpD/Spe. Use \"x\" for unchecked IVs and \"/\" as a separator.")]
+    [HubCategory(StopConditions), HubDescription("StopConditionSettings_TargetMinIVs_Description")]
     public string TargetMinIVs { get; set; } = "";
 
-    [Category(StopConditions), Description("Stop only on Pokémon of the specified nature.")]
+    [HubCategory(StopConditions), HubDescription("StopConditionSettings_TargetNature_Description")]
     public Nature TargetNature { get; set; } = Nature.Random;
 
-    [Category(StopConditions), Description("List of marks to ignore separated by commas. Use the full name, e.g. \"Uncommon Mark, Dawn Mark, Prideful Mark\".")]
+    [HubCategory(StopConditions), HubDescription("StopConditionSettings_UnwantedMarks_Description")]
     public string UnwantedMarks { get; set; } = "";
 
     public static bool EncounterFound<T>(T pk, int[] targetminIVs, int[] targetmaxIVs, StopConditionSettings settings, IReadOnlyList<string>? marklist) where T : PKM

@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel;
 using System.Linq;
+using SysBot.Pokemon.Localization;
 
 namespace SysBot.Pokemon;
 
@@ -12,77 +13,77 @@ public class TwitchSettings
 
     private const string Startup = nameof(Startup);
 
-    [Category(Operation), Description("When enabled, the bot will process commands sent to the channel.")]
+    [HubCategory(Operation), HubDescription("TwitchSettings_AllowCommandsViaChannel_Description")]
     public bool AllowCommandsViaChannel { get; set; } = true;
 
-    [Category(Operation), Description("When enabled, the bot will allow users to send command via whisper (bypasses slow mode)")]
+    [HubCategory(Operation), HubDescription("TwitchSettings_AllowCommandsViaWhisper_Description")]
     public bool AllowCommandsViaWhisper { get; set; }
 
-    [Category(Startup), Description("Channel to Send Messages To")]
+    [HubCategory(Startup), HubDescription("TwitchSettings_Channel_Description")]
     public string Channel { get; set; } = string.Empty;
 
-    [Category(Startup), Description("Bot Command Prefix")]
+    [HubCategory(Startup), HubDescription("TwitchSettings_CommandPrefix_Description")]
     public char CommandPrefix { get; set; } = '$';
 
-    [Category(Operation), Description("Discord Server Link.")]
+    [HubCategory(Operation), HubDescription("TwitchSettings_DiscordLink_Description")]
     public string DiscordLink { get; set; } = string.Empty;
 
-    [Category(Messages), Description("Toggles whether Distribution trades count down before starting.")]
+    [HubCategory(Messages), HubDescription("TwitchSettings_DistributionCountDown_Description")]
     public bool DistributionCountDown { get; set; } = true;
 
-    [Category(Operation), Description("Donation Link.")]
+    [HubCategory(Operation), HubDescription("TwitchSettings_DonationLink_Description")]
     public string DonationLink { get; set; } = string.Empty;
 
-    [Category(Operation), Description("Message sent when the Barrier is released.")]
+    [HubCategory(Operation), HubDescription("TwitchSettings_MessageStart_Description")]
     public string MessageStart { get; set; } = string.Empty;
 
-    [Category(Messages), Description("Determines where generic notifications are sent.")]
+    [HubCategory(Messages), HubDescription("TwitchSettings_NotifyDestination_Description")]
     public TwitchMessageDestination NotifyDestination { get; set; }
 
-    [Category(Operation), Description("Sudo Usernames")]
+    [HubCategory(Operation), HubDescription("TwitchSettings_SudoList_Description")]
     public string SudoList { get; set; } = string.Empty;
 
-    [Category(Operation), Description("Throttle the bot from sending messages if X messages have been sent in the past Y seconds.")]
+    [HubCategory(Operation), HubDescription("TwitchSettings_ThrottleMessages_Description")]
     public int ThrottleMessages { get; set; } = 100;
 
     // Messaging
-    [Category(Operation), Description("Throttle the bot from sending messages if X messages have been sent in the past Y seconds.")]
+    [HubCategory(Operation), HubDescription("TwitchSettings_ThrottleSeconds_Description")]
     public double ThrottleSeconds { get; set; } = 30;
 
-    [Category(Operation), Description("Throttle the bot from sending whispers if X messages have been sent in the past Y seconds.")]
+    [HubCategory(Operation), HubDescription("TwitchSettings_ThrottleWhispers_Description")]
     public int ThrottleWhispers { get; set; } = 100;
 
-    [Category(Operation), Description("Throttle the bot from sending whispers if X messages have been sent in the past Y seconds.")]
+    [HubCategory(Operation), HubDescription("TwitchSettings_ThrottleWhispersSeconds_Description")]
     public double ThrottleWhispersSeconds { get; set; } = 60;
 
-    [Category(Startup), Description("Bot Login Token")]
+    [HubCategory(Startup), HubDescription("TwitchSettings_Token_Description")]
     public string Token { get; set; } = string.Empty;
 
-    [Category(Messages), Description("Determines where TradeCanceled notifications are sent.")]
+    [HubCategory(Messages), HubDescription("TwitchSettings_TradeCanceledDestination_Description")]
     public TwitchMessageDestination TradeCanceledDestination { get; set; } = TwitchMessageDestination.Channel;
 
-    [Category(Messages), Description("Determines where TradeFinish notifications are sent.")]
+    [HubCategory(Messages), HubDescription("TwitchSettings_TradeFinishDestination_Description")]
     public TwitchMessageDestination TradeFinishDestination { get; set; }
 
-    [Category(Messages), Description("Determines where TradeSearch notifications are sent.")]
+    [HubCategory(Messages), HubDescription("TwitchSettings_TradeSearchDestination_Description")]
     public TwitchMessageDestination TradeSearchDestination { get; set; }
 
     // Message Destinations
-    [Category(Messages), Description("Determines where TradeStart notifications are sent.")]
+    [HubCategory(Messages), HubDescription("TwitchSettings_TradeStartDestination_Description")]
     public TwitchMessageDestination TradeStartDestination { get; set; } = TwitchMessageDestination.Channel;
 
-    [Category(Operation), Description("Bot usage tutorial Link.")]
+    [HubCategory(Operation), HubDescription("TwitchSettings_TutorialLink_Description")]
     public string TutorialLink { get; set; } = string.Empty;
 
-    [Category(Operation), Description("Bot usage tutorial text.")]
+    [HubCategory(Operation), HubDescription("TwitchSettings_TutorialText_Description")]
     public string TutorialText { get; set; } = string.Empty;
 
     // Operation
-    [Category(Operation), Description("Users with these usernames cannot use the bot.")]
+    [HubCategory(Operation), HubDescription("TwitchSettings_UserBlacklist_Description")]
     public string UserBlacklist { get; set; } = string.Empty;
 
     // Startup
-    [Category(Startup), Description("Bot Username")]
+    [HubCategory(Startup), HubDescription("TwitchSettings_Username_Description")]
     public string Username { get; set; } = string.Empty;
 
     public bool IsSudo(string username)

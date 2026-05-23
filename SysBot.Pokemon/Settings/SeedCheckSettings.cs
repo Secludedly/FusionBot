@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using SysBot.Pokemon.Localization;
 
 namespace SysBot.Pokemon;
 
@@ -6,10 +7,10 @@ public class SeedCheckSettings
 {
     private const string FeatureToggle = nameof(FeatureToggle);
 
-    [Category(FeatureToggle), Description("Allows returning only the closest shiny frame, the first star and square shiny frames, or the first three shiny frames.")]
+    [HubCategory(FeatureToggle), HubDescription("SeedCheckSettings_ResultDisplayMode_Description")]
     public SeedCheckResults ResultDisplayMode { get; set; }
 
-    [Category(FeatureToggle), Description("When enabled, seed checks will return all possible seed results instead of the first valid match.")]
+    [HubCategory(FeatureToggle), HubDescription("SeedCheckSettings_ShowAllZ3Results_Description")]
     public bool ShowAllZ3Results { get; set; }
 
     public override string ToString() => "Seed Check Settings";

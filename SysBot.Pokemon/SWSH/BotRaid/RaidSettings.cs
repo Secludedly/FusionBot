@@ -3,6 +3,7 @@ using SysBot.Base;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading;
+using SysBot.Pokemon.Localization;
 
 namespace SysBot.Pokemon;
 
@@ -16,59 +17,59 @@ public class RaidSettings : IBotStateSettings, ICountSettings
 
     private int _completedRaids;
 
-    [Category(Counts), Description("Raids Started")]
+    [HubCategory(Counts), HubDescription("RaidSettings_CompletedRaids_Description")]
     public int CompletedRaids
     {
         get => _completedRaids;
         set => _completedRaids = value;
     }
 
-    [Category(FeatureToggle), Description("Echoes each party member as they lock into a Pokémon.")]
+    [HubCategory(FeatureToggle), HubDescription("RaidSettings_EchoPartyReady_Description")]
     public bool EchoPartyReady { get; set; }
 
-    [Category(Counts), Description("When enabled, the counts will be emitted when a status check is requested.")]
+    [HubCategory(Counts), HubDescription("RaidSettings_EmitCountsOnStatusCheck_Description")]
     public bool EmitCountsOnStatusCheck { get; set; }
 
-    [Category(FeatureToggle), Description("Allows the bot to echo your Friend Code if set.")]
+    [HubCategory(FeatureToggle), HubDescription("RaidSettings_FriendCode_Description")]
     public string FriendCode { get; set; } = string.Empty;
 
-    [Category(Hosting), Description("Number of raids to host before trying to add/remove friends. Setting a value of 1 will tell the bot to host one raid, then start adding/removing friends.")]
+    [HubCategory(Hosting), HubDescription("RaidSettings_InitialRaidsToHost_Description")]
     public int InitialRaidsToHost { get; set; }
 
-    [Category(Hosting), Description("Maximum Link Code to host the raid with. Set this to -1 to host with no code.")]
+    [HubCategory(Hosting), HubDescription("RaidSettings_MaxRaidCode_Description")]
     public int MaxRaidCode { get; set; } = 8199;
 
-    [Category(Hosting), Description("Minimum Link Code to host the raid with. Set this to -1 to host with no code.")]
+    [HubCategory(Hosting), HubDescription("RaidSettings_MinRaidCode_Description")]
     public int MinRaidCode { get; set; } = 8180;
 
-    [Category(Hosting), Description("Number of friend requests to accept each time.")]
+    [HubCategory(Hosting), HubDescription("RaidSettings_NumberFriendsToAdd_Description")]
     public int NumberFriendsToAdd { get; set; }
 
-    [Category(Hosting), Description("Number of friends to delete each time.")]
+    [HubCategory(Hosting), HubDescription("RaidSettings_NumberFriendsToDelete_Description")]
     public int NumberFriendsToDelete { get; set; }
 
-    [Category(Hosting), Description("The Nintendo Switch profile you are using to manage friends. For example, set this to 2 if you are using the second profile.")]
+    [HubCategory(Hosting), HubDescription("RaidSettings_ProfileNumber_Description")]
     public int ProfileNumber { get; set; } = 1;
 
-    [Category(FeatureToggle), Description("Optional description of the raid the bot is hosting. Uses automatic Pokémon detection if left blank.")]
+    [HubCategory(FeatureToggle), HubDescription("RaidSettings_RaidDescription_Description")]
     public string RaidDescription { get; set; } = string.Empty;
 
-    [Category(Hosting), Description("Number of raids to host between trying to add friends.")]
+    [HubCategory(Hosting), HubDescription("RaidSettings_RaidsBetweenAddFriends_Description")]
     public int RaidsBetweenAddFriends { get; set; }
 
-    [Category(Hosting), Description("Number of raids to host between trying to delete friends.")]
+    [HubCategory(Hosting), HubDescription("RaidSettings_RaidsBetweenDeleteFriends_Description")]
     public int RaidsBetweenDeleteFriends { get; set; }
 
-    [Category(Hosting), Description("Number of row to start trying to add friends.")]
+    [HubCategory(Hosting), HubDescription("RaidSettings_RowStartAddingFriends_Description")]
     public int RowStartAddingFriends { get; set; } = 1;
 
-    [Category(Hosting), Description("Number of row to start trying to delete friends.")]
+    [HubCategory(Hosting), HubDescription("RaidSettings_RowStartDeletingFriends_Description")]
     public int RowStartDeletingFriends { get; set; } = 1;
 
-    [Category(FeatureToggle), Description("When enabled, the screen will be turned off during normal bot loop operation to save power.")]
+    [HubCategory(FeatureToggle), HubDescription("RaidSettings_ScreenOff_Description")]
     public bool ScreenOff { get; set; }
 
-    [Category(Hosting), Description("Number of seconds to wait before trying to start a raid. Ranges from 0 to 180 seconds.")]
+    [HubCategory(Hosting), HubDescription("RaidSettings_TimeToWait_Description")]
     public int TimeToWait { get; set; } = 90;
 
     public int AddCompletedRaids() => Interlocked.Increment(ref _completedRaids);

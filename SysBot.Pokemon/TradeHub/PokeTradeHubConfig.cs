@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using SysBot.Pokemon.Localization;
 
 // ReSharper disable AutoPropertyCanBeMadeGetOnly.Global
 
@@ -13,50 +14,53 @@ public sealed class PokeTradeHubConfig : BaseConfig
 
     private const string Integration = nameof(Integration);
 
-    [Category(BotTrade), Description("Name of the Discord Bot the Program is Running. This will Title the window for easier recognition. Requires program restart.")]
+    [HubCategory(Operation), HubDescription("PokeTradeHubConfig_Language_Description")]
+    public UILanguage Language { get; set; } = UILanguage.English;
+
+    [HubCategory(BotTrade), HubDescription("PokeTradeHubConfig_BotName_Description")]
     public string BotName { get; set; } = string.Empty;
 
-    [Category(BotTrade)]
-    [Description("208x101 logo image URL or file directory to display in the top left corner. Requires a program restart.")]
+    [HubCategory(BotTrade)]
+    [HubDescription("PokeTradeHubConfig_BotLogoImage_Description")]
     public string BotLogoImage { get; set; } = string.Empty;
 
-    [Category(BotTrade)]
-    [Description("First sparkle color behind the logo. Enter as RGB (e.g. \"255, 20, 200\"). Leave blank to use the default neon palette. Requires a program restart.")]
+    [HubCategory(BotTrade)]
+    [HubDescription("PokeTradeHubConfig_BotLogoSparkleColor1_Description")]
     public string BotLogoSparkleColor1 { get; set; } = string.Empty;
 
-    [Category(BotTrade)]
-    [Description("Second sparkle color behind the logo. Enter as RGB (e.g. \"0, 200, 255\"). Leave blank to use the default neon palette. Requires a program restart.")]
+    [HubCategory(BotTrade)]
+    [HubDescription("PokeTradeHubConfig_BotLogoSparkleColor2_Description")]
     public string BotLogoSparkleColor2 { get; set; } = string.Empty;
 
-    [Category(Integration)]
+    [HubCategory(Integration)]
     [TypeConverter(typeof(ExpandableObjectConverter))]
     public DiscordSettings Discord { get; set; } = new();
 
-    [Category(BotTrade), Description("Settings for idle distribution trades.")]
+    [HubCategory(BotTrade), HubDescription("PokeTradeHubConfig_Distribution_Description")]
     [TypeConverter(typeof(ExpandableObjectConverter))]
     public DistributionSettings Distribution { get; set; } = new();
 
     // Encounter Bots - For finding or hosting Pokémon in-game.
     [Browsable(false)]
-    [Category(BotEncounter)]
+    [HubCategory(BotEncounter)]
     [TypeConverter(typeof(ExpandableObjectConverter))]
     public EncounterSettings EncounterSWSH { get; set; } = new();
 
-    [Category(Integration), Description("Allows favored users to join the queue with a more favorable position than unfavored users.")]
+    [HubCategory(Integration), HubDescription("PokeTradeHubConfig_Favoritism_Description")]
     [TypeConverter(typeof(ExpandableObjectConverter))]
     public FavoredPrioritySettings Favoritism { get; set; } = new();
 
-    [Category(Operation)]
+    [HubCategory(Operation)]
     [TypeConverter(typeof(ExpandableObjectConverter))]
     public QueueSettings Queues { get; set; } = new();
 
     [Browsable(false)]
-    [Category(BotEncounter)]
+    [HubCategory(BotEncounter)]
     [TypeConverter(typeof(ExpandableObjectConverter))]
     public RaidSettings RaidSWSH { get; set; } = new();
 
     [Browsable(false)]
-    [Category(BotTrade)]
+    [HubCategory(BotTrade)]
     [TypeConverter(typeof(ExpandableObjectConverter))]
     public SeedCheckSettings SeedCheckSWSH { get; set; } = new();
 
@@ -64,46 +68,46 @@ public sealed class PokeTradeHubConfig : BaseConfig
     public override bool Shuffled => Distribution.Shuffled;
 
     [Browsable(false)]
-    [Category(BotEncounter), Description("Stop conditions for EncounterBot.")]
+    [HubCategory(BotEncounter), HubDescription("PokeTradeHubConfig_StopConditions_Description")]
     [TypeConverter(typeof(ExpandableObjectConverter))]
     public StopConditionSettings StopConditions { get; set; } = new();
 
-    [Category(Integration), Description("Configure generation of assets for streaming.")]
+    [HubCategory(Integration), HubDescription("PokeTradeHubConfig_Stream_Description")]
     [TypeConverter(typeof(ExpandableObjectConverter))]
     public StreamSettings Stream { get; set; } = new();
 
     [Browsable(false)]
-    [Category(Integration), Description("Users Theme Option Choice.")]
+    [HubCategory(Integration), HubDescription("PokeTradeHubConfig_ThemeOption_Description")]
     public string ThemeOption { get; set; } = string.Empty;
 
-    [Category(Operation), Description("Add extra time for slower Switches.")]
+    [HubCategory(Operation), HubDescription("PokeTradeHubConfig_Timings_Description")]
     [TypeConverter(typeof(ExpandableObjectConverter))]
     public TimingSettings Timings { get; set; } = new();
 
     // Trade Bots
 
-    [Category(BotTrade)]
+    [HubCategory(BotTrade)]
     [TypeConverter(typeof(ExpandableObjectConverter))]
     public TradeSettings Trade { get; set; } = new();
 
-    [Category(BotTrade)]
+    [HubCategory(BotTrade)]
     [TypeConverter(typeof(ExpandableObjectConverter))]
     public TradeAbuseSettings TradeAbuse { get; set; } = new();
 
     // Integration
-    [Category(Integration)]
+    [HubCategory(Integration)]
     [TypeConverter(typeof(ExpandableObjectConverter))]
     public TwitchSettings Twitch { get; set; } = new();
 
-    [Category(Integration)]
+    [HubCategory(Integration)]
     [TypeConverter(typeof(ExpandableObjectConverter))]
     public YouTubeSettings YouTube { get; set; } = new();
 
-    [Category(Operation), Description("Settings for automatic bot recovery after crashes.")]
+    [HubCategory(Operation), HubDescription("PokeTradeHubConfig_Recovery_Description")]
     [TypeConverter(typeof(ExpandableObjectConverter))]
     public RecoverySettings Recovery { get; set; } = new();
 
-    [Category(Integration), Description("Settings for the Web Control Panel server.")]
+    [HubCategory(Integration), HubDescription("PokeTradeHubConfig_WebServer_Description")]
     [TypeConverter(typeof(ExpandableObjectConverter))]
     public WebServerSettings WebServer { get; set; } = new();
 }

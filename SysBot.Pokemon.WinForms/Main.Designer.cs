@@ -1,5 +1,6 @@
 using PKHeX.Drawing.PokeSprite.Properties;
 using SysBot.Pokemon.Helpers;
+using SysBot.Pokemon.WinForms.Localization;
 using SysBot.Pokemon.WinForms.Properties;
 using System.Drawing;
 using System.Windows.Forms;
@@ -96,7 +97,7 @@ namespace SysBot.Pokemon.WinForms
             btnLogs.Padding = new Padding(10, 0, 20, 0);
             btnLogs.Size = new Size(220, 60);
             btnLogs.TabIndex = 3;
-            btnLogs.Text = "Logs";
+            btnLogs.Text = " " + Strings.Get("Main_BtnLogs", "Logs");
             btnLogs.TextAlign = ContentAlignment.MiddleCenter;
             btnLogs.UseVisualStyleBackColor = true;
             btnLogs.Click += Logs_Click;
@@ -113,7 +114,7 @@ namespace SysBot.Pokemon.WinForms
             btnHub.Padding = new Padding(10, 0, 20, 0);
             btnHub.Size = new Size(220, 60);
             btnHub.TabIndex = 2;
-            btnHub.Text = "Hub";
+            btnHub.Text = " " + Strings.Get("Main_BtnHub", "Hub");
             btnHub.TextAlign = ContentAlignment.MiddleCenter;
             btnHub.UseVisualStyleBackColor = true;
             btnHub.Click += Hub_Click;
@@ -140,7 +141,7 @@ namespace SysBot.Pokemon.WinForms
             btnBots.Padding = new Padding(10, 0, 20, 0);
             btnBots.Size = new Size(220, 60);
             btnBots.TabIndex = 1;
-            btnBots.Text = "Bots";
+            btnBots.Text = " " + Strings.Get("Main_BtnBots", "Bots");
             btnBots.TextAlign = ContentAlignment.MiddleCenter;
             btnBots.UseVisualStyleBackColor = true;
             btnBots.Click += Bots_Click;
@@ -208,7 +209,7 @@ namespace SysBot.Pokemon.WinForms
             lblTitle.Name = "lblTitle";
             lblTitle.Size = new Size(220, 32);
             lblTitle.TabIndex = 4;
-            lblTitle.Text = "FusionBot | v0.0.0 | MODE: None";
+            lblTitle.Text = Strings.Get("Main_TitleDefault", "FusionBot | v0.0.0 | MODE: None");
             lblTitle.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // panel4
@@ -241,7 +242,7 @@ namespace SysBot.Pokemon.WinForms
             lblTitleChildForm.Name = "lblTitleChildForm";
             lblTitleChildForm.Size = new Size(173, 53);
             lblTitleChildForm.TabIndex = 0;
-            lblTitleChildForm.Text = "LOADING ...";
+            lblTitleChildForm.Text = Strings.Get("Main_ChildLoading", "LOADING ...");
             // 
             // upperPanelImage
             // 

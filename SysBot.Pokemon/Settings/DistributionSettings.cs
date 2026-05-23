@@ -1,6 +1,7 @@
 using PKHeX.Core;
 using SysBot.Base;
 using System.ComponentModel;
+using SysBot.Pokemon.Localization;
 
 namespace SysBot.Pokemon;
 
@@ -10,36 +11,36 @@ public class DistributionSettings : ISynchronizationSetting
 
     private const string Synchronize = nameof(Synchronize);
 
-    [Category(Distribute), Description("When enabled, idle LinkTrade bots will randomly distribute PKM files from the DistributeFolder."), DisplayName("Distribute While Idle")]
+    [HubCategory(Distribute), HubDescription("DistributionSettings_DistributeWhileIdle_Description"), HubDisplayName("DistributionSettings_DistributeWhileIdle_DisplayName")]
     public bool DistributeWhileIdle { get; set; } = true;
 
-    [Category(Distribute), Description("When set to true, Random Ledy nickname-swap trades will quit rather than trade a random entity from the pool."), DisplayName("Ledy Quit on No Match")]
+    [HubCategory(Distribute), HubDescription("DistributionSettings_LedyQuitIfNoMatch_Description"), HubDisplayName("DistributionSettings_LedyQuitIfNoMatch_DisplayName")]
     public bool LedyQuitIfNoMatch { get; set; }
 
-    [Category(Distribute), Description("When set to something other than None, the Random Trades will require this species in addition to the nickname match."), DisplayName("Ledy Species")]
+    [HubCategory(Distribute), HubDescription("DistributionSettings_LedySpecies_Description"), HubDisplayName("DistributionSettings_LedySpecies_DisplayName")]
     public Species LedySpecies { get; set; } = Species.None;
 
-    [Category(Distribute), Description("Distribution Trade Link Code uses the Min and Max range rather than the fixed trade code."), DisplayName("Random Code")]
+    [HubCategory(Distribute), HubDescription("DistributionSettings_RandomCode_Description"), HubDisplayName("DistributionSettings_RandomCode_DisplayName")]
     public bool RandomCode { get; set; }
 
-    [Category(Distribute), Description("For BDSP, the distribution bot will go to a specific room and remain there until the bot is stopped."), DisplayName("Remain in Union Room")]
+    [HubCategory(Distribute), HubDescription("DistributionSettings_RemainInUnionRoomBDSP_Description"), HubDisplayName("DistributionSettings_RemainInUnionRoomBDSP_DisplayName")]
     public bool RemainInUnionRoomBDSP { get; set; } = true;
 
     // Distribute
-    [Category(Distribute), Description("When enabled, the DistributionFolder will yield randomly rather than in the same sequence."), DisplayName("Shuffle Distribution Folder")]
+    [HubCategory(Distribute), HubDescription("DistributionSettings_Shuffled_Description"), HubDisplayName("DistributionSettings_Shuffled_DisplayName")]
     public bool Shuffled { get; set; }
 
-    [Category(Synchronize), Description("Link Trade: Using multiple distribution bots -- all bots will confirm their trade code at the same time. When Local, the bots will continue when all are at the barrier. When Remote, something else must signal the bots to continue."), DisplayName("Synchronize Bots")]
+    [HubCategory(Synchronize), HubDescription("DistributionSettings_SynchronizeBots_Description"), HubDisplayName("DistributionSettings_SynchronizeBots_DisplayName")]
     public BotSyncOption SynchronizeBots { get; set; } = BotSyncOption.LocalSync;
 
     // Synchronize
-    [Category(Synchronize), Description("Link Trade: Using multiple distribution bots -- once all bots are ready to confirm trade code, the Hub will wait X milliseconds before releasing all bots."), DisplayName("Synchronize Delay Barrier")]
+    [HubCategory(Synchronize), HubDescription("DistributionSettings_SynchronizeDelayBarrier_Description"), HubDisplayName("DistributionSettings_SynchronizeDelayBarrier_DisplayName")]
     public int SynchronizeDelayBarrier { get; set; }
 
-    [Category(Synchronize), Description("Link Trade: Using multiple distribution bots -- how long (seconds) a bot will wait for synchronization before continuing anyways."), DisplayName("Synchronize Timeout")]
+    [HubCategory(Synchronize), HubDescription("DistributionSettings_SynchronizeTimeout_Description"), HubDisplayName("DistributionSettings_SynchronizeTimeout_DisplayName")]
     public double SynchronizeTimeout { get; set; } = 90;
 
-    [Category(Distribute), Description("Distribution Trade Link Code."), DisplayName("Trade Code")]
+    [HubCategory(Distribute), HubDescription("DistributionSettings_TradeCode_Description"), HubDisplayName("DistributionSettings_TradeCode_DisplayName")]
     public int TradeCode { get; set; } = 7196;
 
     public override string ToString() => "Distribution Trade Settings";

@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using SysBot.Pokemon.Localization;
 
 namespace SysBot.Pokemon;
 
@@ -9,15 +10,15 @@ public sealed class WebServerSettings
 {
     private const string WebServer = nameof(WebServer);
     
-    [Category(WebServer)]
-    [Description("The port number for the Bot Control Panel web interface. Default is 8080.")]
+    [HubCategory(WebServer)]
+    [HubDescription("WebServerSettings_ControlPanelPort_Description")]
     public int ControlPanelPort { get; set; } = 8080;
     
-    [Category(WebServer)]
-    [Description("Enable or disable the web control panel. When disabled, the web interface will not be accessible.")]
+    [HubCategory(WebServer)]
+    [HubDescription("WebServerSettings_EnableWebServer_Description")]
     public bool EnableWebServer { get; set; } = true;
     
-    [Category(WebServer)]
-    [Description("Allow external connections to the web control panel. When false, only localhost connections are allowed.")]
+    [HubCategory(WebServer)]
+    [HubDescription("WebServerSettings_AllowExternalConnections_Description")]
     public bool AllowExternalConnections { get; set; } = false;
 }

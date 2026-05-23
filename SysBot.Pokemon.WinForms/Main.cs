@@ -6,6 +6,7 @@ using SysBot.Pokemon.Discord;
 using SysBot.Pokemon.Discord.Helpers;
 using SysBot.Pokemon.Helpers;
 using SysBot.Pokemon.WinForms.Controls;
+using SysBot.Pokemon.WinForms.Localization;
 using SysBot.Pokemon.WinForms.Properties;
 using SysBot.Pokemon.Z3;
 using System;
@@ -348,7 +349,7 @@ namespace SysBot.Pokemon.WinForms
             }
             // Load other form shit and/or save valuable shit to config
             LoadControls();
-            Text = $"{(string.IsNullOrEmpty(Config.Hub.BotName) ? "FusionBot |" : Config.Hub.BotName)} {TradeBot.Version} | Mode: {Config.Mode}";
+            Text = $"{(string.IsNullOrEmpty(Config.Hub.BotName) ? "FusionBot |" : Config.Hub.BotName)} {TradeBot.Version} | {Strings.Get("Main_ModeLabel", "Mode: ")}{Config.Mode}";
             UpdateBackgroundImage(Config.Mode);        // Call the method to update image in leftSidePanel
             UpdateUpperImage(Config.Mode);        // Call the method to update image in panelTitleBar
             LoadThemeOptions();
@@ -431,10 +432,10 @@ namespace SysBot.Pokemon.WinForms
                 if (runningBots.Any())
                 {
                     var result = MessageBox.Show(
-                        $"There are {runningBots.Count} bot(s) currently running.\n\n" +
-                        "Switching game modes will stop all running bots.\n\n" +
-                        "Do you want to continue?",
-                        "Stop Running Bots?",
+                        string.Format(Strings.Get("Main_StopBotsBodyLine1Format", "There are {0} bot(s) currently running."), runningBots.Count) + "\n\n" +
+                        Strings.Get("Main_StopBotsBodyLine2", "Switching game modes will stop all running bots.") + "\n\n" +
+                        Strings.Get("Main_StopBotsBodyLine3", "Do you want to continue?"),
+                        Strings.Get("Main_StopBotsTitle", "Stop Running Bots?"),
                         MessageBoxButtons.YesNo,
                         MessageBoxIcon.Warning);
 
@@ -470,7 +471,7 @@ namespace SysBot.Pokemon.WinForms
                 {
                     Invoke((Action)(() =>
                     {
-                        Text = $"{(string.IsNullOrEmpty(Config.Hub.BotName) ? "FusionBot |" : Config.Hub.BotName)} {TradeBot.Version} | Mode: {newMode}";
+                        Text = $"{(string.IsNullOrEmpty(Config.Hub.BotName) ? "FusionBot |" : Config.Hub.BotName)} {TradeBot.Version} | {Strings.Get("Main_ModeLabel", "Mode: ")}{newMode}";
                         lblTitle.Text = Text;
                         UpdateBackgroundImage(newMode);
                         UpdateUpperImage(newMode);
@@ -478,7 +479,7 @@ namespace SysBot.Pokemon.WinForms
                 }
                 else
                 {
-                    Text = $"{(string.IsNullOrEmpty(Config.Hub.BotName) ? "FusionBot |" : Config.Hub.BotName)} {TradeBot.Version} | Mode: {newMode}";
+                    Text = $"{(string.IsNullOrEmpty(Config.Hub.BotName) ? "FusionBot |" : Config.Hub.BotName)} {TradeBot.Version} | {Strings.Get("Main_ModeLabel", "Mode: ")}{newMode}";
                     lblTitle.Text = Text;
                     UpdateBackgroundImage(newMode);
                     UpdateUpperImage(newMode);
@@ -498,9 +499,9 @@ namespace SysBot.Pokemon.WinForms
 
                 LogUtil.LogInfo($"Successfully switched from {oldMode} to {newMode}", "GameMode");
                 MessageBox.Show(
-                    $"Game mode successfully changed to {newMode}!\n\n" +
-                    "You can now start your bots and they will operate in the new mode.",
-                    "Mode Switch Successful",
+                    string.Format(Strings.Get("Main_ModeSwitchSuccessBodyLine1Format", "Game mode successfully changed to {0}!"), newMode) + "\n\n" +
+                    Strings.Get("Main_ModeSwitchSuccessBodyLine2", "You can now start your bots and they will operate in the new mode."),
+                    Strings.Get("Main_ModeSwitchSuccessTitle", "Mode Switch Successful"),
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Information);
             }
@@ -508,8 +509,10 @@ namespace SysBot.Pokemon.WinForms
             {
                 LogUtil.LogError($"Failed to switch game mode: {ex.Message}", "GameMode");
                 MessageBox.Show(
-                    $"Failed to switch game mode:\n\n{ex.Message}\n\nPlease try reloading the program.",
-                    "Mode Switch Failed",
+                    Strings.Get("Main_ModeSwitchFailedBodyLine1", "Failed to switch game mode:") + "\n\n" +
+                    ex.Message + "\n\n" +
+                    Strings.Get("Main_ModeSwitchFailedBodyLine2", "Please try reloading the program."),
+                    Strings.Get("Main_ModeSwitchFailedTitle", "Mode Switch Failed"),
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
             }
@@ -589,7 +592,7 @@ namespace SysBot.Pokemon.WinForms
             _logsForm.LogsBox.Select();                        // Select the logs box in the LogsForm to write to
 
             if (Bots.Count == 0)
-                WinFormsUtil.Alert("No bots configured, but all supporting services have been started.");
+                WinFormsUtil.Alert(Strings.Get("Main_NoBotsAfterStart", "No bots configured, but all supporting services have been started."));
         }
 
         // Restart the bot and stop all consoles with current config
@@ -610,7 +613,7 @@ namespace SysBot.Pokemon.WinForms
                 _logsForm.LogsBox.Select();                                // Select the logs box in the LogsForm to write to
 
                 if (Bots.Count == 0)
-                    WinFormsUtil.Alert("No bots configured, but all supporting services have been issued the reboot command.");
+                    WinFormsUtil.Alert(Strings.Get("Main_NoBotsAfterReboot", "No bots configured, but all supporting services have been issued the reboot command."));
             });
         }
 
@@ -653,7 +656,7 @@ namespace SysBot.Pokemon.WinForms
             if (!_botsForm.BotPanel.Controls.OfType<BotController>().Any(c => c.IsRunning()) && (ModifierKeys & Keys.Alt) == 0)
             // If not running and no Alt key pressed
             {
-                WinFormsUtil.Alert("Nothing's running, genius."); // Derp
+                WinFormsUtil.Alert(Strings.Get("Main_NothingRunning", "Nothing's running, genius."));
                 return;
             }
 
@@ -663,12 +666,16 @@ namespace SysBot.Pokemon.WinForms
             {
                 if (env.IsRunning)
                 {
-                    WinFormsUtil.Alert("Commanding all bots to Idle.", "Press Stop (without a modifier key) to hard-stop and unlock control, or press Stop with the modifier key again to resume.");
+                    WinFormsUtil.Alert(
+                        Strings.Get("Main_IdleAllPrimary", "Commanding all bots to Idle."),
+                        Strings.Get("Main_IdleAllSecondary", "Press Stop (without a modifier key) to hard-stop and unlock control, or press Stop with the modifier key again to resume."));
                     cmd = WebApi.BotControlCommand.Idle;
                 }
                 else
                 {
-                    WinFormsUtil.Alert("Commanding all bots to resume their original task.", "Press Stop (without a modifier key) to hard-stop and unlock control.");
+                    WinFormsUtil.Alert(
+                        Strings.Get("Main_ResumeAllPrimary", "Commanding all bots to resume their original task."),
+                        Strings.Get("Main_ResumeAllSecondary", "Press Stop (without a modifier key) to hard-stop and unlock control."));
                     cmd = WebApi.BotControlCommand.Resume;
                 }
             }
@@ -689,7 +696,7 @@ namespace SysBot.Pokemon.WinForms
                 return;
             if (!AddBot(cfg))
             {
-                WinFormsUtil.Alert("Unable to add bot; ensure details are valid and not duplicate with an already existing bot.");
+                WinFormsUtil.Alert(Strings.Get("Main_AddBotInvalid", "Unable to add bot; ensure details are valid and not duplicate with an already existing bot."));
                 return;
             }
             System.Media.SystemSounds.Asterisk.Play(); // Play a sound to indicate the bot was added successfully
@@ -810,22 +817,22 @@ namespace SysBot.Pokemon.WinForms
             var port = (int)_botsForm.PortBox.Value; // Get the port number from the PortBox
             if (string.IsNullOrWhiteSpace(ip))       // Check if the IP address is empty or whitespace
             {
-                WinFormsUtil.Error("IP address cannot be empty.");
+                WinFormsUtil.Error(Strings.Get("Main_ErrorIPEmpty", "IP address cannot be empty."));
                 return null;
             }
             if (!System.Net.IPAddress.TryParse(ip, out _))
             {
-                WinFormsUtil.Error($"Invalid IP address: {ip}");
+                WinFormsUtil.Error(string.Format(Strings.Get("Main_ErrorIPInvalidFormat", "Invalid IP address: {0}"), ip));
                 return null;
             }
             if (_botsForm.ProtocolBox.SelectedValue == null)
             {
-                WinFormsUtil.Error("Please select a protocol.");
+                WinFormsUtil.Error(Strings.Get("Main_ErrorSelectProtocol", "Please select a protocol."));
                 return null;
             }
             if (_botsForm.RoutineBox.SelectedValue == null)
             {
-                WinFormsUtil.Error("Please select a routine.");
+                WinFormsUtil.Error(Strings.Get("Main_ErrorSelectRoutine", "Please select a routine."));
                 return null;
             }
             this.StopWebServer(); // Stop the web server to free up resources before adding a new bot
@@ -1508,7 +1515,11 @@ namespace SysBot.Pokemon.WinForms
             catch (Exception ex)
             {
                 LogUtil.LogError($"Error in Download Fonts link click: {ex.Message}", "System");
-                WinFormsUtil.Error($"Error showing font download dialog:\n{ex.Message}\n\nStack trace:\n{ex.StackTrace}");
+                WinFormsUtil.Error(
+                    Strings.Get("Main_ErrorShowFontsDialogLine1", "Error showing font download dialog:"),
+                    ex.Message,
+                    Strings.Get("Main_ErrorStackTraceLabel", "Stack trace:"),
+                    ex.StackTrace ?? string.Empty);
             }
         }
 
@@ -1548,7 +1559,11 @@ namespace SysBot.Pokemon.WinForms
             catch (Exception ex)
             {
                 LogUtil.LogError($"Error in Download Fonts link click: {ex.Message}", "System");
-                WinFormsUtil.Error($"Error showing font download dialog:\n{ex.Message}\n\nStack trace:\n{ex.StackTrace}");
+                WinFormsUtil.Error(
+                    Strings.Get("Main_ErrorShowFontsDialogLine1", "Error showing font download dialog:"),
+                    ex.Message,
+                    Strings.Get("Main_ErrorStackTraceLabel", "Stack trace:"),
+                    ex.StackTrace ?? string.Empty);
             }
         }
 
@@ -1562,7 +1577,7 @@ namespace SysBot.Pokemon.WinForms
                 // Let user choose download location
                 using var folderDialog = new FolderBrowserDialog
                 {
-                    Description = "Select where to download Fonts.7z",
+                    Description = Strings.Get("Main_FontsDownloadFolderDesc", "Select where to download Fonts.7z"),
                     ShowNewFolderButton = true,
                     // Set default to Downloads folder
                     SelectedPath = Path.Combine(
@@ -1584,8 +1599,9 @@ namespace SysBot.Pokemon.WinForms
                 if (File.Exists(filePath))
                 {
                     var overwriteResult = MessageBox.Show(
-                        $"The file Fonts.7z already exists in this location.\n\nDo you want to overwrite it?",
-                        "File Exists",
+                        Strings.Get("Main_FontsOverwriteBodyLine1", "The file Fonts.7z already exists in this location.") + "\n\n" +
+                        Strings.Get("Main_FontsOverwriteBodyLine2", "Do you want to overwrite it?"),
+                        Strings.Get("Main_FontsOverwriteTitle", "File Exists"),
                         MessageBoxButtons.YesNo,
                         MessageBoxIcon.Question
                     );
@@ -1610,12 +1626,17 @@ namespace SysBot.Pokemon.WinForms
                 await File.WriteAllBytesAsync(filePath, fileBytes);
 
                 LogUtil.LogInfo($"Fonts downloaded successfully to: {filePath}", "System");
-                WinFormsUtil.Alert($"Fonts downloaded successfully!\n\nLocation: {filePath}\n\nPlease install the fonts and restart the program.");
+                WinFormsUtil.Alert(
+                    Strings.Get("Main_FontsDownloadSuccessLine1", "Fonts downloaded successfully!"),
+                    string.Format(Strings.Get("Main_FontsDownloadSuccessLocFormat", "Location: {0}"), filePath),
+                    Strings.Get("Main_FontsDownloadSuccessLine3", "Please install the fonts and restart the program."));
             }
             catch (Exception ex)
             {
                 LogUtil.LogError($"Failed to download fonts: {ex.Message}", "System");
-                WinFormsUtil.Error($"Failed to download fonts:\n{ex.Message}");
+                WinFormsUtil.Error(
+                    Strings.Get("Main_FontsDownloadFailedLine1", "Failed to download fonts:"),
+                    ex.Message);
             }
         }
 
@@ -1635,7 +1656,9 @@ namespace SysBot.Pokemon.WinForms
             }
             catch (Exception ex)
             {
-                WinFormsUtil.Error($"Failed to save configuration:\n{ex.Message}");
+                WinFormsUtil.Error(
+                    Strings.Get("Main_SaveConfigFailedLine1", "Failed to save configuration:"),
+                    ex.Message);
             }
         }
 
@@ -1675,7 +1698,7 @@ namespace SysBot.Pokemon.WinForms
         private void InitializeDialog()
         {
             // Form settings
-            this.Text = "Download Fonts";
+            this.Text = Strings.Get("FontDialog_Title", "Download Fonts");
             this.Size = new Size(500, 240);
             this.FormBorderStyle = FormBorderStyle.FixedDialog;
             this.StartPosition = FormStartPosition.CenterParent;
@@ -1686,7 +1709,9 @@ namespace SysBot.Pokemon.WinForms
             // Message label
             lblMessage = new Label
             {
-                Text = "Would you like to download the fonts used in this program in order to install them to display the text correctly?\n\nBe sure after you install the fonts that you reload the program.",
+                Text = Strings.Get("FontDialog_MessageLine1", "Would you like to download the fonts used in this program in order to install them to display the text correctly?")
+                       + "\n\n" +
+                       Strings.Get("FontDialog_MessageLine2", "Be sure after you install the fonts that you reload the program."),
                 Location = new Point(20, 20),
                 Size = new Size(440, 80),
                 Font = new Font("Segoe UI", 9.75F),
@@ -1697,7 +1722,7 @@ namespace SysBot.Pokemon.WinForms
             // Checkbox
             chkDontShowAgain = new CheckBox
             {
-                Text = "Do not display a link to Download Fonts again",
+                Text = Strings.Get("FontDialog_DontShowAgain", "Do not display a link to Download Fonts again"),
                 Location = new Point(20, 110),
                 Size = new Size(350, 24),
                 Font = new Font("Segoe UI", 9F),
@@ -1708,7 +1733,7 @@ namespace SysBot.Pokemon.WinForms
             // Yes button
             btnYes = new Button
             {
-                Text = "Yes",
+                Text = Strings.Get("FontDialog_Yes", "Yes"),
                 Location = new Point(280, 145),
                 Size = new Size(90, 30),
                 Font = new Font("Segoe UI", 9F),
@@ -1723,7 +1748,7 @@ namespace SysBot.Pokemon.WinForms
             // No button
             btnNo = new Button
             {
-                Text = "No",
+                Text = Strings.Get("FontDialog_No", "No"),
                 Location = new Point(380, 145),
                 Size = new Size(90, 30),
                 Font = new Font("Segoe UI", 9F),

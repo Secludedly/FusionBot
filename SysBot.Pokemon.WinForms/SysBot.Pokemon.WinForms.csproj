@@ -111,6 +111,22 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Update="Localization\Strings.resx">
+      <ManifestResourceName>SysBot.Pokemon.WinForms.Localization.Strings</ManifestResourceName>
+    </EmbeddedResource>
+    <!-- Culture-specific siblings: the SDK detects the culture token in the filename
+         (e.g. ".ja.resx") and packages them into satellite assemblies automatically.
+         IncludeAllContentForSelfExtract bundles those satellites into the single exe. -->
+    <EmbeddedResource Update="Localization\Strings.ja.resx" />
+    <EmbeddedResource Update="Localization\Strings.fr.resx" />
+    <EmbeddedResource Update="Localization\Strings.it.resx" />
+    <EmbeddedResource Update="Localization\Strings.de.resx" />
+    <EmbeddedResource Update="Localization\Strings.es.resx" />
+    <EmbeddedResource Update="Localization\Strings.ko.resx" />
+    <EmbeddedResource Update="Localization\Strings.zh-Hans.resx" />
+    <EmbeddedResource Update="Localization\Strings.zh-Hant.resx" />
+  </ItemGroup>
 
   <!-- Rename the published exe to FusionBot_x.x.x.exe using the Version from TradeBot.cs (with the "v" stripped). -->
   <Target Name="RenamePublishOutput" AfterTargets="Publish">

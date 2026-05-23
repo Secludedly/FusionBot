@@ -1,0 +1,314 @@
+<?xml version='1.0' encoding='utf-8'?>
+<root xmlns:ns1="urn:schemas-microsoft-com:xml-msdata" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:schema id="root">
+    <xs:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xs:element name="root" ns1:IsDataSet="true">
+      <xs:complexType>
+        <xs:choice maxOccurs="unbounded">
+          <xs:element name="metadata">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="value" type="xsd:string" minOccurs="0" />
+              </xs:sequence>
+              <xs:attribute name="name" use="required" type="xsd:string" />
+              <xs:attribute name="type" type="xsd:string" />
+              <xs:attribute name="mimetype" type="xsd:string" />
+              <xs:attribute ref="xml:space" />
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="assembly">
+            <xs:complexType>
+              <xs:attribute name="alias" type="xsd:string" />
+              <xs:attribute name="name" type="xsd:string" />
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="data">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="value" type="xsd:string" minOccurs="0" ns1:Ordinal="1" />
+                <xs:element name="comment" type="xsd:string" minOccurs="0" ns1:Ordinal="2" />
+              </xs:sequence>
+              <xs:attribute name="name" type="xsd:string" use="required" ns1:Ordinal="1" />
+              <xs:attribute name="type" type="xsd:string" ns1:Ordinal="3" />
+              <xs:attribute name="mimetype" type="xsd:string" ns1:Ordinal="4" />
+              <xs:attribute ref="xml:space" />
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="resheader">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="value" type="xsd:string" minOccurs="0" ns1:Ordinal="1" />
+              </xs:sequence>
+              <xs:attribute name="name" type="xsd:string" use="required" />
+            </xs:complexType>
+          </xs:element>
+        </xs:choice>
+      </xs:complexType>
+    </xs:element>
+  </xs:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e088</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e088</value>
+  </resheader>
+  <data name="Main_BtnLogs" xml:space="preserve">
+    <value>로그</value>
+  </data>
+  <data name="Main_BtnHub" xml:space="preserve">
+    <value>바퀴통</value>
+  </data>
+  <data name="Main_BtnBots" xml:space="preserve">
+    <value>봇</value>
+  </data>
+  <data name="Main_TitleDefault" xml:space="preserve">
+    <value>퓨전봇 | v0.0.0 | 모드: 없음</value>
+  </data>
+  <data name="Main_ChildLoading" xml:space="preserve">
+    <value>로드 중 ...</value>
+  </data>
+  <data name="Main_ModeLabel" xml:space="preserve">
+    <value>방법:</value>
+    <comment>Prefix label shown before the current ProgramMode in the window title bar.</comment>
+  </data>
+  <data name="LogsForm_Title" xml:space="preserve">
+    <value>봇 로그</value>
+  </data>
+  <data name="LogsForm_Placeholder" xml:space="preserve">
+    <value>현재 기록된 내용이 없습니다...</value>
+  </data>
+  <data name="LogsForm_SearchPlaceholder" xml:space="preserve">
+    <value>찾다...</value>
+  </data>
+  <data name="LogsForm_Next" xml:space="preserve">
+    <value>다음</value>
+  </data>
+  <data name="LogsForm_Prev" xml:space="preserve">
+    <value>이전</value>
+  </data>
+  <data name="LogsForm_Clear" xml:space="preserve">
+    <value>분명한</value>
+  </data>
+  <data name="LogsForm_NoSearchTerm" xml:space="preserve">
+    <value>검색어가 없습니다.</value>
+  </data>
+  <data name="LogsForm_NoMatches" xml:space="preserve">
+    <value>일치하는 항목이 없습니다.</value>
+  </data>
+  <data name="LogsForm_EnterSearchTerm" xml:space="preserve">
+    <value>검색어를 입력하세요.</value>
+  </data>
+  <data name="LogsForm_MatchOf" xml:space="preserve">
+    <value>{1}의 {0} 일치</value>
+    <comment>{0} = 1-based index of current match; {1} = total matches.</comment>
+  </data>
+  <data name="LogsForm_MenuCopy" xml:space="preserve">
+    <value>복사</value>
+  </data>
+  <data name="LogsForm_MenuClear" xml:space="preserve">
+    <value>분명한</value>
+  </data>
+  <data name="LogsForm_MenuSelectAll" xml:space="preserve">
+    <value>모두 선택</value>
+  </data>
+  <data name="BotsForm_Title" xml:space="preserve">
+    <value>봇</value>
+  </data>
+  <data name="BotsForm_Start" xml:space="preserve">
+    <value>시작</value>
+  </data>
+  <data name="BotsForm_Stop" xml:space="preserve">
+    <value>멈추다</value>
+  </data>
+  <data name="BotsForm_Reboot" xml:space="preserve">
+    <value>재부팅</value>
+  </data>
+  <data name="BotsForm_Update" xml:space="preserve">
+    <value>업데이트</value>
+  </data>
+  <data name="BotsForm_Reload" xml:space="preserve">
+    <value>다시 로드</value>
+  </data>
+  <data name="BotsForm_Tooltip_Start" xml:space="preserve">
+    <value>나열된 모든 봇을 함께 시작하십시오.</value>
+  </data>
+  <data name="BotsForm_Tooltip_Stop" xml:space="preserve">
+    <value>나열된 모든 실행 중인 봇을 함께 중지합니다.</value>
+  </data>
+  <data name="BotsForm_Tooltip_Reboot" xml:space="preserve">
+    <value>게임을 재부팅하고 나열된 모든 봇을 중지합니다.</value>
+  </data>
+  <data name="BotsForm_Tooltip_Update" xml:space="preserve">
+    <value>프로그램 업데이트를 확인하세요.</value>
+  </data>
+  <data name="BotsForm_Tooltip_New" xml:space="preserve">
+    <value>새 봇 슬롯을 만듭니다.</value>
+  </data>
+  <data name="BotsForm_Tooltip_Reload" xml:space="preserve">
+    <value>애플리케이션을 깨끗하게 다시 로드하세요.</value>
+  </data>
+  <data name="BotsForm_Tooltip_UpdateInfo" xml:space="preserve">
+    <value>업데이트 세부정보를 확인하고 최신 버전을 다운로드하려면 클릭하세요.</value>
+  </data>
+  <data name="BotsForm_GamePlaceholder" xml:space="preserve">
+    <value>게임</value>
+    <comment>Fallback text drawn in the game-mode combobox before the user picks a mode.</comment>
+  </data>
+  <data name="BotsForm_UpdateLabelFormat" xml:space="preserve">
+    <value>지금 {0}로 업데이트하세요</value>
+    <comment>{0} = new version string, e.g. "v8.0.9".</comment>
+  </data>
+  <data name="BotsForm_ModeSwitchErrorBody" xml:space="preserve">
+    <value>기본 양식 인스턴스를 사용할 수 없습니다. 프로그램을 다시 시작해주세요.</value>
+  </data>
+  <data name="BotsForm_ModeSwitchErrorTitle" xml:space="preserve">
+    <value>모드 전환 오류</value>
+  </data>
+  <data name="BotsForm_ErrorTitle" xml:space="preserve">
+    <value>오류</value>
+  </data>
+  <data name="BotsForm_FailedSwitchModeFormat" xml:space="preserve">
+    <value>게임 모드 전환 실패: {0}</value>
+  </data>
+  <data name="BotsForm_ConfigNotFoundFormat" xml:space="preserve">
+    <value>구성 파일을 찾을 수 없습니다: {0}</value>
+  </data>
+  <data name="BotsForm_LoadConfigFailedFormat" xml:space="preserve">
+    <value>게임 모드 구성을 로드하지 못했습니다: {0}</value>
+  </data>
+  <data name="BotsForm_RestartFailedFormat" xml:space="preserve">
+    <value>다시 시작하지 못했습니다: {0}</value>
+  </data>
+  <data name="Main_StopBotsBodyLine1Format" xml:space="preserve">
+    <value>현재 실행 중인 {0} 봇이 있습니다.</value>
+  </data>
+  <data name="Main_StopBotsBodyLine2" xml:space="preserve">
+    <value>게임 모드를 전환하면 실행 중인 모든 봇이 중지됩니다.</value>
+  </data>
+  <data name="Main_StopBotsBodyLine3" xml:space="preserve">
+    <value>계속하시겠습니까?</value>
+  </data>
+  <data name="Main_StopBotsTitle" xml:space="preserve">
+    <value>봇 실행을 중단하시겠습니까?</value>
+  </data>
+  <data name="Main_ModeSwitchSuccessBodyLine1Format" xml:space="preserve">
+    <value>게임 모드가 {0}로 성공적으로 변경되었습니다!</value>
+  </data>
+  <data name="Main_ModeSwitchSuccessBodyLine2" xml:space="preserve">
+    <value>이제 봇을 시작할 수 있으며 새 모드에서 작동합니다.</value>
+  </data>
+  <data name="Main_ModeSwitchSuccessTitle" xml:space="preserve">
+    <value>모드 전환 성공</value>
+  </data>
+  <data name="Main_ModeSwitchFailedBodyLine1" xml:space="preserve">
+    <value>게임 모드를 전환하지 못했습니다:</value>
+  </data>
+  <data name="Main_ModeSwitchFailedBodyLine2" xml:space="preserve">
+    <value>프로그램을 다시 로드해 보십시오.</value>
+  </data>
+  <data name="Main_ModeSwitchFailedTitle" xml:space="preserve">
+    <value>모드 전환 실패</value>
+  </data>
+  <data name="Main_NoBotsAfterStart" xml:space="preserve">
+    <value>구성된 봇은 없지만 모든 지원 서비스가 시작되었습니다.</value>
+  </data>
+  <data name="Main_NoBotsAfterReboot" xml:space="preserve">
+    <value>구성된 봇은 없지만 모든 지원 서비스에 재부팅 명령이 실행되었습니다.</value>
+  </data>
+  <data name="Main_NothingRunning" xml:space="preserve">
+    <value>아무것도 실행되지 않습니다, 천재님.</value>
+  </data>
+  <data name="Main_IdleAllPrimary" xml:space="preserve">
+    <value>모든 봇에게 유휴 상태를 명령합니다.</value>
+  </data>
+  <data name="Main_IdleAllSecondary" xml:space="preserve">
+    <value>제어를 강제 중지하고 잠금 해제하려면 중지(수정자 키 없이)를 누르고, 다시 시작하려면 수정자 키와 함께 중지를 다시 누르십시오.</value>
+  </data>
+  <data name="Main_ResumeAllPrimary" xml:space="preserve">
+    <value>모든 봇에게 원래 작업을 재개하도록 명령합니다.</value>
+  </data>
+  <data name="Main_ResumeAllSecondary" xml:space="preserve">
+    <value>제어를 강제 중지하고 잠금 해제하려면 중지(수정자 키 없이)를 누르십시오.</value>
+  </data>
+  <data name="Main_AddBotInvalid" xml:space="preserve">
+    <value>봇을 추가할 수 없습니다. 세부 정보가 유효하고 기존 봇과 중복되지 않는지 확인하세요.</value>
+  </data>
+  <data name="Main_ErrorIPEmpty" xml:space="preserve">
+    <value>IP 주소는 비워둘 수 없습니다.</value>
+  </data>
+  <data name="Main_ErrorIPInvalidFormat" xml:space="preserve">
+    <value>잘못된 IP 주소: {0}</value>
+  </data>
+  <data name="Main_ErrorSelectProtocol" xml:space="preserve">
+    <value>프로토콜을 선택하세요.</value>
+  </data>
+  <data name="Main_ErrorSelectRoutine" xml:space="preserve">
+    <value>루틴을 선택하세요.</value>
+  </data>
+  <data name="Main_ErrorShowFontsDialogLine1" xml:space="preserve">
+    <value>글꼴 다운로드 대화상자 표시 오류:</value>
+  </data>
+  <data name="Main_ErrorStackTraceLabel" xml:space="preserve">
+    <value>스택 추적:</value>
+  </data>
+  <data name="Main_FontsOverwriteBodyLine1" xml:space="preserve">
+    <value>Fonts.7z 파일이 이 위치에 이미 존재합니다.</value>
+  </data>
+  <data name="Main_FontsOverwriteBodyLine2" xml:space="preserve">
+    <value>덮어쓰시겠습니까?</value>
+  </data>
+  <data name="Main_FontsOverwriteTitle" xml:space="preserve">
+    <value>파일이 존재함</value>
+  </data>
+  <data name="Main_FontsDownloadSuccessLine1" xml:space="preserve">
+    <value>글꼴이 성공적으로 다운로드되었습니다!</value>
+  </data>
+  <data name="Main_FontsDownloadSuccessLocFormat" xml:space="preserve">
+    <value>위치: {0}</value>
+  </data>
+  <data name="Main_FontsDownloadSuccessLine3" xml:space="preserve">
+    <value>글꼴을 설치하고 프로그램을 다시 시작하세요.</value>
+  </data>
+  <data name="Main_FontsDownloadFailedLine1" xml:space="preserve">
+    <value>글꼴을 다운로드하지 못했습니다:</value>
+  </data>
+  <data name="Main_FontsDownloadFolderDesc" xml:space="preserve">
+    <value>Fonts.7z를 다운로드할 위치를 선택하세요.</value>
+  </data>
+  <data name="Main_SaveConfigFailedLine1" xml:space="preserve">
+    <value>구성을 저장하지 못했습니다.</value>
+  </data>
+  <data name="FontDialog_Title" xml:space="preserve">
+    <value>글꼴 다운로드</value>
+  </data>
+  <data name="FontDialog_MessageLine1" xml:space="preserve">
+    <value>텍스트를 올바르게 표시하기 위해 설치하기 위해 이 프로그램에 사용된 글꼴을 다운로드하시겠습니까?</value>
+  </data>
+  <data name="FontDialog_MessageLine2" xml:space="preserve">
+    <value>프로그램을 다시 로드하는 글꼴을 설치한 후 확인하십시오.</value>
+  </data>
+  <data name="FontDialog_DontShowAgain" xml:space="preserve">
+    <value>글꼴 다운로드 링크를 다시 표시하지 않음</value>
+  </data>
+  <data name="FontDialog_Yes" xml:space="preserve">
+    <value>예</value>
+  </data>
+  <data name="FontDialog_No" xml:space="preserve">
+    <value>아니요</value>
+  </data>
+  <data name="WinFormsUtil_ErrorTitle" xml:space="preserve">
+    <value>오류</value>
+  </data>
+  <data name="WinFormsUtil_AlertTitle" xml:space="preserve">
+    <value>알리다</value>
+  </data>
+  <data name="WinFormsUtil_PromptTitle" xml:space="preserve">
+    <value>즉각적인</value>
+  </data>
+</root>
