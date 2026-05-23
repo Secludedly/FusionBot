@@ -1512,6 +1512,12 @@ public partial class TradeModule<T> : ModuleBase<SocketCommandContext> where T :
 
         var originalPk = pk.Clone();
 
+        // Capture shiny state from the unmodified pkm. Once TID/SID are overwritten below,
+        // pk.IsShiny re-evaluates against the new trainer IDs with the old PID and will
+        // almost always read false — silently dropping the shiny we just generated.
+        bool wasShiny = originalPk.IsShiny;
+        uint originalShinyXor = originalPk.ShinyXor;
+
         // Apply cached trainer info
         pk.OriginalTrainerName = cachedTrainerDetails.OT;
         pk.TrainerTID7 = (uint)cachedTrainerDetails.TID;
@@ -1528,12 +1534,9 @@ public partial class TradeModule<T> : ModuleBase<SocketCommandContext> where T :
         if (!pk.IsNicknamed)
             pk.ClearNickname();
 
-        // Recalculate PID for shiny Pokemon
-        if (pk.IsShiny)
-        {
-            var shinyXor = pk.ShinyXor;
-            pk.PID = (uint)((pk.TID16 ^ pk.SID16 ^ (pk.PID & 0xFFFF) ^ shinyXor) << 16) | (pk.PID & 0xFFFF);
-        }
+        // Rebuild PID against the new TID/SID so the original shiny type (Square/Star) is preserved.
+        if (wasShiny)
+            pk.PID = (uint)((pk.TID16 ^ pk.SID16 ^ (pk.PID & 0xFFFF) ^ originalShinyXor) << 16) | (pk.PID & 0xFFFF);
 
         pk.RefreshChecksum();
 
