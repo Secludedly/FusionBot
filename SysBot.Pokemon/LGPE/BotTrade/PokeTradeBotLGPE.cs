@@ -414,6 +414,7 @@ public class PokeTradeBotLGPE(PokeTradeHub<PB7> Hub, PokeBotState Config) : Poke
 
 
         await Task.Delay(5_000, token).ConfigureAwait(false);
+        Log(PokeTradeBotUtil.FormatFinalTrainerInfo(toSend));
         var tradeResult = await ConfirmAndStartTrading(poke, 0, token);
         if (tradeResult != PokeTradeResult.Success)
         {
@@ -680,6 +681,7 @@ public class PokeTradeBotLGPE(PokeTradeHub<PB7> Hub, PokeBotState Config) : Poke
             await Task.Delay(10_000, token).ConfigureAwait(false);
             detail.SendNotification(this, "You have 5 seconds left to get to the trade screen to not break the trade");
             await Task.Delay(5_000, token);
+            Log(PokeTradeBotUtil.FormatFinalTrainerInfo(t));
             var tradeResult = await ConfirmAndStartTrading(detail, clonelist.IndexOf(t), token);
             if (tradeResult != PokeTradeResult.Success)
             {

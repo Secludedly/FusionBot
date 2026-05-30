@@ -1202,6 +1202,7 @@ public class PokeTradeBotSV(PokeTradeHub<PK9> Hub, PokeBotState Config) : PokeRo
             }
 
             Log($"Confirming trade {currentTradeIndex + 1}/{totalBatchTrades}.");
+            Log(PokeTradeBotUtil.FormatFinalTrainerInfo(toSend));
             TradeProgressChanged?.Invoke(86);
 
             var tradeResult = await ConfirmAndStartTrading(poke, token).ConfigureAwait(false);
@@ -1632,6 +1633,7 @@ public class PokeTradeBotSV(PokeTradeHub<PK9> Hub, PokeBotState Config) : PokeRo
         }
 
         Log("Confirming trade.");
+        Log(PokeTradeBotUtil.FormatFinalTrainerInfo(toSend));
         TradeProgressChanged?.Invoke(86);
 
         var tradeResult = await ConfirmAndStartTrading(poke, token).ConfigureAwait(false);

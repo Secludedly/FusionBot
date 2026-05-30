@@ -967,6 +967,7 @@ public class PokeTradeBotPLZA(PokeTradeHub<PA9> Hub, PokeBotState Config) : Poke
 
                 SetTradeState(TradeState.Confirming);
 
+                Log(PokeTradeBotUtil.FormatFinalTrainerInfo(poke.TradeData));
                 var tradeResult = await ConfirmAndStartTrading(
                     poke,
                     beforeTrade.Checksum,
@@ -1489,6 +1490,7 @@ public class PokeTradeBotPLZA(PokeTradeHub<PA9> Hub, PokeBotState Config) : Poke
         }
 
         Log("Selecting \"Trade it.\" Now waiting for trade animation to begin...");
+        Log(PokeTradeBotUtil.FormatFinalTrainerInfo(toSend));
         SetTradeState(TradeState.Confirming);
         var tradeResult = await ConfirmAndStartTrading(poke, checksumBeforeTrade, token).ConfigureAwait(false);
         if (tradeResult != PokeTradeResult.Success)

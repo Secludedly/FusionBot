@@ -480,6 +480,7 @@ public class PokeTradeBotSWSH(PokeTradeHub<PK8> hub, PokeBotState config) : Poke
 
             // Confirm and execute the trade
             Log($"Confirming trade {currentTradeIndex + 1}/{totalBatchTrades}.");
+            Log(PokeTradeBotUtil.FormatFinalTrainerInfo(toSend));
             TradeProgressChanged?.Invoke(89);
 
             var tradeResult = await ConfirmAndStartTrading(poke, token).ConfigureAwait(false);
@@ -880,6 +881,7 @@ public class PokeTradeBotSWSH(PokeTradeHub<PK8> hub, PokeBotState config) : Poke
             return PokeTradeResult.TradeEvolveNotAllowed;
         }
 
+        Log(PokeTradeBotUtil.FormatFinalTrainerInfo(toSend));
         var tradeResult = await ConfirmAndStartTrading(poke, token).ConfigureAwait(false);
         if (tradeResult != PokeTradeResult.Success)
         {
