@@ -1577,6 +1577,14 @@ public partial class TradeModule<T> : ModuleBase<SocketCommandContext> where T :
                 // IMPORTANT: ShowdownSet is IMMUTABLE — never try to modify Nature/IVs/etc on it
                 content = BatchCommandNormalizer.NormalizeBatchCommands(content);
 
+                // Reject future-dated MetDate requests (must run AFTER normalization
+                // since the validator only matches the .MetDate=YYYYMMDD batch form).
+                if (!MetDateValidator.IsValid(content, out var metDateError))
+                {
+                    await Helpers<T>.ReplyAndDeleteAsync(Context, metDateError!, 10);
+                    return;
+                }
+
                 // Parse hypertraining preferences before stripping code blocks
                 var userHTPreferences = AutoLegalityExtensionsDiscord.ParseHyperTrainingCommandsPublic(content);
 

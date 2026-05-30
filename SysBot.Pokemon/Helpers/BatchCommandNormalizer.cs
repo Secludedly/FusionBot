@@ -293,6 +293,19 @@ namespace SysBot.Pokemon.Discord.Helpers
                 if (string.IsNullOrWhiteSpace(line))
                     continue;
 
+                // Direct batch form ".MetDate=<value>" bypasses the ":" branch below,
+                // so route it through ProcessMetDate to normalize flexible date formats
+                // (e.g. "4-20-2020" → "20200420") and produce the YYYYMMDD form that
+                // ALM and MetDateValidator both expect.
+                if (line.StartsWith(".MetDate=", StringComparison.OrdinalIgnoreCase))
+                {
+                    var rawValue = line[".MetDate=".Length..];
+                    var normalized = ProcessMetDate(rawValue);
+                    if (!string.IsNullOrWhiteSpace(normalized))
+                        processed.Add(normalized);
+                    continue;
+                }
+
                 if (!line.Contains(":"))
                 {
                     // Alcremie forms can now add a topping to the flavor without batch command

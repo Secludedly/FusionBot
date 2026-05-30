@@ -127,28 +127,38 @@ public static class AutoLegalityExtensionsDiscord
         }
     }
 
-    public static Task ReplyWithLegalizedSetAsync(this ISocketMessageChannel channel, string content, byte gen)
+    public static async Task ReplyWithLegalizedSetAsync(this ISocketMessageChannel channel, string content, byte gen)
     {
         content = BatchCommandNormalizer.NormalizeBatchCommands(content);
+        if (!MetDateValidator.IsValid(content, out var metDateError))
+        {
+            await channel.SendMessageAsync(metDateError!).ConfigureAwait(false);
+            return;
+        }
         var userHTPreferences = ParseHyperTrainingCommandsPublic(content);
         content = ReusableActions.StripCodeBlock(content);
         byte requestedLanguage = ExtractAndStripLanguage(ref content);
         var trainerOverride = ExtractAndStripTrainerInfo(ref content);
         var set = new ShowdownSet(content);
         var sav = AutoLegalityWrapper.GetTrainerInfo(gen);
-        return channel.ReplyWithLegalizedSetAsync(sav, set, userHTPreferences, requestedLanguage, trainerOverride);
+        await channel.ReplyWithLegalizedSetAsync(sav, set, userHTPreferences, requestedLanguage, trainerOverride).ConfigureAwait(false);
     }
 
-    public static Task ReplyWithLegalizedSetAsync<T>(this ISocketMessageChannel channel, string content) where T : PKM, new()
+    public static async Task ReplyWithLegalizedSetAsync<T>(this ISocketMessageChannel channel, string content) where T : PKM, new()
     {
         content = BatchCommandNormalizer.NormalizeBatchCommands(content);
+        if (!MetDateValidator.IsValid(content, out var metDateError))
+        {
+            await channel.SendMessageAsync(metDateError!).ConfigureAwait(false);
+            return;
+        }
         var userHTPreferences = ParseHyperTrainingCommandsPublic(content);
         content = ReusableActions.StripCodeBlock(content);
         byte requestedLanguage = ExtractAndStripLanguage(ref content);
         var trainerOverride = ExtractAndStripTrainerInfo(ref content);
         var set = new ShowdownSet(content);
         var sav = AutoLegalityWrapper.GetTrainerInfo<T>();
-        return channel.ReplyWithLegalizedSetAsync(sav, set, userHTPreferences, requestedLanguage, trainerOverride);
+        await channel.ReplyWithLegalizedSetAsync(sav, set, userHTPreferences, requestedLanguage, trainerOverride).ConfigureAwait(false);
     }
 
     private static byte ExtractAndStripLanguage(ref string content)
