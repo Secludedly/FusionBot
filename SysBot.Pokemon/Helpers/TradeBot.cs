@@ -6,6 +6,6 @@ namespace SysBot.Pokemon.Helpers
 
         public const string ConfigPath = "config.json";
 
-        public const string Version = "v8.1.3";
+        public const string Version = "v8.1.4";
     }
 }

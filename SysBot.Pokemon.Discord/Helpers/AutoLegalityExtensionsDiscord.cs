@@ -16,7 +16,7 @@ namespace SysBot.Pokemon.Discord;
 
 public static class AutoLegalityExtensionsDiscord
 {
-    public static async Task ReplyWithLegalizedSetAsync(this ISocketMessageChannel channel, ITrainerInfo sav, ShowdownSet set, Dictionary<string, bool>? userHTPreferences = null, byte requestedLanguage = 0)
+    public static async Task ReplyWithLegalizedSetAsync(this ISocketMessageChannel channel, ITrainerInfo sav, ShowdownSet set, Dictionary<string, bool>? userHTPreferences = null, byte requestedLanguage = 0, TrainerOverride? trainerOverride = null)
     {
         if (set.Species <= 0)
         {
@@ -64,6 +64,12 @@ public static class AutoLegalityExtensionsDiscord
             if (requestedLanguage != 0)
                 ApplyLanguageToSet(pkm, set, requestedLanguage);
 
+            // Apply user-supplied OT/TID/SID from the convert command before legality
+            // checks. ALM generates with the bot's configured sav, so the result keeps
+            // the bot's default trainer info unless we explicitly override it here.
+            if (trainerOverride is not null && trainerOverride.HasAny)
+                ApplyTrainerOverride(pkm, trainerOverride);
+
             var la = new LegalityAnalysis(pkm);
             var spec = GameInfo.Strings.Species[set.Species];
 
@@ -77,6 +83,8 @@ public static class AutoLegalityExtensionsDiscord
                     pkm = fallback;
                     if (requestedLanguage != 0)
                         ApplyLanguageToSet(pkm, set, requestedLanguage);
+                    if (trainerOverride is not null && trainerOverride.HasAny)
+                        ApplyTrainerOverride(pkm, trainerOverride);
                     la = new LegalityAnalysis(pkm);
                 }
             }
@@ -117,9 +125,10 @@ public static class AutoLegalityExtensionsDiscord
         var userHTPreferences = ParseHyperTrainingCommandsPublic(content);
         content = ReusableActions.StripCodeBlock(content);
         byte requestedLanguage = ExtractAndStripLanguage(ref content);
+        var trainerOverride = ExtractAndStripTrainerInfo(ref content);
         var set = new ShowdownSet(content);
         var sav = AutoLegalityWrapper.GetTrainerInfo(gen);
-        return channel.ReplyWithLegalizedSetAsync(sav, set, userHTPreferences, requestedLanguage);
+        return channel.ReplyWithLegalizedSetAsync(sav, set, userHTPreferences, requestedLanguage, trainerOverride);
     }
 
     public static Task ReplyWithLegalizedSetAsync<T>(this ISocketMessageChannel channel, string content) where T : PKM, new()
@@ -128,9 +137,10 @@ public static class AutoLegalityExtensionsDiscord
         var userHTPreferences = ParseHyperTrainingCommandsPublic(content);
         content = ReusableActions.StripCodeBlock(content);
         byte requestedLanguage = ExtractAndStripLanguage(ref content);
+        var trainerOverride = ExtractAndStripTrainerInfo(ref content);
         var set = new ShowdownSet(content);
         var sav = AutoLegalityWrapper.GetTrainerInfo<T>();
-        return channel.ReplyWithLegalizedSetAsync(sav, set, userHTPreferences, requestedLanguage);
+        return channel.ReplyWithLegalizedSetAsync(sav, set, userHTPreferences, requestedLanguage, trainerOverride);
     }
 
     private static byte ExtractAndStripLanguage(ref string content)
@@ -141,6 +151,94 @@ public static class AutoLegalityExtensionsDiscord
         var lines = content.Split('\n').Where(l => !l.TrimStart().StartsWith("Language:", StringComparison.OrdinalIgnoreCase));
         content = string.Join('\n', lines);
         return lang;
+    }
+
+    /// Parses OT/TID/SID lines out of the convert command content and returns them
+    /// for explicit application after ALM generation. ShowdownSet does not preserve
+    /// these as standard fields, and ALM's RegenSet does not reliably apply them
+    /// onto a PKM generated against the bot's configured sav — so we strip and
+    /// apply them ourselves.
+    private static TrainerOverride? ExtractAndStripTrainerInfo(ref string content)
+    {
+        string? ot = null;
+        uint? tid = null;
+        uint? sid = null;
+        var kept = new List<string>();
+
+        foreach (var raw in content.Split('\n'))
+        {
+            var trimmed = raw.TrimStart();
+            if (TryConsumePrefix(trimmed, "OT:", out var otVal))
+            {
+                ot = otVal;
+                continue;
+            }
+            if (TryConsumePrefix(trimmed, "TID:", out var tidVal) && uint.TryParse(tidVal, out var tidParsed))
+            {
+                tid = tidParsed;
+                continue;
+            }
+            if (TryConsumePrefix(trimmed, "SID:", out var sidVal) && uint.TryParse(sidVal, out var sidParsed))
+            {
+                sid = sidParsed;
+                continue;
+            }
+            kept.Add(raw);
+        }
+
+        if (ot is null && tid is null && sid is null)
+            return null;
+
+        content = string.Join('\n', kept);
+        return new TrainerOverride(ot, tid, sid);
+    }
+
+    private static bool TryConsumePrefix(string line, string prefix, out string value)
+    {
+        if (line.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
+        {
+            value = line[prefix.Length..].Trim();
+            return true;
+        }
+        value = string.Empty;
+        return false;
+    }
+
+    /// Applies user-supplied OT/TID/SID onto a generated PKM. Mirrors the trade
+    /// flow's TryApplyEarlyAutoOT: captures shiny state first, rebuilds the PID
+    /// against the new IDs to preserve the original Square/Star shiny type, and
+    /// fully reverts if the result is illegal so we don't ship a broken file.
+    private static void ApplyTrainerOverride(PKM pkm, TrainerOverride o)
+    {
+        var backup = pkm.Clone();
+        bool wasShiny = backup.IsShiny;
+        uint originalShinyXor = backup.ShinyXor;
+
+        if (o.OT is not null)
+            pkm.OriginalTrainerName = o.OT;
+        if (o.TID is not null)
+            pkm.TrainerTID7 = o.TID.Value;
+        if (o.SID is not null)
+            pkm.TrainerSID7 = o.SID.Value;
+
+        if (wasShiny && (o.TID is not null || o.SID is not null))
+            pkm.PID = (uint)((pkm.TID16 ^ pkm.SID16 ^ (pkm.PID & 0xFFFF) ^ originalShinyXor) << 16) | (pkm.PID & 0xFFFF);
+
+        pkm.RefreshChecksum();
+
+        if (!new LegalityAnalysis(pkm).Valid)
+        {
+            pkm.OriginalTrainerName = backup.OriginalTrainerName;
+            pkm.TrainerTID7 = backup.TrainerTID7;
+            pkm.TrainerSID7 = backup.TrainerSID7;
+            pkm.PID = backup.PID;
+            pkm.RefreshChecksum();
+        }
+    }
+
+    public sealed record TrainerOverride(string? OT, uint? TID, uint? SID)
+    {
+        public bool HasAny => OT is not null || TID is not null || SID is not null;
     }
 
     public static async Task ReplyWithLegalizedSetAsync(this ISocketMessageChannel channel, IAttachment att)
