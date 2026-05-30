@@ -68,7 +68,15 @@ public static class AutoLegalityExtensionsDiscord
             // checks. ALM generates with the bot's configured sav, so the result keeps
             // the bot's default trainer info unless we explicitly override it here.
             if (trainerOverride is not null && trainerOverride.HasAny)
+            {
+                LogUtil.LogInfo($"Convert TrainerOverride = Requested OT: {trainerOverride.OT} | Requested TID: {trainerOverride.TID} | Requested SID: {trainerOverride.SID} | Species: {pkm.Species} | Before OT: {pkm.OriginalTrainerName} | Before TID: {pkm.TrainerTID7} | Before SID: {pkm.TrainerSID7}", "TrainerOverride");
                 ApplyTrainerOverride(pkm, trainerOverride);
+                LogUtil.LogInfo($"Convert TrainerOverride = Final OT: {pkm.OriginalTrainerName} | Final TID: {pkm.TrainerTID7} | Final SID: {pkm.TrainerSID7} | Legal: {new LegalityAnalysis(pkm).Valid}", "TrainerOverride");
+            }
+            else
+            {
+                LogUtil.LogInfo($"Convert TrainerOverride = NO OVERRIDE requested in content. ALM's defaults consequentially applied. Trainer Override: {(trainerOverride is null ? "null" : "empty")}", "TrainerOverride");
+            }
 
             var la = new LegalityAnalysis(pkm);
             var spec = GameInfo.Strings.Species[set.Species];
@@ -215,7 +223,15 @@ public static class AutoLegalityExtensionsDiscord
         uint originalShinyXor = backup.ShinyXor;
 
         if (o.OT is not null)
+        {
+            // Clear the trash buffer first — PKHeX's OriginalTrainerName setter
+            // writes the new chars + null terminator but does NOT zero out bytes
+            // past the new null. Replacing "FreeMons.Org" (12) with "Chris" (5)
+            // leaves "ns.Org\0" in the buffer, which the Trainer legality check
+            // flags as invalid trash.
+            pkm.OriginalTrainerTrash.Clear();
             pkm.OriginalTrainerName = o.OT;
+        }
         if (o.TID is not null)
             pkm.TrainerTID7 = o.TID.Value;
         if (o.SID is not null)
@@ -226,9 +242,13 @@ public static class AutoLegalityExtensionsDiscord
 
         pkm.RefreshChecksum();
 
-        if (!new LegalityAnalysis(pkm).Valid)
+        var la = new LegalityAnalysis(pkm);
+        if (!la.Valid)
         {
-            pkm.OriginalTrainerName = backup.OriginalTrainerName;
+            var fails = string.Join("; ", la.Results.Where(r => !r.Valid).Select(r => $"{r.Identifier}"));
+            LogUtil.LogInfo($"Convert TrainerOverride: REVERT — legality failed: {fails}", "TrainerOverride");
+            pkm.OriginalTrainerTrash.Clear();
+            backup.OriginalTrainerTrash.CopyTo(pkm.OriginalTrainerTrash);
             pkm.TrainerTID7 = backup.TrainerTID7;
             pkm.TrainerSID7 = backup.TrainerSID7;
             pkm.PID = backup.PID;
@@ -351,7 +371,7 @@ public static class AutoLegalityExtensionsDiscord
     }
 
     /// <summary>
-    /// Mirrors the HOME fallback in Helpers&lt;T&gt;.TryGetAsHomePa9.
+    /// Mirrors the HOME fallback in Helpers.TryGetAsHomePa9.
     /// Tries every PKM format HOME supports (newest first) and returns the first
     /// result that converts to a legally valid PA9.
     /// </summary>

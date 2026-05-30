@@ -143,6 +143,35 @@ public static class Helpers<T> where T : PKM, new()
         var filteredLines = contentLines.Where(line =>
             !line.TrimStart().StartsWith("Language:", StringComparison.OrdinalIgnoreCase)
         ).ToArray();
+
+        // Strip user-supplied OT:/TID:/SID: lines and capture them for explicit
+        // application after generation. ALM does not reliably propagate these
+        // from a RegenSet onto a PKM generated against the bot's configured sav,
+        // so without this the bot's GenerateOT/TID/SID survive into the trade.
+        string? userOT = null;
+        uint? userTID = null;
+        uint? userSID = null;
+        filteredLines = filteredLines.Where(line =>
+        {
+            var t = line.TrimStart();
+            if (t.StartsWith("OT:", StringComparison.OrdinalIgnoreCase))
+            {
+                userOT = t[3..].Trim();
+                return false;
+            }
+            if (t.StartsWith("TID:", StringComparison.OrdinalIgnoreCase) && uint.TryParse(t[4..].Trim(), out var tv))
+            {
+                userTID = tv;
+                return false;
+            }
+            if (t.StartsWith("SID:", StringComparison.OrdinalIgnoreCase) && uint.TryParse(t[4..].Trim(), out var sv))
+            {
+                userSID = sv;
+                return false;
+            }
+            return true;
+        }).ToArray();
+
         var contentWithoutLanguage = string.Join('\n', filteredLines);
 
         // Detect user-specified Tera Type (for SV non-native override fix)
@@ -457,7 +486,7 @@ public static class Helpers<T> where T : PKM, new()
             {
                 return Task.FromResult(new ProcessedPokemonResult<T>
                 {
-                    Error = "Mew can **not** be Shiny in LGPE. PoGo Mew does not transfer and Pokeball Plus Mew is shiny locked.",
+                    Error = "Mew cannot be Shiny in LGPE. Mew from POGO does not transfer & the Poke Ball Plus Mew is shiny-locked.",
                     ShowdownSet = set
                 });
             }
@@ -726,7 +755,7 @@ public static class Helpers<T> where T : PKM, new()
                 var failReasons = string.Join(", ", la.Results
                     .Where(r => !r.Valid)
                     .Select(r => $"{r.Identifier}"));
-                LogUtil.LogInfo($"TradeModule legality fail: species={pkm.Species} form={pkm.Form} loc={pkm.MetLocation} ot='{pkm.OriginalTrainerName}' shiny={pkm.IsShiny} shinyXor={pkm.ShinyXor} result='{result}' | {failReasons}", "Legality");
+                LogUtil.LogInfo($"TradeModule Legality Failure = Species: {pkm.Species} | Form: {pkm.Form} | Location: {pkm.MetLocation} | OT:'{pkm.OriginalTrainerName}' | Shiny: {pkm.IsShiny} | ShinyXor: {pkm.ShinyXor} | Result: '{result}' | Failure Issues: {failReasons}", "Legality");
             }
             var reason = GetFailureReason(result, spec);
             var hint = result == "Failed" ? GetLegalizationHint(template, sav, pkm, spec) : null;
@@ -798,7 +827,7 @@ public static class Helpers<T> where T : PKM, new()
                     pk.StatNature = clone.StatNature;
                     pk.RefreshChecksum();
                     LogUtil.LogInfo(
-                        $"{(Species)pk.Species}: Requested nature {requestedNature} is legal — applied.",
+                        $"{(Species)pk.Species}: Requested nature of {requestedNature} is legal for the set and is applied.",
                         "ZANature");
                 }
                 else
@@ -819,8 +848,8 @@ public static class Helpers<T> where T : PKM, new()
                         pk.StatNature = wantedStatNature;
                         pk.RefreshChecksum();
                         LogUtil.LogInfo(
-                            $"{(Species)pk.Species}: Requested nature {requestedNature} is illegal for this encounter. " +
-                            $"Mint applied: Nature={pk.Nature}, StatNature={pk.StatNature}.",
+                            $"{(Species)pk.Species}: Requested nature of {requestedNature} is illegal for this encounter." +
+                            $"Mint Applied! Nature: {pk.Nature} | Stat Nature: {pk.StatNature}.",
                             "ZANature");
                     }
                     else
@@ -828,8 +857,8 @@ public static class Helpers<T> where T : PKM, new()
                         // Minting is also restricted (e.g. shiny-correlation check ties StatNature to Nature).
                         // Leave Nature and StatNature exactly as PKHeX produced them — both forced.
                         LogUtil.LogInfo(
-                            $"{(Species)pk.Species}: Requested nature {requestedNature} is illegal and minting is " +
-                            $"restricted for this encounter. Keeping forced Nature={pk.Nature}, StatNature={pk.StatNature}.",
+                            $"{(Species)pk.Species}: Requested nature of {requestedNature} is illegal and minting is " +
+                            $"restricted for this encounter. Keeping forced nature of {pk.Nature} with Stat Nature of {pk.StatNature}.",
                             "ZANature");
                     }
                 }
@@ -886,6 +915,17 @@ public static class Helpers<T> where T : PKM, new()
         // choice is not overwritten by finalLanguage here.
         PrepareForTrade(pk, set, effectiveLanguage);
 
+        // Apply user-supplied OT/TID/SID from the Showdown set (after PrepareForTrade
+        // has finalized language/nickname/Asian-OT handling). Reverts to the
+        // pre-override state if the result fails legality so we never ship an
+        // illegal trade — for fixed-OT encounters the bot defaults survive.
+        if (userOT is not null || userTID is not null || userSID is not null)
+        {
+            LogUtil.LogInfo($"Trade TrainerOverride = Requested OT: {userOT} | Requested TID: {userTID} | Requested SID: {userSID} | Species: {pk.Species} | Before OT: {pk.OriginalTrainerName} | Before TID: {pk.TrainerTID7} | Before SID: {pk.TrainerSID7}", "TrainerOverride");
+            ApplyUserTrainerOverride(pk, userOT, userTID, userSID);
+            LogUtil.LogInfo($"Trade TrainerOverride = Final OT: {pk.OriginalTrainerName} | Final TID: {pk.TrainerTID7} | Final SID: {pk.TrainerSID7} | Legal: {new LegalityAnalysis(pk).Valid}", "TrainerOverride");
+        }
+
         // Check for spam names
         if (Info.Hub.Config.Trade.TradeConfiguration.EnableSpamCheck)
         {
@@ -893,7 +933,7 @@ public static class Helpers<T> where T : PKM, new()
             {
                 return Task.FromResult(new ProcessedPokemonResult<T>
                 {
-                    Error = "Detected Adname in the Pokémon's name or trainer name, which is not allowed.",
+                    Error = "Detected Admon URL in the Pokémon's name or OT, which is not allowed.",
                     ShowdownSet = set
                 });
             }
@@ -970,6 +1010,52 @@ public static class Helpers<T> where T : PKM, new()
         }
 
         pk.ResetPartyStats();
+    }
+
+    /// Applies user-supplied OT/TID/SID from the Showdown set onto the final PKM.
+    /// Captures shiny state before mutating IDs so the PID can be rebuilt against
+    /// the new TID/SID — without this, pk.IsShiny re-evaluates against the new IDs
+    /// with the old PID and silently reads false, dropping the shiny we generated.
+    /// Reverts every field on legality failure so the bot never ships an illegal
+    /// trade for fixed-OT encounters (events, in-game trades, Mystery Gifts).
+    private static void ApplyUserTrainerOverride(T pk, string? ot, uint? tid, uint? sid)
+    {
+        var backup = pk.Clone();
+        bool wasShiny = backup.IsShiny;
+        uint originalShinyXor = backup.ShinyXor;
+
+        if (ot is not null)
+        {
+            // Clear the trash buffer first — PKHeX's OriginalTrainerName setter
+            // writes the new chars + null terminator but does NOT zero out bytes
+            // past the new null. Replacing "FreeMons.Org" (12) with "Chris" (5)
+            // leaves "ns.Org\0" in the buffer, which the Trainer legality check
+            // flags as invalid trash.
+            pk.OriginalTrainerTrash.Clear();
+            pk.OriginalTrainerName = ot;
+        }
+        if (tid is not null)
+            pk.TrainerTID7 = tid.Value;
+        if (sid is not null)
+            pk.TrainerSID7 = sid.Value;
+
+        if (wasShiny && (tid is not null || sid is not null))
+            pk.PID = (uint)((pk.TID16 ^ pk.SID16 ^ (pk.PID & 0xFFFF) ^ originalShinyXor) << 16) | (pk.PID & 0xFFFF);
+
+        pk.RefreshChecksum();
+
+        var la = new LegalityAnalysis(pk);
+        if (!la.Valid)
+        {
+            var fails = string.Join("; ", la.Results.Where(r => !r.Valid).Select(r => $"{r.Identifier}"));
+            LogUtil.LogInfo($"TrainerOverride: REVERT — legality failed: {fails}", "TrainerOverride");
+            pk.OriginalTrainerTrash.Clear();
+            backup.OriginalTrainerTrash.CopyTo(pk.OriginalTrainerTrash);
+            pk.TrainerTID7 = backup.TrainerTID7;
+            pk.TrainerSID7 = backup.TrainerSID7;
+            pk.PID = backup.PID;
+            pk.RefreshChecksum();
+        }
     }
 
     private static int ValidateLanguageForGame(PKM pk, byte requestedLanguage)
