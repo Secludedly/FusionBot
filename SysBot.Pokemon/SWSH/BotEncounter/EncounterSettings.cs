@@ -50,19 +50,24 @@ public class EncounterSettings : IBotStateSettings, ICountSettings
         set => _completedLegend = value;
     }
 
+    [HubDisplayName("EncounterSettings_ContinueAfterMatch_DisplayName")]
     [HubCategory(Encounter), HubDescription("EncounterSettings_ContinueAfterMatch_Description")]
     public ContinueAfterMatch ContinueAfterMatch { get; set; } = ContinueAfterMatch.StopExit;
 
+    [HubDisplayName("EncounterSettings_EmitCountsOnStatusCheck_DisplayName")]
     [HubCategory(Counts), HubDescription("EncounterSettings_EmitCountsOnStatusCheck_Description")]
     public bool EmitCountsOnStatusCheck { get; set; }
 
+    [HubDisplayName("EncounterSettings_EncounteringType_DisplayName")]
     [HubCategory(Encounter), HubDescription("EncounterSettings_EncounteringType_Description")]
     public EncounterMode EncounteringType { get; set; } = EncounterMode.VerticalLine;
 
+    [HubDisplayName("EncounterSettings_Fossil_DisplayName")]
     [HubCategory(Settings)]
     [TypeConverter(typeof(ExpandableObjectConverter))]
     public FossilSettings Fossil { get; set; } = new();
 
+    [HubDisplayName("EncounterSettings_ScreenOff_DisplayName")]
     [HubCategory(Encounter), HubDescription("EncounterSettings_ScreenOff_Description")]
     public bool ScreenOff { get; set; }
 

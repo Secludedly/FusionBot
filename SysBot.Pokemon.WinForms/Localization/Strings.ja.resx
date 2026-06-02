@@ -311,4 +311,40 @@
   <data name="WinFormsUtil_PromptTitle" xml:space="preserve">
     <value>プロンプト</value>
   </data>
+  <data name="GameMode_PLZA" xml:space="preserve">
+    <value>Z-A</value>
+  </data>
+  <data name="GameMode_PLA" xml:space="preserve">
+    <value>アルセウス</value>
+  </data>
+  <data name="GameMode_SWSH" xml:space="preserve">
+    <value>剣盾</value>
+  </data>
+  <data name="GameMode_BDSP" xml:space="preserve">
+    <value>ブリ・シャ</value>
+  </data>
+  <data name="GameMode_LGPE" xml:space="preserve">
+    <value>レツゴ</value>
+  </data>
+  <data name="GameMode_SV" xml:space="preserve">
+    <value>スカ・バイ</value>
+  </data>
+  <data name="Routine_FlexTrade" xml:space="preserve">
+    <value>柔軟な取引</value>
+  </data>
+  <data name="Routine_Idle" xml:space="preserve">
+    <value>遊休</value>
+  </data>
+  <data name="Routine_LinkTrade" xml:space="preserve">
+    <value>リンク交換</value>
+  </data>
+  <data name="Routine_Clone" xml:space="preserve">
+    <value>クローン</value>
+  </data>
+  <data name="Routine_Dump" xml:space="preserve">
+    <value>ごみ</value>
+  </data>
+  <data name="Routine_RemoteControl" xml:space="preserve">
+    <value>リモコン</value>
+  </data>
 </root>

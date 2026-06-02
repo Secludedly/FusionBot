@@ -30,73 +30,95 @@ public class QueueSettings
 
     private const string UserBias = nameof(UserBias);
 
+    [HubDisplayName("QueueSettings_CanDequeueIfProcessing_DisplayName")]
     [HubCategory(FeatureToggle), HubDescription("QueueSettings_CanDequeueIfProcessing_Description")]
     public bool CanDequeueIfProcessing { get; set; } = true;
 
+    [HubDisplayName("QueueSettings_CanQueue_DisplayName")]
     [HubCategory(FeatureToggle), HubDescription("QueueSettings_CanQueue_Description")]
     public bool CanQueue { get; set; } = true;
 
+    [HubDisplayName("QueueSettings_EstimatedDelayFactor_DisplayName")]
     [HubCategory(TimeBias), HubDescription("QueueSettings_EstimatedDelayFactor_Description")]
     public float EstimatedDelayFactor { get; set; } = 1.2f;
 
+    [HubDisplayName("QueueSettings_FlexMode_DisplayName")]
     [HubCategory(FeatureToggle), HubDescription("QueueSettings_FlexMode_Description")]
     public FlexYieldMode FlexMode { get; set; } = FlexYieldMode.Weighted;
 
+    [HubDisplayName("QueueSettings_IntervalCloseFor_DisplayName")]
     [HubCategory(QueueToggle), HubDescription("QueueSettings_IntervalCloseFor_Description")]
     public int IntervalCloseFor { get; set; } = 15 * 60;
 
+    [HubDisplayName("QueueSettings_IntervalOpenFor_DisplayName")]
     [HubCategory(QueueToggle), HubDescription("QueueSettings_IntervalOpenFor_Description")]
     public int IntervalOpenFor { get; set; } = 5 * 60;
 
     // General
+    [HubDisplayName("QueueSettings_MaxQueueCount_DisplayName")]
     [HubCategory(FeatureToggle), HubDescription("QueueSettings_MaxQueueCount_Description")]
     public int MaxQueueCount { get; set; } = 200;
 
+    [HubDisplayName("QueueSettings_QueueToggleMode_DisplayName")]
     [HubCategory(FeatureToggle), HubDescription("QueueSettings_QueueToggleMode_Description")]
     public QueueOpening QueueToggleMode { get; set; } = QueueOpening.Threshold;
 
+    [HubDisplayName("QueueSettings_NotifyOnQueueClose_DisplayName")]
     [HubCategory(FeatureToggle), HubDescription("QueueSettings_NotifyOnQueueClose_Description")]
     public bool NotifyOnQueueClose { get; set; } = true;
 
+    [HubDisplayName("QueueSettings_ThresholdLock_DisplayName")]
     [HubCategory(QueueToggle), HubDescription("QueueSettings_ThresholdLock_Description")]
     public int ThresholdLock { get; set; } = 200;
 
+    [HubDisplayName("QueueSettings_ThresholdUnlock_DisplayName")]
     [HubCategory(QueueToggle), HubDescription("QueueSettings_ThresholdUnlock_Description")]
     public int ThresholdUnlock { get; set; } = 0;
 
+    [HubDisplayName("QueueSettings_YieldMultCountClone_DisplayName")]
     [HubCategory(UserBias), HubDescription("QueueSettings_YieldMultCountClone_Description")]
     public int YieldMultCountClone { get; set; } = 100;
 
+    [HubDisplayName("QueueSettings_YieldMultCountDump_DisplayName")]
     [HubCategory(UserBias), HubDescription("QueueSettings_YieldMultCountDump_Description")]
     public int YieldMultCountDump { get; set; } = 100;
 
+    [HubDisplayName("QueueSettings_YieldMultCountFixOT_DisplayName")]
     [HubCategory(UserBias), HubDescription("QueueSettings_YieldMultCountFixOT_Description")]
     public int YieldMultCountFixOT { get; set; } = 100;
 
+    [HubDisplayName("QueueSettings_YieldMultCountSeedCheck_DisplayName")]
     [HubCategory(UserBias), HubDescription("QueueSettings_YieldMultCountSeedCheck_Description")]
     public int YieldMultCountSeedCheck { get; set; } = 100;
 
+    [HubDisplayName("QueueSettings_YieldMultCountTrade_DisplayName")]
     [HubCategory(UserBias), HubDescription("QueueSettings_YieldMultCountTrade_Description")]
     public int YieldMultCountTrade { get; set; } = 100;
 
+    [HubDisplayName("QueueSettings_YieldMultWait_DisplayName")]
     [HubCategory(TimeBias), HubDescription("QueueSettings_YieldMultWait_Description")]
     public FlexBiasMode YieldMultWait { get; set; } = FlexBiasMode.Multiply;
 
+    [HubDisplayName("QueueSettings_YieldMultWaitClone_DisplayName")]
     [HubCategory(TimeBias), HubDescription("QueueSettings_YieldMultWaitClone_Description")]
     public int YieldMultWaitClone { get; set; } = 1;
 
+    [HubDisplayName("QueueSettings_YieldMultWaitDump_DisplayName")]
     [HubCategory(TimeBias), HubDescription("QueueSettings_YieldMultWaitDump_Description")]
     public int YieldMultWaitDump { get; set; } = 1;
 
+    [HubDisplayName("QueueSettings_YieldMultWaitFixOT_DisplayName")]
     [HubCategory(TimeBias), HubDescription("QueueSettings_YieldMultWaitFixOT_Description")]
     public int YieldMultWaitFixOT { get; set; } = 1;
 
+    [HubDisplayName("QueueSettings_YieldMultWaitSeedCheck_DisplayName")]
     [HubCategory(TimeBias), HubDescription("QueueSettings_YieldMultWaitSeedCheck_Description")]
     public int YieldMultWaitSeedCheck { get; set; } = 1;
 
     // Queue Toggle
     // Flex Users
     // Flex Time
+    [HubDisplayName("QueueSettings_YieldMultWaitTrade_DisplayName")]
     [HubCategory(TimeBias), HubDescription("QueueSettings_YieldMultWaitTrade_Description")]
     public int YieldMultWaitTrade { get; set; } = 1;
 

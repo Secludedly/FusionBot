@@ -311,4 +311,40 @@
   <data name="WinFormsUtil_PromptTitle" xml:space="preserve">
     <value>즉각적인</value>
   </data>
+  <data name="GameMode_PLZA" xml:space="preserve">
+    <value>Z-A</value>
+  </data>
+  <data name="GameMode_PLA" xml:space="preserve">
+    <value>아르세</value>
+  </data>
+  <data name="GameMode_SWSH" xml:space="preserve">
+    <value>소실</value>
+  </data>
+  <data name="GameMode_BDSP" xml:space="preserve">
+    <value>브샤</value>
+  </data>
+  <data name="GameMode_LGPE" xml:space="preserve">
+    <value>렛고</value>
+  </data>
+  <data name="GameMode_SV" xml:space="preserve">
+    <value>스바</value>
+  </data>
+  <data name="Routine_FlexTrade" xml:space="preserve">
+    <value>유연 교환</value>
+  </data>
+  <data name="Routine_Idle" xml:space="preserve">
+    <value>대기</value>
+  </data>
+  <data name="Routine_LinkTrade" xml:space="preserve">
+    <value>링크 교환</value>
+  </data>
+  <data name="Routine_Clone" xml:space="preserve">
+    <value>복제</value>
+  </data>
+  <data name="Routine_Dump" xml:space="preserve">
+    <value>덤프</value>
+  </data>
+  <data name="Routine_RemoteControl" xml:space="preserve">
+    <value>원격 제어</value>
+  </data>
 </root>

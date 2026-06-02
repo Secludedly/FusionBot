@@ -311,4 +311,40 @@
   <data name="WinFormsUtil_PromptTitle" xml:space="preserve">
     <value>Richiesta</value>
   </data>
+  <data name="GameMode_PLZA" xml:space="preserve">
+    <value>Z-A</value>
+  </data>
+  <data name="GameMode_PLA" xml:space="preserve">
+    <value>Arceus</value>
+  </data>
+  <data name="GameMode_SWSH" xml:space="preserve">
+    <value>SS</value>
+  </data>
+  <data name="GameMode_BDSP" xml:space="preserve">
+    <value>DP</value>
+  </data>
+  <data name="GameMode_LGPE" xml:space="preserve">
+    <value>LG</value>
+  </data>
+  <data name="GameMode_SV" xml:space="preserve">
+    <value>SV</value>
+  </data>
+  <data name="Routine_FlexTrade" xml:space="preserve">
+    <value>Scambio Flessibile</value>
+  </data>
+  <data name="Routine_Idle" xml:space="preserve">
+    <value>Inattivo</value>
+  </data>
+  <data name="Routine_LinkTrade" xml:space="preserve">
+    <value>Scambio Link</value>
+  </data>
+  <data name="Routine_Clone" xml:space="preserve">
+    <value>Clona</value>
+  </data>
+  <data name="Routine_Dump" xml:space="preserve">
+    <value>Dump</value>
+  </data>
+  <data name="Routine_RemoteControl" xml:space="preserve">
+    <value>Controllo Remoto</value>
+  </data>
 </root>

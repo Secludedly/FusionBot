@@ -15,20 +15,25 @@ public abstract class BaseConfig
     [Browsable(false)]
     private const string Debug = nameof(Debug);
 
+    [HubDisplayName("BaseConfig_AntiIdle_DisplayName")]
     [HubCategory(FeatureToggle), HubDescription("BaseConfig_AntiIdle_Description")]
     public bool AntiIdle { get; set; } = true;
 
+    [HubDisplayName("BaseConfig_Folder_DisplayName")]
     [HubCategory(Operation)]
     [TypeConverter(typeof(ExpandableObjectConverter))]
     public FolderSettings Folder { get; set; } = new();
 
+    [HubDisplayName("BaseConfig_Legality_DisplayName")]
     [HubCategory(Operation)]
     [TypeConverter(typeof(ExpandableObjectConverter))]
     public LegalitySettings Legality { get; set; } = new();
 
+    [HubDisplayName("BaseConfig_LoggingEnabled_DisplayName")]
     [HubCategory(FeatureToggle), HubDescription("BaseConfig_LoggingEnabled_Description")]
     public bool LoggingEnabled { get; set; } = true;
 
+    [HubDisplayName("BaseConfig_MaxArchiveFiles_DisplayName")]
     [HubCategory(FeatureToggle), HubDescription("BaseConfig_MaxArchiveFiles_Description")]
     public int MaxArchiveFiles { get; set; } = 10;
 
@@ -38,6 +43,7 @@ public abstract class BaseConfig
     [HubCategory(Debug), HubDescription("BaseConfig_SkipConsoleBotCreation_Description")]
     public bool SkipConsoleBotCreation { get; set; }
 
+    [HubDisplayName("BaseConfig_UseKeyboard_DisplayName")]
     [HubCategory(FeatureToggle), HubDescription("BaseConfig_UseKeyboard_Description")]
     public bool UseKeyboard { get; set; } = true;
 }

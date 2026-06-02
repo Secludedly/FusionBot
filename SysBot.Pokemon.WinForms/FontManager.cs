@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Text;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -74,6 +75,48 @@ namespace SysBot.Pokemon.WinForms
             }
 
             return new Font(family, size, style);
+        }
+
+        /// <summary>
+        /// Points to subtract from button-label font sizes for the current UI language.
+        /// English (the UI is built around it) and CJK languages (compact glyphs that already
+        /// fit) return 0; other languages (German, Spanish, French, Italian, …) have longer
+        /// words that overflow the fixed-width buttons, so their labels are shrunk to fit.
+        /// Tune the reduction (in points) here.
+        /// </summary>
+        public static float ButtonFontReduction()
+        {
+            return CultureInfo.CurrentUICulture.TwoLetterISOLanguageName switch
+            {
+                "en" => 0f,                  // English: leave as designed
+                "ja" or "ko" or "zh" => 0f,  // Japanese/Korean/Chinese: compact, no change
+                _ => 3f,                     // others: shrink a few points to fit
+            };
+        }
+
+        /// <summary>
+        /// Like <see cref="Get"/>, but pre-shrinks the size by <see cref="ButtonFontReduction"/>
+        /// for the current UI language (never below 6pt). Use for button labels that must fit a
+        /// fixed width across languages.
+        /// </summary>
+        public static Font GetButton(string fontFamilyName, float size, FontStyle style = FontStyle.Regular)
+        {
+            float adjusted = Math.Max(6f, size - ButtonFontReduction());
+            return Get(fontFamilyName, adjusted, style);
+        }
+
+        /// <summary>
+        /// Returns <paramref name="baseFont"/> shrunk by <see cref="ButtonFontReduction"/> for the
+        /// current UI language (never below 6pt), preserving family/style/unit. Returns the same
+        /// instance unchanged when no reduction applies (English/CJK).
+        /// </summary>
+        public static Font ScaleForLanguage(Font baseFont)
+        {
+            float reduction = ButtonFontReduction();
+            if (reduction <= 0f)
+                return baseFont;
+            float size = Math.Max(6f, baseFont.Size - reduction);
+            return new Font(baseFont.FontFamily, size, baseFont.Style, baseFont.Unit);
         }
 
         public static IEnumerable<string> LoadedFamilies => _fonts.Keys;

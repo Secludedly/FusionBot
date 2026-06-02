@@ -311,4 +311,40 @@
   <data name="WinFormsUtil_PromptTitle" xml:space="preserve">
     <value>迅速的</value>
   </data>
+  <data name="GameMode_PLZA" xml:space="preserve">
+    <value>Z-A</value>
+  </data>
+  <data name="GameMode_PLA" xml:space="preserve">
+    <value>阿尔宙</value>
+  </data>
+  <data name="GameMode_SWSH" xml:space="preserve">
+    <value>剑盾</value>
+  </data>
+  <data name="GameMode_BDSP" xml:space="preserve">
+    <value>晶钻明珠</value>
+  </data>
+  <data name="GameMode_LGPE" xml:space="preserve">
+    <value>皮伊</value>
+  </data>
+  <data name="GameMode_SV" xml:space="preserve">
+    <value>朱紫</value>
+  </data>
+  <data name="Routine_FlexTrade" xml:space="preserve">
+    <value>弹性交换</value>
+  </data>
+  <data name="Routine_Idle" xml:space="preserve">
+    <value>闲置</value>
+  </data>
+  <data name="Routine_LinkTrade" xml:space="preserve">
+    <value>联机交换</value>
+  </data>
+  <data name="Routine_Clone" xml:space="preserve">
+    <value>复制</value>
+  </data>
+  <data name="Routine_Dump" xml:space="preserve">
+    <value>导出</value>
+  </data>
+  <data name="Routine_RemoteControl" xml:space="preserve">
+    <value>远程控制</value>
+  </data>
 </root>

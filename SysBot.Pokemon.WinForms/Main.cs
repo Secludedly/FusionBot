@@ -174,11 +174,11 @@ namespace SysBot.Pokemon.WinForms
                 {
                     try
                     {
-                        btn.Font = FontManager.Get("Enter The Grid", 13.8F);
+                        btn.Font = FontManager.GetButton("Enter The Grid", 13.8F);
                     }
                     catch
                     {
-                        btn.Font = new Font(FontFamily.GenericSansSerif, 13.8F);
+                        btn.Font = FontManager.ScaleForLanguage(new Font(FontFamily.GenericSansSerif, 13.8F));
                     }
                 }
 
@@ -549,7 +549,7 @@ namespace SysBot.Pokemon.WinForms
 
             // Routine Selection
             var routines = ((PokeRoutineType[])Enum.GetValues(typeof(PokeRoutineType))).Where(z => RunningEnvironment.SupportsRoutine(z)) // Get all routine types
-                .Select(z => new { Text = z.ToString(), Value = (int)z }).ToList(); // Create a list of routine types with their text and value
+                .Select(z => new { Text = Strings.Get("Routine_" + z, z.ToString()), Value = (int)z }).ToList(); // Create a localized list of routine types with their text and value
             _botsForm.RoutineBox.DisplayMember = "Text";                            // Set the display text for the RoutineBox
             _botsForm.RoutineBox.ValueMember = "Value";                             // Set the value number for the RoutineBox (Flextrade, etc.)
             _botsForm.RoutineBox.DataSource = routines;                             // Bind the RoutineBox to the list of routine types (Dropdown list)

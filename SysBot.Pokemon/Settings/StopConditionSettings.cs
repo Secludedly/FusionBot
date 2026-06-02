@@ -11,39 +11,51 @@ public class StopConditionSettings
 {
     private const string StopConditions = nameof(StopConditions);
 
+    [HubDisplayName("StopConditionSettings_CaptureVideoClip_DisplayName")]
     [HubCategory(StopConditions), HubDescription("StopConditionSettings_CaptureVideoClip_Description")]
     public bool CaptureVideoClip { get; set; }
 
+    [HubDisplayName("StopConditionSettings_ExtraTimeWaitCaptureVideo_DisplayName")]
     [HubCategory(StopConditions), HubDescription("StopConditionSettings_ExtraTimeWaitCaptureVideo_Description")]
     public int ExtraTimeWaitCaptureVideo { get; set; } = 10000;
 
+    [HubDisplayName("StopConditionSettings_MarkOnly_DisplayName")]
     [HubCategory(StopConditions), HubDescription("StopConditionSettings_MarkOnly_Description")]
     public bool MarkOnly { get; set; }
 
+    [HubDisplayName("StopConditionSettings_MatchFoundEchoMention_DisplayName")]
     [HubCategory(StopConditions), HubDescription("StopConditionSettings_MatchFoundEchoMention_Description")]
     public string MatchFoundEchoMention { get; set; } = string.Empty;
 
+    [HubDisplayName("StopConditionSettings_MatchShinyAndIV_DisplayName")]
     [HubCategory(StopConditions), HubDescription("StopConditionSettings_MatchShinyAndIV_Description")]
     public bool MatchShinyAndIV { get; set; } = true;
 
+    [HubDisplayName("StopConditionSettings_ShinyTarget_DisplayName")]
     [HubCategory(StopConditions), HubDescription("StopConditionSettings_ShinyTarget_Description")]
     public TargetShinyType ShinyTarget { get; set; } = TargetShinyType.DisableOption;
 
+    [HubDisplayName("StopConditionSettings_StopOnForm_DisplayName")]
     [HubCategory(StopConditions), HubDescription("StopConditionSettings_StopOnForm_Description")]
     public int? StopOnForm { get; set; }
 
+    [HubDisplayName("StopConditionSettings_StopOnSpecies_DisplayName")]
     [HubCategory(StopConditions), HubDescription("StopConditionSettings_StopOnSpecies_Description")]
     public Species StopOnSpecies { get; set; }
 
+    [HubDisplayName("StopConditionSettings_TargetMaxIVs_DisplayName")]
     [HubCategory(StopConditions), HubDescription("StopConditionSettings_TargetMaxIVs_Description")]
     public string TargetMaxIVs { get; set; } = "";
 
+    [HubDisplayName("StopConditionSettings_TargetMinIVs_DisplayName")]
     [HubCategory(StopConditions), HubDescription("StopConditionSettings_TargetMinIVs_Description")]
     public string TargetMinIVs { get; set; } = "";
 
+    [HubDisplayName("StopConditionSettings_TargetNature_DisplayName")]
     [HubCategory(StopConditions), HubDescription("StopConditionSettings_TargetNature_Description")]
     public Nature TargetNature { get; set; } = Nature.Random;
 
+    [HubDisplayName("StopConditionSettings_UnwantedMarks_DisplayName")]
     [HubCategory(StopConditions), HubDescription("StopConditionSettings_UnwantedMarks_Description")]
     public string UnwantedMarks { get; set; } = "";
 

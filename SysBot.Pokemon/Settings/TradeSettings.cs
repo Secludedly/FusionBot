@@ -28,6 +28,7 @@ public class TradeSettings : IBotStateSettings, ICountSettings
     [TypeConverter(typeof(ExpandableObjectConverter))]
     public class EmojiInfo
     {
+        [HubDisplayName("EmojiInfo_EmojiString_DisplayName")]
         [HubDescription("EmojiInfo_EmojiString_Description")]
         public string EmojiString { get; set; } = string.Empty;
 
@@ -385,6 +386,7 @@ public class TradeSettings : IBotStateSettings, ICountSettings
             set => _completedDumps = value;
         }
 
+        [HubDisplayName("CountStatsSettingsCategory_EmitCountsOnStatusCheck_DisplayName")]
         [HubCategory(CountStats), HubDescription("CountStatsSettingsCategory_EmitCountsOnStatusCheck_Description")]
         public bool EmitCountsOnStatusCheck { get; set; }
 
@@ -476,8 +478,10 @@ public class TradeSettings : IBotStateSettings, ICountSettings
 
     public class MoveTypeEmojiInfo
     {
+        [HubDisplayName("MoveTypeEmojiInfo_MoveType_DisplayName")]
         [HubDescription("MoveTypeEmojiInfo_MoveType_Description")]
         public MoveType MoveType { get; set; }
+        [HubDisplayName("MoveTypeEmojiInfo_EmojiCode_DisplayName")]
         [HubDescription("MoveTypeEmojiInfo_EmojiCode_Description")]
         public string EmojiCode { get; set; } = string.Empty;
         public MoveTypeEmojiInfo()
@@ -497,8 +501,10 @@ public class TradeSettings : IBotStateSettings, ICountSettings
 
     public class TeraTypeEmojiInfo
     {
+        [HubDisplayName("TeraTypeEmojiInfo_MoveType_DisplayName")]
         [HubDescription("TeraTypeEmojiInfo_MoveType_Description")]
         public MoveType MoveType { get; set; }
+        [HubDisplayName("TeraTypeEmojiInfo_EmojiCode_DisplayName")]
         [HubDescription("TeraTypeEmojiInfo_EmojiCode_Description")]
         public string EmojiCode { get; set; }
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.

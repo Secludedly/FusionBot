@@ -7,9 +7,11 @@ public class SeedCheckSettings
 {
     private const string FeatureToggle = nameof(FeatureToggle);
 
+    [HubDisplayName("SeedCheckSettings_ResultDisplayMode_DisplayName")]
     [HubCategory(FeatureToggle), HubDescription("SeedCheckSettings_ResultDisplayMode_Description")]
     public SeedCheckResults ResultDisplayMode { get; set; }
 
+    [HubDisplayName("SeedCheckSettings_ShowAllZ3Results_DisplayName")]
     [HubCategory(FeatureToggle), HubDescription("SeedCheckSettings_ShowAllZ3Results_Description")]
     public bool ShowAllZ3Results { get; set; }
 

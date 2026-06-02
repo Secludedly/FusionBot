@@ -13,9 +13,11 @@ namespace SysBot.Pokemon
 
         // Startup
 
+        [HubDisplayName("BilibiliSettings_LogUrl_DisplayName")]
         [HubCategory(Startup), HubDescription("BilibiliSettings_LogUrl_Description")]
         public string LogUrl { get; set; } = string.Empty;
 
+        [HubDisplayName("BilibiliSettings_RoomId_DisplayName")]
         [HubCategory(Startup), HubDescription("BilibiliSettings_RoomId_Description")]
         public int RoomId { get; set; } = 0;
     }

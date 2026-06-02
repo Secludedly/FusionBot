@@ -76,6 +76,7 @@ public class DiscordSettings
     [HubCategory(Channels), HubDescription("DiscordSettings_AbuseLogChannels_Description"), HubDisplayName("DiscordSettings_AbuseLogChannels_DisplayName")]
     public RemoteControlAccessList AbuseLogChannels { get; set; } = new();
 
+    [HubDisplayName("DiscordSettings_AnnouncementSettings_DisplayName")]
     public AnnouncementSettingsCategory AnnouncementSettings { get; set; } = new();
 
     [HubCategory(Startup), HubDescription("DiscordSettings_BotColorStatusTradeOnly_Description"), HubDisplayName("DiscordSettings_BotColorStatusTradeOnly_DisplayName")]
@@ -188,17 +189,22 @@ public class DiscordSettings
     [HubCategory(Operation), TypeConverter(typeof(CategoryConverter<AnnouncementSettingsCategory>))]
     public class AnnouncementSettingsCategory
     {
+        [HubDisplayName("AnnouncementSettingsCategory_AnnouncementEmbedColor_DisplayName")]
         public EmbedColorOption AnnouncementEmbedColor { get; set; } = EmbedColorOption.Purple;
 
+        [HubDisplayName("AnnouncementSettingsCategory_AnnouncementThumbnailOption_DisplayName")]
         [HubCategory("Embed Settings"), HubDescription("AnnouncementSettingsCategory_AnnouncementThumbnailOption_Description")]
         public ThumbnailOption AnnouncementThumbnailOption { get; set; } = ThumbnailOption.Gengar;
 
+        [HubDisplayName("AnnouncementSettingsCategory_CustomAnnouncementThumbnailUrl_DisplayName")]
         [HubCategory("Embed Settings"), HubDescription("AnnouncementSettingsCategory_CustomAnnouncementThumbnailUrl_Description")]
         public string CustomAnnouncementThumbnailUrl { get; set; } = string.Empty;
 
+        [HubDisplayName("AnnouncementSettingsCategory_RandomAnnouncementColor_DisplayName")]
         [HubCategory("Embed Settings"), HubDescription("AnnouncementSettingsCategory_RandomAnnouncementColor_Description")]
         public bool RandomAnnouncementColor { get; set; } = false;
 
+        [HubDisplayName("AnnouncementSettingsCategory_RandomAnnouncementThumbnail_DisplayName")]
         [HubCategory("Embed Settings"), HubDescription("AnnouncementSettingsCategory_RandomAnnouncementThumbnail_Description")]
         public bool RandomAnnouncementThumbnail { get; set; } = false;
 
