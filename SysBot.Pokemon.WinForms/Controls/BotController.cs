@@ -1,5 +1,6 @@
 using SysBot.Base;
 using SysBot.Pokemon.WinForms.Controls;
+using SysBot.Pokemon.WinForms.Localization;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -50,6 +51,7 @@ public partial class BotController : UserControl
     public BotController()
     {
         InitializeComponent();
+        btnActions.Text = "▶ " + Strings.Get("BotMenu_Button", "MENU");
         InitializeContextMenu();
 
         this.Margin = new Padding(0);
@@ -241,38 +243,49 @@ public partial class BotController : UserControl
     {
         RCMenu.Items.Clear();
 
+        // Localized menu labels (kept in variables so the colorMap keys stay in sync with the displayed text)
+        string startText = "▶️ " + Strings.Get("BotMenu_Start", "Start");
+        string stopText = "⏹️ " + Strings.Get("BotMenu_Stop", "Stop");
+        string idleText = "⏸️ " + Strings.Get("BotMenu_Idle", "Idle");
+        string resumeText = "🔼 " + Strings.Get("BotMenu_Resume", "Resume");
+        string restartText = "🔁 " + Strings.Get("BotMenu_Restart", "Restart");
+        string rebootText = "🔄 " + Strings.Get("BotMenu_Reboot", "Reboot");
+        string screenOnText = "💡 " + Strings.Get("BotMenu_ScreenOn", "Screen On");
+        string screenOffText = "🌑 " + Strings.Get("BotMenu_ScreenOff", "Screen Off");
+        string removeText = "⛔ " + Strings.Get("BotMenu_Remove", "Remove");
+
         // Your color map for the menu text
         var colorMap = new Dictionary<string, Color>
     {
-        { "▶️ Start Bot", Color.LimeGreen },
-        { "⏹️ Stop Bot", Color.IndianRed },
-        { "⏸️ Idle Bot", Color.White },
-        { "🔼 Resume Bot", Color.White },
-        { "🔁 Restart Bot", Color.White },
-        { "🔄 Reboot + Stop", Color.White },
-        { "💡 Turn Screen On", Color.White },
-        { "🌑 Turn Screen Off", Color.White },
-        { "⛔ Remove Bot", Color.IndianRed }
+        { startText, Color.LimeGreen },
+        { stopText, Color.IndianRed },
+        { idleText, Color.White },
+        { resumeText, Color.White },
+        { restartText, Color.White },
+        { rebootText, Color.White },
+        { screenOnText, Color.White },
+        { screenOffText, Color.White },
+        { removeText, Color.IndianRed }
     };
 
-        AddMenuItem("▶️ Start Bot", BotControlCommand.Start);
-        AddMenuItem("⏹️ Stop Bot", BotControlCommand.Stop);
-        AddMenuItem("⏸️ Idle Bot", BotControlCommand.Idle);
-        AddMenuItem("🔼 Resume Bot", BotControlCommand.Resume);
+        AddMenuItem(startText, BotControlCommand.Start);
+        AddMenuItem(stopText, BotControlCommand.Stop);
+        AddMenuItem(idleText, BotControlCommand.Idle);
+        AddMenuItem(resumeText, BotControlCommand.Resume);
 
         RCMenu.Items.Add(new ToolStripSeparator());
 
-        AddMenuItem("🔁 Restart Bot", BotControlCommand.Restart);
-        AddMenuItem("🔄 Reboot + Stop", BotControlCommand.RebootAndStop);
+        AddMenuItem(restartText, BotControlCommand.Restart);
+        AddMenuItem(rebootText, BotControlCommand.RebootAndStop);
 
         RCMenu.Items.Add(new ToolStripSeparator());
 
-        AddMenuItem("💡 Turn Screen On", BotControlCommand.ScreenOn);
-        AddMenuItem("🌑 Turn Screen Off", BotControlCommand.ScreenOff);
+        AddMenuItem(screenOnText, BotControlCommand.ScreenOn);
+        AddMenuItem(screenOffText, BotControlCommand.ScreenOff);
 
         RCMenu.Items.Add(new ToolStripSeparator());
 
-        var remove = new ToolStripMenuItem("⛔ Remove Bot");
+        var remove = new ToolStripMenuItem(removeText);
         remove.Click += (_, __) => TryRemove();
         RCMenu.Items.Add(remove);
 

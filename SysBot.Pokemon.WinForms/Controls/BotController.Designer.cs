@@ -133,7 +133,7 @@ partial class BotController
         btnActions.Name = "btnActions";
         btnActions.Size = new Size(116, 30);
         btnActions.TabIndex = 4;
-        btnActions.Text = "▶ BOT MENU";
+        btnActions.Text = "▶ MENU";
         btnActions.UseVisualStyleBackColor = false;
         btnActions.Click += BtnActions_Click;
         // 

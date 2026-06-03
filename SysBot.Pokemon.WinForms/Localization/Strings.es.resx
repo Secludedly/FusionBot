@@ -347,4 +347,34 @@
   <data name="Routine_RemoteControl" xml:space="preserve">
     <value>Control Remoto</value>
   </data>
+  <data name="BotMenu_Button" xml:space="preserve">
+    <value>Menú</value>
+  </data>
+  <data name="BotMenu_Start" xml:space="preserve">
+    <value>Iniciar</value>
+  </data>
+  <data name="BotMenu_Stop" xml:space="preserve">
+    <value>Detener</value>
+  </data>
+  <data name="BotMenu_Idle" xml:space="preserve">
+    <value>Inactivo</value>
+  </data>
+  <data name="BotMenu_Resume" xml:space="preserve">
+    <value>Reanudar</value>
+  </data>
+  <data name="BotMenu_Restart" xml:space="preserve">
+    <value>Reiniciar</value>
+  </data>
+  <data name="BotMenu_Reboot" xml:space="preserve">
+    <value>Reinicio</value>
+  </data>
+  <data name="BotMenu_ScreenOn" xml:space="preserve">
+    <value>Encender pantalla</value>
+  </data>
+  <data name="BotMenu_ScreenOff" xml:space="preserve">
+    <value>Apagar pantalla</value>
+  </data>
+  <data name="BotMenu_Remove" xml:space="preserve">
+    <value>Eliminar</value>
+  </data>
 </root>

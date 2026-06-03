@@ -347,4 +347,34 @@
   <data name="Routine_RemoteControl" xml:space="preserve">
     <value>원격 제어</value>
   </data>
+  <data name="BotMenu_Button" xml:space="preserve">
+    <value>메뉴</value>
+  </data>
+  <data name="BotMenu_Start" xml:space="preserve">
+    <value>시작</value>
+  </data>
+  <data name="BotMenu_Stop" xml:space="preserve">
+    <value>정지</value>
+  </data>
+  <data name="BotMenu_Idle" xml:space="preserve">
+    <value>대기</value>
+  </data>
+  <data name="BotMenu_Resume" xml:space="preserve">
+    <value>재개</value>
+  </data>
+  <data name="BotMenu_Restart" xml:space="preserve">
+    <value>다시 시작</value>
+  </data>
+  <data name="BotMenu_Reboot" xml:space="preserve">
+    <value>재부팅</value>
+  </data>
+  <data name="BotMenu_ScreenOn" xml:space="preserve">
+    <value>화면 켜기</value>
+  </data>
+  <data name="BotMenu_ScreenOff" xml:space="preserve">
+    <value>화면 끄기</value>
+  </data>
+  <data name="BotMenu_Remove" xml:space="preserve">
+    <value>제거</value>
+  </data>
 </root>

@@ -347,4 +347,34 @@
   <data name="Routine_RemoteControl" xml:space="preserve">
     <value>遠端控制</value>
   </data>
+  <data name="BotMenu_Button" xml:space="preserve">
+    <value>選單</value>
+  </data>
+  <data name="BotMenu_Start" xml:space="preserve">
+    <value>啟動</value>
+  </data>
+  <data name="BotMenu_Stop" xml:space="preserve">
+    <value>停止</value>
+  </data>
+  <data name="BotMenu_Idle" xml:space="preserve">
+    <value>閒置</value>
+  </data>
+  <data name="BotMenu_Resume" xml:space="preserve">
+    <value>恢復</value>
+  </data>
+  <data name="BotMenu_Restart" xml:space="preserve">
+    <value>重新啟動</value>
+  </data>
+  <data name="BotMenu_Reboot" xml:space="preserve">
+    <value>重新開機</value>
+  </data>
+  <data name="BotMenu_ScreenOn" xml:space="preserve">
+    <value>開啟螢幕</value>
+  </data>
+  <data name="BotMenu_ScreenOff" xml:space="preserve">
+    <value>關閉螢幕</value>
+  </data>
+  <data name="BotMenu_Remove" xml:space="preserve">
+    <value>移除</value>
+  </data>
 </root>
