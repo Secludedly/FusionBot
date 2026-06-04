@@ -107,6 +107,38 @@ public partial class BotController : UserControl
             _progressFill.Invalidate();
         };
         _sparkleTimer.Start();
+
+        ApplyTheme();
+    }
+
+    /// <summary>
+    /// Recolors this controller's surfaces to the currently selected theme.
+    /// Status/progress indicator colors (the glow dot, progress gradient, status
+    /// text) are intentionally left alone since they convey bot state, not decoration.
+    /// </summary>
+    public void ApplyTheme()
+    {
+        var colors = ThemeManager.CurrentColors;
+
+        BackColor = colors.ControlBackground;
+        rtbBotMeta.BackColor = colors.ControlBackground;
+        rtbBotMeta.ForeColor = colors.ForeColor;
+
+        if (_progressBarContainer != null)
+            _progressBarContainer.BackColor = colors.ControlBackground;
+
+        btnActions.BackColor = colors.PanelBase;
+        btnActions.ForeColor = colors.ForeColor;
+        btnActions.FlatAppearance.BorderColor = colors.Border;
+        btnActions.FlatAppearance.MouseOverBackColor = colors.Highlight;
+        btnActions.FlatAppearance.MouseDownBackColor = colors.Border;
+
+        // Text labels follow the theme foreground (lblStatus stays state-colored).
+        lblConnectionName.ForeColor = colors.ForeColor;
+        if (lblConnectionInfo != null)
+            lblConnectionInfo.ForeColor = colors.ForeColor;
+        if (lblRoutine != null)
+            lblRoutine.ForeColor = colors.ForeColor;
     }
 
     private void _progressFill_Paint(object? sender, PaintEventArgs e)
@@ -204,7 +236,7 @@ public partial class BotController : UserControl
         base.OnPaint(e);
 
         // Draw background bar
-        using (SolidBrush backBrush = new SolidBrush(Color.FromArgb(20, 19, 57)))
+        using (SolidBrush backBrush = new SolidBrush(ThemeManager.CurrentColors.ControlBackground))
         {
             e.Graphics.FillRectangle(backBrush, 0, Height - 4, Width, 4);
         }
@@ -342,8 +374,11 @@ public partial class BotController : UserControl
     private class ColoredMenuRenderer : ToolStripProfessionalRenderer
     {
         private readonly Dictionary<string, Color> _colorMap;
-        private readonly Color _backgroundColor = Color.FromArgb(20, 19, 57);
         private readonly int _leftPadding = 22; // padding from left edge
+
+        // Pulled live so the menu follows theme changes without rebuilding it.
+        private static Color BackgroundColor => ThemeManager.CurrentColors.ControlBackground;
+        private static Color SelectedColor => ThemeManager.CurrentColors.Highlight;
 
         public ColoredMenuRenderer(Dictionary<string, Color> colorMap)
         {
@@ -352,13 +387,13 @@ public partial class BotController : UserControl
 
         protected override void OnRenderToolStripBackground(ToolStripRenderEventArgs e)
         {
-            using var brush = new SolidBrush(_backgroundColor);
+            using var brush = new SolidBrush(BackgroundColor);
             e.Graphics.FillRectangle(brush, e.AffectedBounds);
         }
 
         protected override void OnRenderMenuItemBackground(ToolStripItemRenderEventArgs e)
         {
-            Color bg = e.Item.Selected ? Color.Cyan : _backgroundColor;
+            Color bg = e.Item.Selected ? SelectedColor : BackgroundColor;
             using var brush = new SolidBrush(bg);
             e.Graphics.FillRectangle(brush, e.Item.ContentRectangle);
         }
@@ -470,7 +505,7 @@ public partial class BotController : UserControl
         {
             rtbBotMeta.SelectionFont = new Font(FontFamily.GenericSansSerif, 9F, FontStyle.Bold);
         }
-        rtbBotMeta.SelectionColor = Color.White;
+        rtbBotMeta.SelectionColor = ThemeManager.CurrentColors.ForeColor;
         rtbBotMeta.AppendText(topLine);
     }
 
@@ -512,7 +547,7 @@ public partial class BotController : UserControl
         // Fade between BACKGROUND COLOR and _glowBaseColor
         float t = (_glowPhase - min) / (max - min);
 
-        Color background = Color.FromArgb(20, 19, 57);
+        Color background = ThemeManager.CurrentColors.ControlBackground;
         int r = (int)(background.R + (_glowBaseColor.R - background.R) * t);
         int g = (int)(background.G + (_glowBaseColor.G - background.G) * t);
         int b = (int)(background.B + (_glowBaseColor.B - background.B) * t);

@@ -167,15 +167,6 @@ public static class ThemeManager
 
         },
 
-        ["Black & White"] = new ThemeColors
-        {
-            PanelBase = Color.FromArgb(0, 0, 0),
-            Shadow = Color.FromArgb(255, 255, 255),
-            Hover = Color.FromArgb(42, 42, 42),
-            ForeColor = Color.White
-
-        },
-
         ["Dark Fade Out"] = new ThemeColors
         {
             PanelBase = Color.FromArgb(32, 32, 32),
@@ -207,14 +198,6 @@ public static class ThemeManager
             PanelBase = Color.FromArgb(20, 25, 55),
             Shadow = Color.FromArgb(10, 10, 30),
             Hover = Color.FromArgb(20, 25, 55),
-            ForeColor = Color.White
-        },
-
-        ["Arctic Halo"] = new ThemeColors
-        {
-            PanelBase = Color.FromArgb(15, 20, 50),
-            Shadow = Color.FromArgb(240, 240, 255),
-            Hover = Color.FromArgb(15, 20, 50),
             ForeColor = Color.White
         },
 
@@ -325,10 +308,45 @@ public static class ThemeManager
 
         // Reapply hover animations using new theme colors
         form.SetupThemeAwareButtons();
+
+        // Cascade the theme into the child forms (Bots/Hub/Logs) and their controls
+        form.RefreshChildThemes();
     }
 
     public static ThemeColors? GetCurrentColors()
         => ThemePresets.TryGetValue(CurrentThemeName, out var colors) ? colors : null;
+
+    // ──────────────────────────────────────────────────────────────────────
+    //  Color helpers — used to derive the secondary surface colors so every
+    //  preset themes the child forms without having to declare extra colors.
+    // ──────────────────────────────────────────────────────────────────────
+
+    /// <summary>
+    /// Lightens (factor &gt; 0, toward white) or darkens (factor &lt; 0, toward
+    /// black) a color. <paramref name="factor"/> is a 0–1 ratio.
+    /// </summary>
+    public static Color Shade(Color c, float factor)
+    {
+        if (factor < 0)
+        {
+            float f = 1f + factor; // e.g. -0.30 -> scale channels by 0.70
+            return Color.FromArgb(c.A, Clamp(c.R * f), Clamp(c.G * f), Clamp(c.B * f));
+        }
+
+        return Color.FromArgb(c.A,
+            Clamp(c.R + (255 - c.R) * factor),
+            Clamp(c.G + (255 - c.G) * factor),
+            Clamp(c.B + (255 - c.B) * factor));
+    }
+
+    /// <summary>Linearly blends <paramref name="a"/> toward <paramref name="b"/> by <paramref name="t"/> (0–1).</summary>
+    public static Color Blend(Color a, Color b, float t)
+        => Color.FromArgb(
+            Clamp(a.R + (b.R - a.R) * t),
+            Clamp(a.G + (b.G - a.G) * t),
+            Clamp(a.B + (b.B - a.B) * t));
+
+    private static int Clamp(float v) => (int)(v < 0 ? 0 : v > 255 ? 255 : v);
 }
 
 // Add Hover support to ThemeColors
@@ -338,4 +356,31 @@ public class ThemeColors
     public Color Shadow { get; set; }
     public Color Hover { get; set; }
     public Color ForeColor { get; set; }
+
+    // ── Derived semantic colors ───────────────────────────────────────────
+    // Computed from the base palette so the child forms (Bots/Hub/Logs and the
+    // bot controllers) follow each theme automatically.
+
+    /// <summary>Deepest surface — logs view, property-grid view, text input backgrounds.</summary>
+    public Color DeepBackground => ThemeManager.Shade(Shadow, -0.30f);
+
+    /// <summary>Background for nested controls (input boxes) and the bot controller body.</summary>
+    public Color ControlBackground => Shadow;
+
+    /// <summary>
+    /// Background of the bot-list panel — a touch lighter than the entries that sit
+    /// on it, so the controllers read as slightly darker cards against the panel.
+    /// Derived from <see cref="Shadow"/> (not PanelBase) so the contrast holds for
+    /// every preset, including ones where PanelBase and Shadow are equal.
+    /// </summary>
+    public Color ListBackground => ThemeManager.Shade(Shadow, 0.05f);
+
+    /// <summary>Lighter pop for hovered/selected list items.</summary>
+    public Color Highlight => ThemeManager.Shade(PanelBase, 0.20f);
+
+    /// <summary>Subtle border/divider color.</summary>
+    public Color Border => ThemeManager.Shade(Shadow, -0.15f);
+
+    /// <summary>Dimmed foreground for secondary labels.</summary>
+    public Color SecondaryForeColor => ThemeManager.Blend(ForeColor, PanelBase, 0.45f);
 }

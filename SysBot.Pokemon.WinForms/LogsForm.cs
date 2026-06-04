@@ -20,6 +20,8 @@ namespace SysBot.Pokemon.WinForms
         private Button prevButton = null!;
         private Label resultLabel = null!;
         private Label placeholderLabel = null!;
+        private Panel _logsPanel = null!;
+        private Panel _topPanel = null!;
 
         private List<int> matchIndices = new();
         private int currentMatchIndex = -1;
@@ -73,17 +75,38 @@ namespace SysBot.Pokemon.WinForms
                 Font = placeholderFont
             };
 
-            var logsPanel = new Panel { Dock = DockStyle.Fill };
-            logsPanel.Controls.Add(placeholderLabel);
-            logsPanel.Controls.Add(LogsBox);
+            _logsPanel = new Panel { Dock = DockStyle.Fill };
+            _logsPanel.Controls.Add(placeholderLabel);
+            _logsPanel.Controls.Add(LogsBox);
 
-            var topPanel = CreateSearchPanel();
+            _topPanel = CreateSearchPanel();
 
             // Add the panels in correct order
-            Controls.Add(logsPanel);   // ✅ instead of LogsBox directly
-            Controls.Add(topPanel);
+            Controls.Add(_logsPanel);   // ✅ instead of LogsBox directly
+            Controls.Add(_topPanel);
 
             LogsBox.TextChanged += LogsBox_TextChanged;
+
+            ApplyTheme();
+        }
+
+        /// <summary>
+        /// Recolors this form and its controls to the currently selected theme.
+        /// The logs text keeps its terminal-cyan color (a functional readability choice),
+        /// while the surfaces follow the theme.
+        /// </summary>
+        public void ApplyTheme()
+        {
+            var colors = ThemeManager.CurrentColors;
+
+            BackColor = colors.PanelBase;
+            _logsPanel.BackColor = colors.DeepBackground;
+            LogsBox.BackColor = colors.DeepBackground;
+            placeholderLabel.ForeColor = colors.SecondaryForeColor;
+
+            _topPanel.BackColor = colors.ControlBackground;
+            searchBox.BackColor = colors.DeepBackground;
+            resultLabel.ForeColor = colors.ForeColor;
         }
 
         private void LogsBox_TextChanged(object? sender, EventArgs e)
@@ -290,7 +313,7 @@ namespace SysBot.Pokemon.WinForms
 
         private void ClearHighlights()
         {
-            var originalColor = Color.FromArgb(10, 10, 40);
+            var originalColor = ThemeManager.CurrentColors.DeepBackground;
 
             LogsBox.SelectAll();
             LogsBox.SelectionBackColor = originalColor;

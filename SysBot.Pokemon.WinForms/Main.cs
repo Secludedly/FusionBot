@@ -806,6 +806,19 @@ namespace SysBot.Pokemon.WinForms
             ThemeManager.ApplyTheme(this, Config.Theme);
         }
 
+        /// <summary>
+        /// Re-applies the current theme to the child forms (Bots/Hub/Logs) and their
+        /// nested controls. Called by <see cref="ThemeManager.ApplyTheme(Main, string)"/>
+        /// whenever the theme changes so the whole UI stays in sync.
+        /// </summary>
+        public void RefreshChildThemes()
+        {
+            _botsForm?.ApplyTheme();
+            _logsForm?.ApplyTheme();
+            if (_hubForm is { IsDisposed: false })
+                _hubForm.ApplyTheme();
+        }
+
 
         ///////////////////////////////////////////////////////////////////
         /////// BOT HANDLING FOR INITIATING A NEW BOT IN THE FORMS ////////

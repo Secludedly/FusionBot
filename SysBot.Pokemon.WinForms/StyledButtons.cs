@@ -227,7 +227,7 @@ public class FancyButton : Button
             Height - (2 * borderThickness)
         );
 
-        using var brush = new SolidBrush(Color.FromArgb(20, 19, 57));
+        using var brush = new SolidBrush(ThemeManager.CurrentColors.ControlBackground);
         g.FillRectangle(brush, fillRect);
 
         // 3) Draw the button image if set (for icon buttons)
