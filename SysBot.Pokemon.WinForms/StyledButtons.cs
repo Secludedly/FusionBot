@@ -124,7 +124,9 @@ public class FancyButton : Button
             }
             else
             {
-                ForeColor = Color.White;
+                // Command buttons (BotsForm) follow the active theme so light
+                // themes don't end up with invisible white text on a pale fill.
+                ForeColor = ThemeManager.CurrentColors.CommandButtonForeColor;
             }
         };
     }

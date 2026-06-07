@@ -122,23 +122,23 @@ public partial class BotController : UserControl
 
         BackColor = colors.ControlBackground;
         rtbBotMeta.BackColor = colors.ControlBackground;
-        rtbBotMeta.ForeColor = colors.ForeColor;
+        rtbBotMeta.ForeColor = colors.ControllerForeColor;
 
         if (_progressBarContainer != null)
             _progressBarContainer.BackColor = colors.ControlBackground;
 
         btnActions.BackColor = colors.PanelBase;
-        btnActions.ForeColor = colors.ForeColor;
+        btnActions.ForeColor = colors.ControllerForeColor;
         btnActions.FlatAppearance.BorderColor = colors.Border;
         btnActions.FlatAppearance.MouseOverBackColor = colors.Highlight;
         btnActions.FlatAppearance.MouseDownBackColor = colors.Border;
 
         // Text labels follow the theme foreground (lblStatus stays state-colored).
-        lblConnectionName.ForeColor = colors.ForeColor;
+        lblConnectionName.ForeColor = colors.ControllerForeColor;
         if (lblConnectionInfo != null)
-            lblConnectionInfo.ForeColor = colors.ForeColor;
+            lblConnectionInfo.ForeColor = colors.ControllerForeColor;
         if (lblRoutine != null)
-            lblRoutine.ForeColor = colors.ForeColor;
+            lblRoutine.ForeColor = colors.ControllerForeColor;
     }
 
     private void _progressFill_Paint(object? sender, PaintEventArgs e)
@@ -505,7 +505,7 @@ public partial class BotController : UserControl
         {
             rtbBotMeta.SelectionFont = new Font(FontFamily.GenericSansSerif, 9F, FontStyle.Bold);
         }
-        rtbBotMeta.SelectionColor = ThemeManager.CurrentColors.ForeColor;
+        rtbBotMeta.SelectionColor = ThemeManager.CurrentColors.ControllerForeColor;
         rtbBotMeta.AppendText(topLine);
     }
 

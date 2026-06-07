@@ -282,6 +282,11 @@ namespace SysBot.Pokemon.WinForms
 
             _updateVersionLabel.ForeColor = colors.ForeColor;
 
+            // Command buttons (Start/Stop/Reboot/Update/Reload + the "+" add button)
+            // draw their own text, so recolor them explicitly per theme.
+            foreach (var fb in new[] { _B_Start, _B_Stop, _B_RebootStop, _updater, _B_Reload, _B_New })
+                fb.ForeColor = colors.CommandButtonForeColor;
+
             // Cascade to the bot controllers hosted in the list
             foreach (Control c in _FLP_Bots.Controls)
             {

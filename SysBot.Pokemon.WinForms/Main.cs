@@ -126,8 +126,8 @@ namespace SysBot.Pokemon.WinForms
         {
             ProgramMode.PLZA => TitleBarPalette_PLZA,
             ProgramMode.LGPE => TitleBarPalette_LGPE,
-            ProgramMode.SV   => TitleBarPalette_SV,
-            ProgramMode.LA   => TitleBarPalette_LA,
+            ProgramMode.SV => TitleBarPalette_SV,
+            ProgramMode.LA => TitleBarPalette_LA,
             ProgramMode.BDSP => TitleBarPalette_BDSP,
             ProgramMode.SWSH => TitleBarPalette_SWSH,
             _ => null, // null falls back to Sparkle's default white/yellow
@@ -1046,7 +1046,7 @@ namespace SysBot.Pokemon.WinForms
         ///////////////////////////////////////////////////
         //////////// PROGRESS BAR UPDATE LOGIC ////////////
         ///////////////////////////////////////////////////
-       
+
         private void HookBotProgress(PokeBotState cfg, PokeRoutineExecutorBase bot)
         {
             BotController? botControl = _botsForm.BotPanel.Controls
@@ -1677,6 +1677,16 @@ namespace SysBot.Pokemon.WinForms
 
         // WINFORMS JUNK THAT'S NEEDED
         private void panel6_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void panel5_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void panel3_Paint(object sender, PaintEventArgs e)
         {
 
         }

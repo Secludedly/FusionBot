@@ -92,7 +92,8 @@ namespace SysBot.Pokemon.WinForms
 
         /// <summary>
         /// Recolors this form and its controls to the currently selected theme.
-        /// The logs text keeps its terminal-cyan color (a functional readability choice),
+        /// The logs text follows the theme's <see cref="ThemeColors.LogsTextColor"/>
+        /// (terminal-cyan by default, theme-matched on strongly-hued/light presets),
         /// while the surfaces follow the theme.
         /// </summary>
         public void ApplyTheme()
@@ -102,6 +103,7 @@ namespace SysBot.Pokemon.WinForms
             BackColor = colors.PanelBase;
             _logsPanel.BackColor = colors.DeepBackground;
             LogsBox.BackColor = colors.DeepBackground;
+            LogsBox.ForeColor = colors.LogsTextColor;
             placeholderLabel.ForeColor = colors.SecondaryForeColor;
 
             _topPanel.BackColor = colors.ControlBackground;

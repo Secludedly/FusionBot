@@ -15,15 +15,6 @@ public static class ThemeManager
 
         },
 
-        ["Diet Classic"] = new ThemeColors
-        {
-            PanelBase = Color.FromArgb(41, 40, 78),
-            Shadow = Color.FromArgb(30, 29, 67),
-            Hover = Color.FromArgb(41, 40, 78),
-            ForeColor = Color.White
-
-        },
-
         ["In the Shadows"] = new ThemeColors
         {
             PanelBase = Color.FromArgb(20, 19, 57),
@@ -78,29 +69,11 @@ public static class ThemeManager
 
         },
 
-        ["Indigo Shroud"] = new ThemeColors
-        {
-            PanelBase = Color.FromArgb(31, 30, 68),
-            Shadow = Color.FromArgb(42, 0, 128),
-            Hover = Color.FromArgb(31, 30, 68),
-            ForeColor = Color.White
-
-        },
-
         ["Night Wave"] = new ThemeColors
         {
             PanelBase = Color.FromArgb(28, 24, 70),
             Shadow = Color.FromArgb(15, 12, 55),
             Hover = Color.FromArgb(28, 24, 70),
-            ForeColor = Color.White
-
-        },
-
-        ["Violet Mist"] = new ThemeColors
-        {
-            PanelBase = Color.FromArgb(35, 28, 85),
-            Shadow = Color.FromArgb(20, 15, 60),
-            Hover = Color.FromArgb(35, 28, 85),
             ForeColor = Color.White
 
         },
@@ -179,7 +152,7 @@ public static class ThemeManager
         ["Silver & Cold"] = new ThemeColors
         {
             PanelBase = Color.FromArgb(64, 64, 64),
-            Shadow = Color.FromArgb(0, 153, 153),
+            Shadow = Color.FromArgb(150, 195, 235),
             Hover = Color.FromArgb(32, 32, 32),
             ForeColor = Color.White
 
@@ -190,7 +163,10 @@ public static class ThemeManager
             PanelBase = Color.FromArgb(120, 180, 220),
             Shadow = Color.FromArgb(180, 220, 255),
             Hover = Color.FromArgb(120, 180, 220),
-            ForeColor = Color.White
+            ForeColor = Color.White,
+            ControllerForeColor = Color.Black,
+            // Light icy log surface — keep the blue identity but darken for contrast.
+            LogsTextColor = Color.FromArgb(20, 60, 110)
         },
 
         ["Midnight Frost"] = new ThemeColors
@@ -198,14 +174,6 @@ public static class ThemeManager
             PanelBase = Color.FromArgb(20, 25, 55),
             Shadow = Color.FromArgb(10, 10, 30),
             Hover = Color.FromArgb(20, 25, 55),
-            ForeColor = Color.White
-        },
-
-        ["Winter Void"] = new ThemeColors
-        {
-            PanelBase = Color.FromArgb(12, 18, 45),
-            Shadow = Color.FromArgb(90, 110, 150),
-            Hover = Color.FromArgb(12, 18, 45),
             ForeColor = Color.White
         },
 
@@ -235,9 +203,9 @@ public static class ThemeManager
 
         ["Blue Eclipse"] = new ThemeColors
         {
-            PanelBase = Color.FromArgb(18, 22, 60),
-            Shadow = Color.FromArgb(0, 20, 70),
-            Hover = Color.FromArgb(18, 22, 60),
+            PanelBase = Color.FromArgb(10, 13, 36),
+            Shadow = Color.FromArgb(0, 8, 28),
+            Hover = Color.FromArgb(10, 13, 36),
             ForeColor = Color.White
         },
 
@@ -257,19 +225,66 @@ public static class ThemeManager
             ForeColor = Color.White
         },
 
-        ["WTF? :O"] = new ThemeColors
+        ["Crimson Veil"] = new ThemeColors
         {
-            PanelBase = Color.FromArgb(69, 99, 14),
-            Shadow = Color.FromArgb(150, 4, 100),
-            Hover = Color.FromArgb(0, 150, 120),
-            ForeColor = Color.White
+            PanelBase = Color.FromArgb(74, 12, 20),
+            Shadow = Color.FromArgb(58, 8, 16),
+            Hover = Color.FromArgb(74, 12, 20),
+            ForeColor = Color.White,
+            LogsTextColor = Color.FromArgb(255, 150, 140)
+        },
 
+        ["Matte Lime"] = new ThemeColors
+        {
+            PanelBase = Color.FromArgb(118, 142, 78),
+            Shadow = Color.FromArgb(82, 100, 52),
+            Hover = Color.FromArgb(118, 142, 78),
+            ForeColor = Color.White,
+            LogsTextColor = Color.FromArgb(205, 235, 150)
+        },
+
+        ["Baby Pink"] = new ThemeColors
+        {
+            PanelBase = Color.FromArgb(238, 197, 210),
+            Shadow = Color.FromArgb(248, 222, 232),
+            Hover = Color.FromArgb(238, 197, 210),
+            ForeColor = Color.Black,
+            MenuForeColor = Color.FromArgb(70, 70, 70),
+            CommandButtonForeColor = Color.FromArgb(70, 70, 70),
+            LogsTextColor = Color.FromArgb(120, 45, 75)
+        },
+
+        ["Arctic White"] = new ThemeColors
+        {
+            PanelBase = Color.FromArgb(236, 243, 250),
+            Shadow = Color.FromArgb(216, 230, 244),
+            Hover = Color.FromArgb(236, 243, 250),
+            ForeColor = Color.Black,
+            LogsTextColor = Color.FromArgb(25, 55, 100)
+        },
+
+        ["Emerald Noir"] = new ThemeColors
+        {
+            PanelBase = Color.FromArgb(12, 56, 42),
+            Shadow = Color.FromArgb(6, 32, 24),
+            Hover = Color.FromArgb(12, 56, 42),
+            ForeColor = Color.White,
+            LogsTextColor = Color.FromArgb(140, 230, 180)
+        },
+
+        ["Sunset Ember"] = new ThemeColors
+        {
+            PanelBase = Color.FromArgb(86, 38, 18),
+            Shadow = Color.FromArgb(52, 20, 9),
+            Hover = Color.FromArgb(86, 38, 18),
+            ForeColor = Color.White,
+            LogsTextColor = Color.FromArgb(255, 190, 120)
         },
     };
 
     public static string CurrentThemeName { get; private set; } = "Classic";
 
-    // 🆕 Easy access to current theme colors
+    // Easy access to current theme colors
     public static ThemeColors CurrentColors => ThemePresets[CurrentThemeName];
 
     public static void ApplyTheme(Main form, string themeName)
@@ -293,18 +308,21 @@ public static class ThemeManager
         form.panel2.BackColor = colors.Shadow;
         form.panel3.BackColor = colors.Shadow;
         form.panel4.BackColor = colors.Shadow;
-        form.panel5.BackColor = colors.Shadow;
-        form.panel6.BackColor = colors.Shadow;
 
         // BUTTONS — start with PanelBase color
         form.btnBots.BackColor = colors.PanelBase;
         form.btnHub.BackColor = colors.PanelBase;
         form.btnLogs.BackColor = colors.PanelBase;
 
-        form.btnBots.ForeColor = colors.ForeColor;
-        form.btnHub.ForeColor = colors.ForeColor;
-        form.btnLogs.ForeColor = colors.ForeColor;
+        form.btnBots.ForeColor = colors.MenuForeColor;
+        form.btnHub.ForeColor = colors.MenuForeColor;
+        form.btnLogs.ForeColor = colors.MenuForeColor;
         form.lblTitle.ForeColor = colors.ForeColor;
+
+        // TITLE BAR: child-form title + window icons follow the theme foreground
+        // so light themes (e.g. Arctic White) get dark chrome instead of white.
+        // The close button keeps its red accent (set in SetupTitleBarButtonHoverEffects).
+        form.lblTitleChildForm.ForeColor = colors.ForeColor;
 
         // Reapply hover animations using new theme colors
         form.SetupThemeAwareButtons();
@@ -356,6 +374,44 @@ public class ThemeColors
     public Color Shadow { get; set; }
     public Color Hover { get; set; }
     public Color ForeColor { get; set; }
+
+    // Text color used inside the bot controllers. Falls back to ForeColor when
+    // not set, so only themes that need a different controller text color (e.g.
+    // a light background that wants black text) have to override it.
+    private Color? _controllerForeColor;
+    public Color ControllerForeColor
+    {
+        get => _controllerForeColor ?? ForeColor;
+        set => _controllerForeColor = value;
+    }
+
+    // Text + icon color for the left-side nav buttons (Bots/Hub/Logs). Falls
+    // back to ForeColor when not set.
+    private Color? _menuForeColor;
+    public Color MenuForeColor
+    {
+        get => _menuForeColor ?? ForeColor;
+        set => _menuForeColor = value;
+    }
+
+    // Text color for the command buttons (Start/Stop/Reboot/Update/Reload, and
+    // the "+" add button). Falls back to ForeColor when not set.
+    private Color? _commandButtonForeColor;
+    public Color CommandButtonForeColor
+    {
+        get => _commandButtonForeColor ?? ForeColor;
+        set => _commandButtonForeColor = value;
+    }
+
+    // Text color for the logs view. Defaults to the classic terminal cyan, which
+    // suits the purple/blue/neutral-dark themes; strongly-hued or light themes
+    // override it with a color that fits and stays readable on their log surface.
+    private Color? _logsTextColor;
+    public Color LogsTextColor
+    {
+        get => _logsTextColor ?? Color.FromArgb(51, 255, 255);
+        set => _logsTextColor = value;
+    }
 
     // ── Derived semantic colors ───────────────────────────────────────────
     // Computed from the base palette so the child forms (Bots/Hub/Logs and the
