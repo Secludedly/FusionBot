@@ -212,8 +212,9 @@ public partial class TradeModule<T> : ModuleBase<SocketCommandContext> where T :
         content = ReusableActions.StripCodeBlock(content);
         var set = new ShowdownSet(content);
 
-        // You can still get template if you want other ALM things, but not for GenerateEgg
-         var template = AutoLegalityWrapper.GetTemplate(set);
+        // GetTemplate parses Ball:/.Scale= into the RegenTemplate's Regen (and consumes those
+        // lines from set.InvalidLines), so this same instance must be the one passed to GenerateEgg.
+        var template = AutoLegalityWrapper.GetTemplate(set);
 
         _ = Task.Run(async () =>
         {
@@ -221,11 +222,11 @@ public partial class TradeModule<T> : ModuleBase<SocketCommandContext> where T :
             {
                 var sav = AutoLegalityWrapper.GetTrainerInfo<T>();
 
-                // Wrap the ShowdownSet in a RegenTemplate for GenerateEgg
-                var regenTemplate = new RegenTemplate(set);
-
-                // Generate the egg using ALM's GenerateEgg
-                var pkm = sav.GenerateEgg(regenTemplate, out var result);
+                // Reuse the template built above. GetTemplate(set) already parsed the Ball:/.Scale=
+                // lines into its Regen AND removed them from set.InvalidLines, so building a second
+                // RegenTemplate(set) here would silently drop the user's ball and batch commands.
+                // Generate the egg (also applies the user's batch commands, e.g. .Scale=)
+                var pkm = AutoLegalityWrapper.GenerateEgg(sav, template, out var result);
 
                 if (result != LegalizationResult.Regenerated)
                 {

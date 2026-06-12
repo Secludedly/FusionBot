@@ -243,11 +243,11 @@ public static class Helpers<T> where T : PKM, new()
         // Generate egg or normal pokemon based on isEgg flag
         if (isEgg)
         {
-            // Create a proper RegenTemplate from the ShowdownSet
-            var regenTemplate = new RegenTemplate(set);
-
-            // Generate egg using ALM
-            pkm = sav.GenerateEgg(regenTemplate, out var eggResult);
+            // Reuse the template built above. GetTemplate(set) already parsed the Ball:/.Scale=
+            // lines into its Regen AND removed them from set.InvalidLines, so a fresh
+            // RegenTemplate(set) here would silently drop the user's ball and batch commands.
+            // Generate egg (also applies the user's batch commands, e.g. .Scale=)
+            pkm = AutoLegalityWrapper.GenerateEgg(sav, template, out var eggResult);
             result = eggResult.ToString();
         }
         else

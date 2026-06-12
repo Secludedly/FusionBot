@@ -356,8 +356,8 @@ namespace SysBot.Pokemon.Discord
                     var set = CreateEggShowdownSet(species, context);
                     var template = AutoLegalityWrapper.GetTemplate(set);
 
-                    // Use ALM's GenerateEgg method to properly generate eggs
-                    var pk = sav.GenerateEgg(template, out var result);
+                    // Generate egg (also applies any batch commands, e.g. .Scale=)
+                    var pk = AutoLegalityWrapper.GenerateEgg(sav, template, out var result);
 
                     if (pk == null || result != LegalizationResult.Regenerated)
                         continue;

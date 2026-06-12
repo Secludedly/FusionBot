@@ -41,8 +41,8 @@ public static class AutoLegalityExtensionsDiscord
                 // Wrap the ShowdownSet directly in a RegenTemplate
                 var regenTemplate = new RegenTemplate(set);
 
-                // Generate egg using ALM
-                pkm = sav.GenerateEgg(regenTemplate, out var eggResult);
+                // Generate egg (also applies the user's batch commands, e.g. .Scale=)
+                pkm = AutoLegalityWrapper.GenerateEgg(sav, regenTemplate, out var eggResult);
                 result = eggResult.ToString();
             }
             else

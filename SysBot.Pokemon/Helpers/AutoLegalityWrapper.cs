@@ -447,4 +447,68 @@ public static class AutoLegalityWrapper
     public static string GetLegalizationHint(IBattleTemplate set, ITrainerInfo sav, PKM pk) => set.SetAnalysis(sav, pk);
     public static PKM LegalizePokemon(this PKM pk) => pk.Legalize();
     public static RegenTemplate GetTemplate(ShowdownSet set) => new RegenTemplate(set);
+
+    /// <summary>
+    /// Generates an egg from <paramref name="template"/> via Auto Legality Mod, then applies the
+    /// user's batch commands (e.g. <c>.Scale=</c>, marks, friendship) to it.
+    /// </summary>
+    /// <remarks>
+    /// ALM's egg generator applies the requested Ball but never the RegenTemplate's batch
+    /// instructions — only the normal (non-egg) GetLegal path runs the batch pipeline. On top of
+    /// that, PKHeX's batch editor skips any entity whose checksum is invalid
+    /// (<c>BatchEditingBase.ShouldModify</c>), which is exactly the state the freshly generated egg
+    /// is left in, so even a manual batch pass is silently dropped. We refresh the checksum and run
+    /// the same batch pipeline the non-egg path uses, reverting if a command makes the egg illegal.
+    /// Callers should use this instead of ALM's <c>ITrainerInfo.GenerateEgg</c> so eggs honor custom
+    /// scale/size and other batch edits the way regular trades do.
+    /// </remarks>
+    public static PKM GenerateEgg(ITrainerInfo sav, RegenTemplate template, out LegalizationResult result)
+    {
+        var pkm = sav.GenerateEgg(template, out result);
+        if (result != LegalizationResult.Regenerated || pkm is null)
+            return pkm;
+
+        var regen = template.Regen;
+        var requestedBall = regen.HasExtraSettings ? regen.Extra.Ball : Ball.None;
+
+        // The egg leaves ALM with an invalid checksum; refresh so legality checks and PKHeX's
+        // batch editor (which skips invalid-checksum entities) operate on a valid entity.
+        pkm.RefreshChecksum();
+
+        // Re-assert the user's requested Ball. ALM's GenerateEgg runs SetSuggestedBall, which —
+        // when ForceSpecifiedBall is off and SetMatchingBalls is on — silently replaces the
+        // requested ball with a color-matched one if its egg ball verifier rejects it. Re-apply
+        // the request and keep it when the egg stays legal (or when the host has ForceSpecifiedBall
+        // on), so a user-specified ball wins over color-matching exactly like regular trades.
+        if (requestedBall != Ball.None && (Ball)pkm.Ball != requestedBall)
+        {
+            var prevBall = pkm.Ball;
+            pkm.Ball = (byte)requestedBall;
+            pkm.RefreshChecksum();
+            bool ballOk = APILegality.ForceSpecifiedBall || new LegalityAnalysis(pkm).Valid;
+            if (!ballOk)
+            {
+                pkm.Ball = prevBall;
+                pkm.RefreshChecksum();
+            }
+        }
+
+        // Apply batch commands (.Scale=, marks, friendship, etc). ALM's egg generator never runs
+        // the batch pipeline — only the non-egg GetLegal path does — so without this eggs ignore
+        // every batch edit. Mirror that path; revert if a command makes the egg illegal.
+        if (APILegality.AllowBatchCommands && regen.HasBatchSettings)
+        {
+            var beforeBatch = pkm.Clone();
+            var batch = regen.Batch;
+            EntityBatchEditor.ScreenStrings(batch.Filters);
+            EntityBatchEditor.ScreenStrings(batch.Instructions);
+            EntityBatchEditor.Instance.TryModifyIsSuccess(pkm, batch.Filters, batch.Instructions);
+            pkm.ApplyPostBatchFixes();
+            pkm.RefreshChecksum();
+            if (!new LegalityAnalysis(pkm).Valid)
+                pkm = beforeBatch; // revert just the batch; keep the ball/egg from above
+        }
+
+        return pkm;
+    }
 }
