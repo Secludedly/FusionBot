@@ -1,6 +1,8 @@
 using PKHeX.Core;
+using SysBot.Base;
 using SysBot.Pokemon.Discord;
 using SysBot.Pokemon.Twitch;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -31,8 +33,32 @@ public class PokeBotRunnerImpl<T> : PokeBotRunner<T> where T : PKM, new()
         if (string.IsNullOrWhiteSpace(token))
             return;
 
-        var bot = new SysCord<T>(this, _config);
-        Task.Run(() => bot.MainAsync(token, CancellationToken.None), CancellationToken.None);
+        // Supervise the Discord client so a terminal failure rebuilds it instead of leaving
+        // the bot permanently offline until the process restarts. See WinForms PokeBotRunnerImpl.
+        _ = Task.Run(() => RunDiscordBotSupervisedAsync(token));
+    }
+
+    private async Task RunDiscordBotSupervisedAsync(string apiToken)
+    {
+        int consecutiveFailures = 0;
+        while (true)
+        {
+            try
+            {
+                var bot = new SysCord<T>(this, _config);
+                await bot.MainAsync(apiToken, CancellationToken.None).ConfigureAwait(false);
+                consecutiveFailures = 0;
+            }
+            catch (Exception ex)
+            {
+                consecutiveFailures++;
+                LogUtil.LogError($"Discord client terminated unexpectedly: {ex.Message}", "SysCord");
+            }
+
+            int delaySeconds = System.Math.Min(60, 5 * (int)System.Math.Pow(2, System.Math.Min(consecutiveFailures, 4)));
+            LogUtil.LogText($"Recreating Discord client in {delaySeconds}s...");
+            await Task.Delay(TimeSpan.FromSeconds(delaySeconds)).ConfigureAwait(false);
+        }
     }
 
     private void AddTwitchBot(TwitchSettings config)

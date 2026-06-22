@@ -60,8 +60,6 @@ public sealed partial class SysCord<T> : IDisposable where T : PKM, new()
     ];
 
     private readonly DiscordManager Manager;
-    private readonly SemaphoreSlim _reconnectSemaphore = new(1, 1);
-    private CancellationTokenSource? _reconnectCts;
 
     public SysCord(PokeBotRunner<T> runner, ProgramConfig config)
     {
@@ -185,8 +183,12 @@ public sealed partial class SysCord<T> : IDisposable where T : PKM, new()
 
     private Task Client_Disconnected(Exception exception)
     {
-        LogUtil.LogText($"Discord connection lost. Reason: {exception?.Message ?? "Unknown"}");
-        Task.Run(() => ReconnectAsync());
+        // Log only. DiscordSocketClient reconnects automatically for transient drops;
+        // manually calling StartAsync/StopAsync here fights that built-in logic and can
+        // wedge the client into a "connected-but-deaf" or disposed state. Persistent
+        // failures are detected by MonitorStatusAsync (which returns from MainAsync) and
+        // handled by the supervisor loop in PokeBotRunnerImpl, which builds a fresh client.
+        LogUtil.LogText($"Discord connection lost. Reason: {exception?.Message ?? "Unknown"}. Awaiting automatic reconnect.");
         return Task.CompletedTask;
     }
 
@@ -194,101 +196,6 @@ public sealed partial class SysCord<T> : IDisposable where T : PKM, new()
 
     // Track loading of Echo/Logging channels, so they aren't loaded multiple times.
     private bool MessageChannelsLoaded { get; set; }
-
-    private async Task ReconnectAsync()
-    {
-        // Prevent multiple concurrent reconnection attempts
-        if (!await _reconnectSemaphore.WaitAsync(0).ConfigureAwait(false))
-        {
-            LogUtil.LogText("Client is already attempting to reconnect.");
-            return;
-        }
-
-        try
-        {
-            // Cancel any previous reconnection attempt
-            _reconnectCts?.Cancel();
-            _reconnectCts?.Dispose();
-            _reconnectCts = new CancellationTokenSource();
-            var cancellationToken = _reconnectCts.Token;
-
-            const int maxRetries = 5;
-            const int delayBetweenRetries = 5000; // 5 seconds
-            const int initialDelay = 10000; // 10 seconds
-
-            // Initial delay to allow Discord's automatic reconnection
-            await Task.Delay(initialDelay, cancellationToken).ConfigureAwait(false);
-
-            for (int i = 0; i < maxRetries; i++)
-            {
-                if (cancellationToken.IsCancellationRequested)
-                {
-                    LogUtil.LogText("Reconnection attempt cancelled.");
-                    return;
-                }
-
-                try
-                {
-                    if (_client.ConnectionState == ConnectionState.Connected)
-                    {
-                        LogUtil.LogText("Client reconnected automatically.");
-                        return; // Already reconnected
-                    }
-
-                    // Check if the client is in the process of reconnecting
-                    if (_client.ConnectionState == ConnectionState.Connecting)
-                    {
-                        LogUtil.LogText("Waiting for automatic reconnection...");
-                        await Task.Delay(delayBetweenRetries, cancellationToken).ConfigureAwait(false);
-                        continue;
-                    }
-
-                    await _client.StartAsync().ConfigureAwait(false);
-                    LogUtil.LogText("Reconnected successfully.");
-                    return;
-                }
-                catch (Exception ex)
-                {
-                    LogUtil.LogText($"Reconnection attempt {i + 1} failed: {ex.Message}");
-                    if (i < maxRetries - 1)
-                        await Task.Delay(delayBetweenRetries, cancellationToken).ConfigureAwait(false);
-                }
-            }
-
-            // If all attempts to reconnect fail, stop and restart the bot
-            LogUtil.LogText("Failed to reconnect after maximum attempts. Restarting the bot...");
-
-            try
-            {
-                // Stop the bot cleanly
-                if (_client.ConnectionState != ConnectionState.Disconnected)
-                {
-                    await _client.StopAsync().ConfigureAwait(false);
-                    await Task.Delay(2000, cancellationToken).ConfigureAwait(false);
-                }
-
-                // Restart the bot
-                await _client.StartAsync().ConfigureAwait(false);
-                LogUtil.LogText("Bot restarted successfully.");
-            }
-            catch (Exception ex)
-            {
-                LogUtil.LogText($"Failed to restart bot: {ex.Message}");
-            }
-        }
-        catch (OperationCanceledException)
-        {
-            LogUtil.LogText("Reconnection cancelled.");
-        }
-        catch (Exception ex)
-        {
-            LogUtil.LogText($"Unexpected error in ReconnectAsync: {ex.Message}");
-        }
-        finally
-        {
-            _reconnectSemaphore.Release();
-        }
-    }
 
     public async Task AnnounceBotStatus(string status, EmbedColorOption color)
     {
@@ -552,9 +459,6 @@ public sealed partial class SysCord<T> : IDisposable where T : PKM, new()
         }
         finally
         {
-            // Cancel any ongoing reconnection attempts
-            try { _reconnectCts?.Cancel(); } catch (ObjectDisposedException) { }
-
             // Disconnect the bot
             try { await _client.StopAsync(); } catch { }
 
@@ -592,10 +496,6 @@ public sealed partial class SysCord<T> : IDisposable where T : PKM, new()
         // Dispose owned resources
         _dmRelayService?.Dispose();
         _dmRelayService = null;
-
-        try { _reconnectCts?.Cancel(); } catch (ObjectDisposedException) { }
-        _reconnectCts?.Dispose();
-        _reconnectSemaphore?.Dispose();
 
         _services?.Dispose();
         _client?.Dispose();
@@ -838,14 +738,34 @@ public sealed partial class SysCord<T> : IDisposable where T : PKM, new()
             await _client.SetGameAsync(game).ConfigureAwait(false);
     }
 
+    // If the gateway stays unhealthy longer than this, MonitorStatusAsync returns so the
+    // supervisor loop in PokeBotRunnerImpl can build a fresh client. Generous enough to let
+    // Discord.NET's own auto-reconnect recover from transient drops first.
+    private static readonly TimeSpan DisconnectRestartThreshold = TimeSpan.FromSeconds(120);
+
     private async Task MonitorStatusAsync(CancellationToken token)
     {
         const int Interval = 20; // seconds
 
         // Check datetime for update
         UserStatus state = UserStatus.Idle;
+        var lastConnected = DateTime.Now;
         while (!token.IsCancellationRequested)
         {
+            // --- Connection health watchdog ---
+            // While connected, keep resetting the timer. If the gateway stays unhealthy for
+            // too long, exit so the bot can be rebuilt from scratch rather than silently
+            // sitting on a dead/disposed client (which previously required a full app restart).
+            if (_client.ConnectionState == ConnectionState.Connected)
+            {
+                lastConnected = DateTime.Now;
+            }
+            else if (DateTime.Now - lastConnected > DisconnectRestartThreshold)
+            {
+                LogUtil.LogText($"Discord gateway has been unhealthy for over {DisconnectRestartThreshold.TotalSeconds:0}s. Ending session so a fresh client can be created.");
+                return;
+            }
+
             var time = DateTime.Now;
             var lastLogged = LogUtil.LastLogged;
             if (Hub.Config.Discord.BotColorStatusTradeOnly)
@@ -862,22 +782,41 @@ public sealed partial class SysCord<T> : IDisposable where T : PKM, new()
             if (gap <= TimeSpan.Zero)
             {
                 var idle = noQueue ? UserStatus.DoNotDisturb : UserStatus.Idle;
-                if (idle != state)
-                {
+                if (idle != state && await TrySetStatusAsync(idle).ConfigureAwait(false))
                     state = idle;
-                    await _client.SetStatusAsync(state).ConfigureAwait(false);
-                }
                 await Task.Delay(2_000, token).ConfigureAwait(false);
                 continue;
             }
 
             var active = noQueue ? UserStatus.DoNotDisturb : UserStatus.Online;
-            if (active != state)
-            {
+            if (active != state && await TrySetStatusAsync(active).ConfigureAwait(false))
                 state = active;
-                await _client.SetStatusAsync(state).ConfigureAwait(false);
-            }
             await Task.Delay(gap, token).ConfigureAwait(false);
+        }
+    }
+
+    /// <summary>
+    /// Updates the bot's presence without letting a transient gateway error tear down the
+    /// status loop. Previously an exception here propagated out of MainAsync and permanently
+    /// disposed the client. Returns true only if the status was actually applied.
+    /// </summary>
+    private async Task<bool> TrySetStatusAsync(UserStatus status)
+    {
+        if (_client.ConnectionState != ConnectionState.Connected)
+            return false;
+        try
+        {
+            await _client.SetStatusAsync(status).ConfigureAwait(false);
+            return true;
+        }
+        catch (ObjectDisposedException)
+        {
+            return false;
+        }
+        catch (Exception ex)
+        {
+            LogUtil.LogText($"MonitorStatusAsync: failed to set status: {ex.Message}");
+            return false;
         }
     }
 
