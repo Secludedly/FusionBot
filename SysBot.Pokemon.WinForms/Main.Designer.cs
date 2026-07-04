@@ -212,9 +212,9 @@ namespace SysBot.Pokemon.WinForms
             // lblTitleChildForm
             //
             lblTitleChildForm.AutoSize = true;
-            lblTitleChildForm.Font = new Font("Gnuolane Rg", 20F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblTitleChildForm.Font = new Font("Gnuolane Rg", 22F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblTitleChildForm.ForeColor = Color.White;
-            lblTitleChildForm.Location = new Point(15, 7);
+            lblTitleChildForm.Location = new Point(15, 9);
             lblTitleChildForm.Name = "lblTitleChildForm";
             lblTitleChildForm.Size = new Size(173, 53);
             lblTitleChildForm.TabIndex = 0;

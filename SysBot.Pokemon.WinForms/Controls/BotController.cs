@@ -276,15 +276,18 @@ public partial class BotController : UserControl
         RCMenu.Items.Clear();
 
         // Localized menu labels (kept in variables so the colorMap keys stay in sync with the displayed text)
-        string startText = "▶️ " + Strings.Get("BotMenu_Start", "Start");
-        string stopText = "⏹️ " + Strings.Get("BotMenu_Stop", "Stop");
-        string idleText = "⏸️ " + Strings.Get("BotMenu_Idle", "Idle");
-        string resumeText = "🔼 " + Strings.Get("BotMenu_Resume", "Resume");
-        string restartText = "🔁 " + Strings.Get("BotMenu_Restart", "Restart");
-        string rebootText = "🔄 " + Strings.Get("BotMenu_Reboot", "Reboot");
-        string screenOnText = "💡 " + Strings.Get("BotMenu_ScreenOn", "Screen On");
-        string screenOffText = "🌑 " + Strings.Get("BotMenu_ScreenOff", "Screen Off");
-        string removeText = "⛔ " + Strings.Get("BotMenu_Remove", "Remove");
+        // Icons use monochrome glyphs from the Geometric Shapes / Arrows / Misc Symbols blocks
+        // that the default Linux font (DejaVu Sans) covers. Avoid emoji + U+FE0F variation
+        // selectors, which force color-emoji presentation and render as tofu boxes on Linux.
+        string startText = "▶ " + Strings.Get("BotMenu_Start", "Start");
+        string stopText = "■ " + Strings.Get("BotMenu_Stop", "Stop");
+        string idleText = "‖   " + Strings.Get("BotMenu_Idle", "Idle");
+        string resumeText = "▲ " + Strings.Get("BotMenu_Resume", "Resume");
+        string restartText = "↻ " + Strings.Get("BotMenu_Restart", "Restart");
+        string rebootText = "↺ " + Strings.Get("BotMenu_Reboot", "Reboot");
+        string screenOnText = "●  " + Strings.Get("BotMenu_ScreenOn", "Screen On");
+        string screenOffText = "○ " + Strings.Get("BotMenu_ScreenOff", "Screen Off");
+        string removeText = "✕ " + Strings.Get("BotMenu_Remove", "Remove");
 
         // Your color map for the menu text
         var colorMap = new Dictionary<string, Color>
@@ -484,8 +487,12 @@ public partial class BotController : UserControl
         _status = status;
         UpdateStatusUI(status);
 
-        lblConnectionName.Text = bot.Connection?.Label ?? "Unknown Connection";
-        lblConnectionInfo.Text = $"↪ {bot.LastLogged}";
+        // Show the IP/USB id, plus the in-game trainer once the bot connects and identifies
+        // Falls back to the connection label for non-Poke executors.
+        lblConnectionName.Text = bot is PokeRoutineExecutorBase pkBot
+            ? pkBot.ConnectionDisplay
+            : bot.Connection?.Label ?? "Unknown Connection";
+        lblConnectionInfo.Text = $"→ {bot.LastLogged}";
         SetBotMetaDisplay(State.InitialRoutine.ToString(), bot.LastTime);
     }
     private void SetBotMetaDisplay(string routine, DateTime lastTime)

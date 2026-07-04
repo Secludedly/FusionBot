@@ -750,7 +750,7 @@ namespace SysBot.Pokemon.WinForms
 
         private void AddBotControl(PokeBotState cfg)
         {
-            var row = new BotController { Width = _botsForm.BotPanel.Width };
+            var row = new BotController { Width = _botsForm.BotPanel.ClientSize.Width }; // Fit flush inside the panel's client area (excludes the FixedSingle border + any vertical scrollbar) so a freshly-added bot never overflows into a horizontal scrollbar
             row.Initialize(RunningEnvironment, cfg);
             _botsForm.BotPanel.Controls.Add(row);
             _botsForm.BotPanel.SetFlowBreak(row, true);
@@ -1099,7 +1099,7 @@ namespace SysBot.Pokemon.WinForms
         {
             // Resize all BotController controls in the BotPanel to match the width of the panel
             foreach (var c in _botsForm.BotPanel.Controls.OfType<BotController>()) // Iterate through each BotController in the BotPanel
-                c.Width = _botsForm.BotPanel.Width;                                // Set the width of the BotController to the width of the BotPanel
+                c.Width = _botsForm.BotPanel.Width - 1;                            // Keep the fixed width (1px inside the panel edge) rather than stretching to the resized panel
         }
 
         // Protocol and IP selection handling

@@ -26,6 +26,17 @@ public abstract class PokeRoutineExecutorBase(IConsoleBotManaged<IConsoleConnect
     /// </summary>
     public string TrainerLabel { get; private set; } = string.Empty;
 
+    /// <summary>
+    /// Trainer identifier in "OT/TID" form (slash) for UI display, kept separate from
+    /// <see cref="TrainerLabel"/> which uses a dash for log-folder naming.
+    /// </summary>
+    private string TrainerDisplayLabel = string.Empty;
+
+    public string ConnectionDisplay =>
+        string.IsNullOrEmpty(TrainerDisplayLabel)
+            ? Connection.Name
+            : $"{Connection.Name} ({TrainerDisplayLabel})";
+
     public Task Click(SwitchButton b, int delayMin, int delayMax, CancellationToken token) =>
         Click(b, Util.Rand.Next(delayMin, delayMax), token);
 
@@ -51,6 +62,7 @@ public abstract class PokeRoutineExecutorBase(IConsoleBotManaged<IConsoleConnect
         Version = sav.Version;
         InGameName = sav.OT;
         TrainerLabel = $"{InGameName}-{sav.DisplayTID:000000}";
+        TrainerDisplayLabel = $"{InGameName}/{sav.DisplayTID:000000}";
 
         // Flush buffered logs from early identifier (IP/USB) to trainer folder
         var earlyIdentifier = Connection.Label;
