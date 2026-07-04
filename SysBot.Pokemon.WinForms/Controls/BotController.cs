@@ -487,8 +487,7 @@ public partial class BotController : UserControl
         _status = status;
         UpdateStatusUI(status);
 
-        // Show the IP/USB id, plus the in-game trainer once the bot connects and identifies
-        // Falls back to the connection label for non-Poke executors.
+        // Show the IP/USB ID, plus the in-game trainer once the bot connects and identifies
         lblConnectionName.Text = bot is PokeRoutineExecutorBase pkBot
             ? pkBot.ConnectionDisplay
             : bot.Connection?.Label ?? "Unknown Connection";
