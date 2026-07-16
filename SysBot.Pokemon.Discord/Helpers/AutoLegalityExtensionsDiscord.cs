@@ -69,9 +69,9 @@ public static class AutoLegalityExtensionsDiscord
             // the bot's default trainer info unless we explicitly override it here.
             if (trainerOverride is not null && trainerOverride.HasAny)
             {
-                LogUtil.LogInfo($"Convert TrainerOverride = Requested OT: {trainerOverride.OT} | Requested TID: {trainerOverride.TID} | Requested SID: {trainerOverride.SID} | Species: {pkm.Species} | Before OT: {pkm.OriginalTrainerName} | Before TID: {pkm.TrainerTID7} | Before SID: {pkm.TrainerSID7}", "TrainerOverride");
+                LogUtil.LogInfo($"Convert TrainerOverride = Requested OT: {trainerOverride.OT} | Requested TID: {trainerOverride.TID} | Requested SID: {trainerOverride.SID} | Requested OTGender: {(trainerOverride.OTGender is null ? "none" : trainerOverride.OTGender == 0 ? "Male" : "Female")} | Species: {pkm.Species} | Before OT: {pkm.OriginalTrainerName} | Before TID: {pkm.TrainerTID7} | Before SID: {pkm.TrainerSID7} | Before OTGender: {(pkm.OriginalTrainerGender == 0 ? "Male" : "Female")}", "TrainerOverride");
                 ApplyTrainerOverride(pkm, trainerOverride);
-                LogUtil.LogInfo($"Convert TrainerOverride = Final OT: {pkm.OriginalTrainerName} | Final TID: {pkm.TrainerTID7} | Final SID: {pkm.TrainerSID7} | Legal: {new LegalityAnalysis(pkm).Valid}", "TrainerOverride");
+                LogUtil.LogInfo($"Convert TrainerOverride = Final OT: {pkm.OriginalTrainerName} | Final TID: {pkm.TrainerTID7} | Final SID: {pkm.TrainerSID7} | Final OTGender: {(pkm.OriginalTrainerGender == 0 ? "Male" : "Female")} | Legal: {new LegalityAnalysis(pkm).Valid}", "TrainerOverride");
             }
             else
             {
@@ -181,11 +181,18 @@ public static class AutoLegalityExtensionsDiscord
         string? ot = null;
         uint? tid = null;
         uint? sid = null;
+        byte? otGender = null;
         var kept = new List<string>();
 
         foreach (var raw in content.Split('\n'))
         {
             var trimmed = raw.TrimStart();
+            // Check OTGender before OT so the shorter "OT:" prefix doesn't swallow it.
+            if (TryConsumePrefix(trimmed, "OTGender:", out var genderVal) && TryParseTrainerGender(genderVal, out var genderParsed))
+            {
+                otGender = genderParsed;
+                continue;
+            }
             if (TryConsumePrefix(trimmed, "OT:", out var otVal))
             {
                 ot = otVal;
@@ -204,11 +211,29 @@ public static class AutoLegalityExtensionsDiscord
             kept.Add(raw);
         }
 
-        if (ot is null && tid is null && sid is null)
+        if (ot is null && tid is null && sid is null && otGender is null)
             return null;
 
         content = string.Join('\n', kept);
-        return new TrainerOverride(ot, tid, sid);
+        return new TrainerOverride(ot, tid, sid, otGender);
+    }
+
+    /// Parses an OTGender value into PKHeX's byte convention (0 = Male, 1 = Female).
+    /// Accepts "Male"/"M"/"0" and "Female"/"F"/"1", case-insensitive.
+    private static bool TryParseTrainerGender(string value, out byte gender)
+    {
+        switch (value.Trim().ToLowerInvariant())
+        {
+            case "male" or "m" or "0":
+                gender = 0;
+                return true;
+            case "female" or "f" or "1":
+                gender = 1;
+                return true;
+            default:
+                gender = 0;
+                return false;
+        }
     }
 
     private static bool TryConsumePrefix(string line, string prefix, out string value)
@@ -246,6 +271,8 @@ public static class AutoLegalityExtensionsDiscord
             pkm.TrainerTID7 = o.TID.Value;
         if (o.SID is not null)
             pkm.TrainerSID7 = o.SID.Value;
+        if (o.OTGender is not null)
+            pkm.OriginalTrainerGender = o.OTGender.Value;
 
         if (wasShiny && (o.TID is not null || o.SID is not null))
             pkm.PID = (uint)((pkm.TID16 ^ pkm.SID16 ^ (pkm.PID & 0xFFFF) ^ originalShinyXor) << 16) | (pkm.PID & 0xFFFF);
@@ -261,14 +288,15 @@ public static class AutoLegalityExtensionsDiscord
             backup.OriginalTrainerTrash.CopyTo(pkm.OriginalTrainerTrash);
             pkm.TrainerTID7 = backup.TrainerTID7;
             pkm.TrainerSID7 = backup.TrainerSID7;
+            pkm.OriginalTrainerGender = backup.OriginalTrainerGender;
             pkm.PID = backup.PID;
             pkm.RefreshChecksum();
         }
     }
 
-    public sealed record TrainerOverride(string? OT, uint? TID, uint? SID)
+    public sealed record TrainerOverride(string? OT, uint? TID, uint? SID, byte? OTGender)
     {
-        public bool HasAny => OT is not null || TID is not null || SID is not null;
+        public bool HasAny => OT is not null || TID is not null || SID is not null || OTGender is not null;
     }
 
     public static async Task ReplyWithLegalizedSetAsync(this ISocketMessageChannel channel, IAttachment att)
