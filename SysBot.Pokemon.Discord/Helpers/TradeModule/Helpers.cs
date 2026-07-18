@@ -921,9 +921,19 @@ public static class Helpers<T> where T : PKM, new()
         // illegal trade — for fixed-OT encounters the bot defaults survive.
         if (userOT is not null || userTID is not null || userSID is not null)
         {
-            LogUtil.LogInfo($"Trade TrainerOverride = Requested OT: {userOT} | Requested TID: {userTID} | Requested SID: {userSID} | Species: {pk.Species} | Before OT: {pk.OriginalTrainerName} | Before TID: {pk.TrainerTID7} | Before SID: {pk.TrainerSID7}", "TrainerOverride");
-            ApplyUserTrainerOverride(pk, userOT, userTID, userSID);
-            LogUtil.LogInfo($"Trade TrainerOverride = Final OT: {pk.OriginalTrainerName} | Final TID: {pk.TrainerTID7} | Final SID: {pk.TrainerSID7} | Legal: {new LegalityAnalysis(pk).Valid}", "TrainerOverride");
+            // Respect the AllowTrainerDataOverride config flag. When disabled, the
+            // OT/TID/SID lines were already stripped from the set above, so we simply
+            // skip re-applying them and let the bot's generated trainer info stand.
+            if (Info.Hub.Config.Legality.AllowTrainerDataOverride)
+            {
+                LogUtil.LogInfo($"Trade TrainerOverride = Requested OT: {userOT} | Requested TID: {userTID} | Requested SID: {userSID} | Species: {pk.Species} | Before OT: {pk.OriginalTrainerName} | Before TID: {pk.TrainerTID7} | Before SID: {pk.TrainerSID7}", "TrainerOverride");
+                ApplyUserTrainerOverride(pk, userOT, userTID, userSID);
+                LogUtil.LogInfo($"Trade TrainerOverride = Final OT: {pk.OriginalTrainerName} | Final TID: {pk.TrainerTID7} | Final SID: {pk.TrainerSID7} | Legal: {new LegalityAnalysis(pk).Valid}", "TrainerOverride");
+            }
+            else
+            {
+                LogUtil.LogInfo($"Trade TrainerOverride = SKIPPED — AllowTrainerDataOverride is disabled. Ignoring requested OT: {userOT} | TID: {userTID} | SID: {userSID} | Species: {pk.Species}", "TrainerOverride");
+            }
         }
 
         // Check for spam names

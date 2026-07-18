@@ -69,9 +69,19 @@ public static class AutoLegalityExtensionsDiscord
             // the bot's default trainer info unless we explicitly override it here.
             if (trainerOverride is not null && trainerOverride.HasAny)
             {
-                LogUtil.LogInfo($"Convert TrainerOverride = Requested OT: {trainerOverride.OT} | Requested TID: {trainerOverride.TID} | Requested SID: {trainerOverride.SID} | Requested OTGender: {(trainerOverride.OTGender is null ? "none" : trainerOverride.OTGender == 0 ? "Male" : "Female")} | Species: {pkm.Species} | Before OT: {pkm.OriginalTrainerName} | Before TID: {pkm.TrainerTID7} | Before SID: {pkm.TrainerSID7} | Before OTGender: {(pkm.OriginalTrainerGender == 0 ? "Male" : "Female")}", "TrainerOverride");
-                ApplyTrainerOverride(pkm, trainerOverride);
-                LogUtil.LogInfo($"Convert TrainerOverride = Final OT: {pkm.OriginalTrainerName} | Final TID: {pkm.TrainerTID7} | Final SID: {pkm.TrainerSID7} | Final OTGender: {(pkm.OriginalTrainerGender == 0 ? "Male" : "Female")} | Legal: {new LegalityAnalysis(pkm).Valid}", "TrainerOverride");
+                // Respect the AllowTrainerDataOverride config flag. When disabled we do
+                // not apply the user's OT/TID/SID/OTGender and let ALM's generated
+                // trainer info stand.
+                if (SysCordSettings.HubConfig.Legality.AllowTrainerDataOverride)
+                {
+                    LogUtil.LogInfo($"Convert TrainerOverride = Requested OT: {trainerOverride.OT} | Requested TID: {trainerOverride.TID} | Requested SID: {trainerOverride.SID} | Requested OTGender: {(trainerOverride.OTGender is null ? "none" : trainerOverride.OTGender == 0 ? "Male" : "Female")} | Species: {pkm.Species} | Before OT: {pkm.OriginalTrainerName} | Before TID: {pkm.TrainerTID7} | Before SID: {pkm.TrainerSID7} | Before OTGender: {(pkm.OriginalTrainerGender == 0 ? "Male" : "Female")}", "TrainerOverride");
+                    ApplyTrainerOverride(pkm, trainerOverride);
+                    LogUtil.LogInfo($"Convert TrainerOverride = Final OT: {pkm.OriginalTrainerName} | Final TID: {pkm.TrainerTID7} | Final SID: {pkm.TrainerSID7} | Final OTGender: {(pkm.OriginalTrainerGender == 0 ? "Male" : "Female")} | Legal: {new LegalityAnalysis(pkm).Valid}", "TrainerOverride");
+                }
+                else
+                {
+                    LogUtil.LogInfo($"Convert TrainerOverride = SKIPPED — AllowTrainerDataOverride is disabled. Ignoring requested OT: {trainerOverride.OT} | TID: {trainerOverride.TID} | SID: {trainerOverride.SID} | Species: {pkm.Species}", "TrainerOverride");
+                }
             }
             else
             {
@@ -91,7 +101,7 @@ public static class AutoLegalityExtensionsDiscord
                     pkm = fallback;
                     if (requestedLanguage != 0)
                         ApplyLanguageToSet(pkm, set, requestedLanguage);
-                    if (trainerOverride is not null && trainerOverride.HasAny)
+                    if (trainerOverride is not null && trainerOverride.HasAny && SysCordSettings.HubConfig.Legality.AllowTrainerDataOverride)
                         ApplyTrainerOverride(pkm, trainerOverride);
                     la = new LegalityAnalysis(pkm);
                 }
