@@ -302,8 +302,12 @@ public class PokeTradeBotBS : PokeRoutineExecutor8BS, ICountBot, ITradeBot, IDis
         }
         else
         {
+            // Revert: partner info made the Pokémon illegal. Write the original back to
+            // the box so the box always matches the returned value — otherwise the main
+            // confirm path (which does not re-write after ApplyAutoOT) would trade the
+            // illegal, partner-modified clone.
             Log("Pokemon not valid after using Trade Partner Info.");
-            await SetBoxPokemonAbsolute(BoxStartOffset, cln, token, sav).ConfigureAwait(false);
+            await SetBoxPokemonAbsolute(BoxStartOffset, toSend, token, sav).ConfigureAwait(false);
             return toSend;
         }
     }
