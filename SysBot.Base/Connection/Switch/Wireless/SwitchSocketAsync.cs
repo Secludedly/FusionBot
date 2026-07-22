@@ -29,11 +29,16 @@ public sealed class SwitchSocketAsync : SwitchSocket, ISwitchConnectionAsync
 
     public override void Connect()
     {
-        if (Connected)
+        if (IsConnectionAlive())
         {
             Log("Already connected prior, skipping initial connection.");
             return;
         }
+
+        // We may have a stale socket that still reports Connected==true but is actually dead
+        // (remote forcibly closed). A Socket instance cannot be reused once it has connected,
+        // so always start from a fresh socket before attempting the connection.
+        InitializeSocket();
 
         Log("Connecting to device...");
         IAsyncResult result = Connection.BeginConnect(Info.IP, Info.Port, null, null);
@@ -165,10 +170,23 @@ public sealed class SwitchSocketAsync : SwitchSocket, ISwitchConnectionAsync
 
     public override void Reset()
     {
-        if (Connected)
-            Disconnect();
+        if (IsConnectionAlive())
+        {
+            try
+            {
+                Disconnect();
+            }
+            catch
+            {
+                // The peer already dropped us, so a graceful disconnect can fail.
+                // Discard the socket and let Connect() rebuild it from scratch.
+                InitializeSocket();
+            }
+        }
         else
+        {
             InitializeSocket();
+        }
         Connect();
     }
 
