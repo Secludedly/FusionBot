@@ -11,7 +11,7 @@ namespace SysBot.Pokemon.Discord.Commands.Bots.SlashCommands;
 /// </summary>
 public class CreatePokemonPLAModule<T> : InteractionModuleBase<SocketInteractionContext> where T : PKM, new()
 {
-    [SlashCommand("create-pla", "Create a Legends: Arceus Pokemon with Alpha support")]
+    [SlashCommand("create", "Create a Legends: Arceus Pokemon with Alpha support")]
     public async Task CreatePokemonPLAAsync(
         [Summary("pokemon", "Pokemon species")]
         [Autocomplete(typeof(PokemonAutocompletePLAHandler))]

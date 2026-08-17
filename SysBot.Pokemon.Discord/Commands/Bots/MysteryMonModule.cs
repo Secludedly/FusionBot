@@ -180,7 +180,9 @@ namespace SysBot.Pokemon.Discord
         // --------------------------------------------------------
         // RANDOMIZATION + LEGALITY PIPELINE
         // --------------------------------------------------------
-        private static T? GenerateMysteryMon(System.Threading.CancellationToken token)
+        // Visibility widened from private so the slash command logic can reuse the generator rather than
+        // duplicating the randomization rules.
+        internal static T? GenerateMysteryMon(System.Threading.CancellationToken token)
         {
             var game = GetGameVersion();
             var speciesList = GetValidSpecies(game);

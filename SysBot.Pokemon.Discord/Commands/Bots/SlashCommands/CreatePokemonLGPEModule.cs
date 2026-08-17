@@ -11,7 +11,7 @@ namespace SysBot.Pokemon.Discord.Commands.Bots.SlashCommands;
 /// </summary>
 public class CreatePokemonLGPEModule<T> : InteractionModuleBase<SocketInteractionContext> where T : PKM, new()
 {
-    [SlashCommand("create-lgpe", "Create a Let's Go Pikachu/Eevee Pokemon")]
+    [SlashCommand("create", "Create a Let's Go Pikachu/Eevee Pokemon")]
     public async Task CreatePokemonLGPEAsync(
         [Summary("pokemon", "Pokemon species")]
         [Autocomplete(typeof(PokemonAutocompleteLGPEHandler))]

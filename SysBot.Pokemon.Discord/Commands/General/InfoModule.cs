@@ -13,7 +13,7 @@ namespace SysBot.Pokemon.Discord
 {
     public class InfoModule : ModuleBase<SocketCommandContext>
     {
-        private const string detail = "I am a free and open-source Discord bot powered by PKHeX & AutoLegalityMod, upgraded through time, in pieces, by a collaboration of multiple developers of all skill levels with bright ideas and a hobby.";
+        internal const string detail = "I am a free and open-source Discord bot powered by PKHeX & AutoLegalityMod, upgraded through time, in pieces, by a collaboration of multiple developers of all skill levels with bright ideas and a hobby.";
         private const string repo = "[Original Source](https://github.com/kwsch/SysBot.NET)";
 
         [Command("info")]
@@ -52,10 +52,10 @@ namespace SysBot.Pokemon.Discord
             await ReplyAsync("Here's some info about me!", embed: builder.Build()).ConfigureAwait(false);
         }
 
-        private static string GetUptime() => (DateTime.Now - Process.GetCurrentProcess().StartTime).ToString(@"dd\.hh\:mm\:ss");
-        private static string GetHeapSize() => Math.Round(GC.GetTotalMemory(true) / (1024.0 * 1024.0), 2).ToString(CultureInfo.CurrentCulture);
+        internal static string GetUptime() => (DateTime.Now - Process.GetCurrentProcess().StartTime).ToString(@"dd\.hh\:mm\:ss");
+        internal static string GetHeapSize() => Math.Round(GC.GetTotalMemory(true) / (1024.0 * 1024.0), 2).ToString(CultureInfo.CurrentCulture);
 
-        private static string GetVersionInfo(string assemblyName, bool inclVersion = true)
+        internal static string GetVersionInfo(string assemblyName, bool inclVersion = true)
         {
             const string _default = "Unknown";
             var assemblies = AppDomain.CurrentDomain.GetAssemblies();

@@ -7,6 +7,7 @@ using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
 using PKHeX.Core;
 using SysBot.Base;
+using SysBot.Pokemon.Discord.Commands.Bots.SlashCommands;
 using SysBot.Pokemon.Discord.Helpers;
 using System;
 using System.Collections.Generic;
@@ -58,6 +59,19 @@ public sealed partial class SysCord<T> : IDisposable where T : PKM, new()
         "Trade", "trade", "ts", "mm", "mysterymon", "Mysterymon", "MysteryMon", "homeready", "hrr", "hr", "MM", "HRR", "TV", "tv", "TT", "tt",
         "texttrade", "TextTrade", "Texttrade", "remotestart", "RemoteStart", "Remotestart", "startremote", "StartRemote", "Startremote"
     ];
+
+    // Interaction modules that are only valid for one game, mapped to the PKM type they can actually
+    // produce. Consumed by InitCommands to skip registering builders that cannot work with this
+    // process's T. Keyed on the open generic type so a rename is a compile error, not a silent miss.
+    private static readonly Dictionary<Type, Type> GameSpecificInteractionModules = new()
+    {
+        [typeof(CreatePokemonLGPEModule<>)] = typeof(PB7),
+        [typeof(CreatePokemonSWSHModule<>)] = typeof(PK8),
+        [typeof(CreatePokemonBDSPModule<>)] = typeof(PB8),
+        [typeof(CreatePokemonPLAModule<>)] = typeof(PA8),
+        [typeof(CreatePokemonSVModule<>)] = typeof(PK9),
+        [typeof(CreatePokemonPLZAModule<>)] = typeof(PA9),
+    };
 
     private readonly DiscordManager Manager;
 
@@ -385,6 +399,14 @@ public sealed partial class SysCord<T> : IDisposable where T : PKM, new()
         await _interactions.AddModulesAsync(assembly, _services).ConfigureAwait(false);
         foreach (var t in assembly.DefinedTypes.Where(z => z.IsSubclassOf(typeof(InteractionModuleBase<SocketInteractionContext>)) && z.IsGenericType))
         {
+            // A process only ever runs one game, so T is fixed at startup (see Main.cs mode switch:
+            // SWSH=PK8, BDSP=PB8, LA=PA8, SV=PK9, PLZA=PA9, LGPE=PB7). Game-specific builder modules
+            // are generic too, so without this guard ALL of them register against that single T --
+            // e.g. an SV bot exposed /create-swsh, which silently emitted a PK9 because its
+            // "pk is PK8" feature check could never match. Register only the one matching T.
+            if (GameSpecificInteractionModules.TryGetValue(t.AsType(), out var requiredPKM) && requiredPKM != typeof(T))
+                continue;
+
             var genModule = t.MakeGenericType(typeof(T));
             await _interactions.AddModuleAsync(genModule, _services).ConfigureAwait(false);
         }
@@ -400,9 +422,31 @@ public sealed partial class SysCord<T> : IDisposable where T : PKM, new()
     {
         try
         {
+            // Guild-scoped registration when a server ID is configured. Discord applies guild commands
+            // immediately, while global commands are cached and can take up to an hour to show up --
+            // which makes iterating on slash commands impractical. Empty setting = original behaviour.
+            var guildIdRaw = SysCordSettings.Settings.SlashCommandGuildId;
+            if (!string.IsNullOrWhiteSpace(guildIdRaw))
+            {
+                if (!ulong.TryParse(guildIdRaw.Trim(), out var guildId) || guildId == 0)
+                {
+                    await Log(new LogMessage(LogSeverity.Warning, "Interactions", $"SlashCommandGuildId '{guildIdRaw}' is not a valid server ID. Falling back to global registration.")).ConfigureAwait(false);
+                }
+                else
+                {
+                    // Any commands previously registered globally would otherwise sit alongside the guild
+                    // copies, showing the user duplicates (and stale names). Clear them so the guild set is
+                    // the only one in play. Re-registering globally is just a matter of clearing this setting.
+                    await _client.Rest.DeleteAllGlobalCommandsAsync().ConfigureAwait(false);
+                    await _interactions.RegisterCommandsToGuildAsync(guildId, deleteMissing: true).ConfigureAwait(false);
+                    await Log(new LogMessage(LogSeverity.Info, "Interactions", $"Slash commands registered to server {guildId} (instant). Global commands cleared to avoid duplicates.")).ConfigureAwait(false);
+                    return;
+                }
+            }
+
             // Register slash commands globally (available in all servers)
             await _interactions.RegisterCommandsGloballyAsync().ConfigureAwait(false);
-            await Log(new LogMessage(LogSeverity.Info, "Interactions", "Slash commands registered globally!")).ConfigureAwait(false);
+            await Log(new LogMessage(LogSeverity.Info, "Interactions", "Slash commands registered globally! Discord may take up to an hour to show changes.")).ConfigureAwait(false);
         }
         catch (Exception ex)
         {
@@ -626,6 +670,24 @@ public sealed partial class SysCord<T> : IDisposable where T : PKM, new()
             {
                 await SysCord<T>.RespondToThanksMessage(msg).ConfigureAwait(false);
                 return;
+            }
+
+            // ===== Message Content intent fallback (opt-in, default off) =====
+            // Discord is removing the Message Content privileged intent. Without it, msg.Content and
+            // msg.Attachments arrive EMPTY for guild messages -- except when the message @mentions the
+            // bot, which still delivers the full payload. Treating a leading bot-mention as a command
+            // prefix therefore keeps every existing prefix command reachable as "@BotName trade ...".
+            // This is purely additive: if the mention isn't present, or the command isn't recognized,
+            // we fall through to the original prefix handling below completely untouched.
+            if (SysCordSettings.Settings.AllowMentionPrefix)
+            {
+                int mentionPos = 0;
+                if (msg.HasMentionPrefix(_client.CurrentUser, ref mentionPos))
+                {
+                    var mentionContext = new SocketCommandContext(_client, msg);
+                    if (await TryHandleCommandAsync(msg, mentionContext, mentionPos).ConfigureAwait(false))
+                        return;
+                }
             }
 
             char[] allowedPrefixes = new[]

@@ -100,6 +100,20 @@ public class DiscordSettings
     [HubCategory(Startup), HubDescription("DiscordSettings_AllowAnyPrefix_Description"), HubDisplayName("DiscordSettings_AllowAnyPrefix_DisplayName")]
     public bool AllowAnyPrefix { get; set; } = false;
 
+    // Fallback for Discord's Message Content intent removal. When the intent is revoked, message
+    // Content/Attachments arrive empty EXCEPT for DMs, the bot's own messages, and messages that
+    // @mention the bot. Enabling this lets users invoke any existing prefix command as
+    // "@BotName trade ..." so the message-based command set keeps working without the intent.
+    [HubCategory(Startup), HubDescription("DiscordSettings_AllowMentionPrefix_Description"), HubDisplayName("DiscordSettings_AllowMentionPrefix_DisplayName")]
+    public bool AllowMentionPrefix { get; set; } = false;
+
+    // Optional server ID for slash command registration. Global commands are cached by Discord and can
+    // take up to an hour to appear or update; guild-scoped commands apply immediately. Set this to a
+    // server ID while iterating on slash commands, then clear it to go back to global registration.
+    // Leaving it empty preserves the original global-only behaviour.
+    [HubCategory(Startup), HubDescription("DiscordSettings_SlashCommandGuildId_Description"), HubDisplayName("DiscordSettings_SlashCommandGuildId_DisplayName")]
+    public string SlashCommandGuildId { get; set; } = string.Empty;
+
     [HubCategory(Operation), HubDescription("DiscordSettings_ConvertPKMReplyAnyChannel_Description"), HubDisplayName("DiscordSettings_ConvertPKMReplyAnyChannel_DisplayName")]
     public bool ConvertPKMReplyAnyChannel { get; set; } = false;
 

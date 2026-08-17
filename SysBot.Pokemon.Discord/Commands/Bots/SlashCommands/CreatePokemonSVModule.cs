@@ -11,7 +11,7 @@ namespace SysBot.Pokemon.Discord.Commands.Bots.SlashCommands;
 /// </summary>
 public class CreatePokemonSVModule<T> : InteractionModuleBase<SocketInteractionContext> where T : PKM, new()
 {
-    [SlashCommand("create-sv", "Create a Scarlet/Violet Pokemon with Tera Type")]
+    [SlashCommand("create", "Create a Scarlet/Violet Pokemon with Tera Type")]
     public async Task CreatePokemonSVAsync(
         [Summary("pokemon", "Pokemon species")]
         [Autocomplete(typeof(PokemonAutocompleteSVHandler))]

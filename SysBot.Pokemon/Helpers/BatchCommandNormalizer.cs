@@ -21,7 +21,7 @@ namespace SysBot.Pokemon.Discord.Helpers
 
         // Maps common aliases to their normalized command keys
         // New Showdown Set key → Original Batch Command key
-        private static readonly Dictionary<string, string> BatchCommandAliasMap = new(StringComparer.OrdinalIgnoreCase)
+        public static readonly Dictionary<string, string> BatchCommandAliasMap = new(StringComparer.OrdinalIgnoreCase)
         {
             { "Size", "Scale" },
             { "Weight", "WeightScalar" },
@@ -45,14 +45,14 @@ namespace SysBot.Pokemon.Discord.Helpers
             { "Stat Nature", "StatNature" }
         };
 
-        private static readonly HashSet<string> EqualCommandKeys = new(StringComparer.OrdinalIgnoreCase)
+        public static readonly HashSet<string> EqualCommandKeys = new(StringComparer.OrdinalIgnoreCase)
         {
             "Generation", "Gen", "WasEgg", "Hatched", "Version"
         };
 
         // Core mapping of functions for each key
         // Batch Command key → Handler function
-        private static readonly Dictionary<string, Func<string, string>> CommandProcessors =
+        public static readonly Dictionary<string, Func<string, string>> CommandProcessors =
             new(StringComparer.OrdinalIgnoreCase)
             {
                 { "Scale", ProcessScale },

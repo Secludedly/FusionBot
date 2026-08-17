@@ -180,7 +180,8 @@ namespace SysBot.Pokemon.Discord
             };
         }
 
-        private static IEnumerable<(int Index, string EventInfo)> GetFilteredEvents(MysteryGift[] eventData, string speciesName = "")
+        // Widened from private so the slash command can list the same filtered events.
+        internal static IEnumerable<(int Index, string EventInfo)> GetFilteredEvents(MysteryGift[] eventData, string speciesName = "")
         {
             return eventData
                 .Select((gift, index) =>

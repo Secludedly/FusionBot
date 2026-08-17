@@ -14,7 +14,7 @@ namespace FusionBot.Modules
         // ===========================
         // CONSTANTS
         // ===========================
-        private const int MAX_TRADES = 700;
+        internal const int MAX_TRADES = 700;
         private const int MAX_LEVEL = 100;
         private const int MAX_QUOTE_LENGTH = 50;
         private const int PROGRESS_BAR_SEGMENTS = 20;
@@ -180,13 +180,13 @@ namespace FusionBot.Modules
         // ===========================
         // HELPER METHODS - CALCULATIONS
         // ===========================
-        private static int CalculateLevel(int totalTrades)
+        internal static int CalculateLevel(int totalTrades)
         {
             int level = (int)Math.Round((double)totalTrades / MAX_TRADES * MAX_LEVEL);
             return Math.Clamp(level, 0, MAX_LEVEL);
         }
 
-        private static int CalculateTradesToNextLevel(int currentLevel, int totalTrades)
+        internal static int CalculateTradesToNextLevel(int currentLevel, int totalTrades)
         {
             if (currentLevel >= MAX_LEVEL)
                 return 0;
@@ -199,7 +199,7 @@ namespace FusionBot.Modules
         // ===========================
         // HELPER METHODS - MEDAL INFO
         // ===========================
-        private static (int Milestone, string Title, Color Color) GetMedalInfo(int totalTrades)
+        internal static (int Milestone, string Title, Color Color) GetMedalInfo(int totalTrades)
         {
             int milestone = MedalHelpers.GetCurrentMilestone(totalTrades);
 
@@ -216,7 +216,7 @@ namespace FusionBot.Modules
         // ===========================
         // HELPER METHODS - USER INFO
         // ===========================
-        private static SocketRole? GetTopRole(SocketGuildUser user)
+        internal static SocketRole? GetTopRole(SocketGuildUser user)
         {
             return user.Roles
                 .Where(r => !r.IsEveryone)
@@ -224,7 +224,7 @@ namespace FusionBot.Modules
                 .FirstOrDefault();
         }
 
-        private static string GenerateRandomQuote()
+        internal static string GenerateRandomQuote()
         {
             return DefaultQuotes[Random.Next(DefaultQuotes.Length)];
         }
@@ -232,7 +232,7 @@ namespace FusionBot.Modules
         // ===========================
         // HELPER METHODS - PROGRESS BAR
         // ===========================
-        private static string BuildProgressBar(double progressPct)
+        internal static string BuildProgressBar(double progressPct)
         {
             int filled = (int)Math.Round(progressPct * PROGRESS_BAR_SEGMENTS);
             filled = Math.Clamp(filled, 0, PROGRESS_BAR_SEGMENTS);
@@ -251,7 +251,7 @@ namespace FusionBot.Modules
         // ===========================
         // HELPER METHODS - EMBED BUILDER
         // ===========================
-        private static EmbedBuilder BuildProfileEmbed(
+        internal static EmbedBuilder BuildProfileEmbed(
             SocketGuildUser user,
             string trainerOT,
             int trainerTID,

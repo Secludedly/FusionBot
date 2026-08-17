@@ -51,7 +51,7 @@ public class CreatePokemonSWSHModule<T> : InteractionModuleBase<SocketInteractio
         Species.Urshifu,
     };
 
-    [SlashCommand("create-swsh", "Create a Sword/Shield Pokemon with Gigantamax support")]
+    [SlashCommand("create", "Create a Sword/Shield Pokemon with Gigantamax support")]
     public async Task CreatePokemonSWSHAsync(
         [Summary("pokemon", "Pokemon species")]
         [Autocomplete(typeof(PokemonAutocompleteSWSHHandler))]

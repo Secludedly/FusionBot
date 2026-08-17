@@ -11,7 +11,7 @@ namespace SysBot.Pokemon.Discord.Commands.Bots.SlashCommands;
 /// </summary>
 public class CreatePokemonBDSPModule<T> : InteractionModuleBase<SocketInteractionContext> where T : PKM, new()
 {
-    [SlashCommand("create-bdsp", "Create a Brilliant Diamond/Shining Pearl Pokemon")]
+    [SlashCommand("create", "Create a Brilliant Diamond/Shining Pearl Pokemon")]
     public async Task CreatePokemonBDSPAsync(
         [Summary("pokemon", "Pokemon species")]
         [Autocomplete(typeof(PokemonAutocompleteBDSPHandler))]

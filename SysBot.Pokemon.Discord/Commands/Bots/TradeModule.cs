@@ -735,7 +735,9 @@ public partial class TradeModule<T> : ModuleBase<SocketCommandContext> where T :
     }
 
     // Dictionaries for the TextTrade command's pending trades and queue status
-    private static readonly ConcurrentDictionary<ulong, List<string>> _pendingTextTrades = new();
+    // Widened from private so the slash TextTrade commands share the same pending-file state:
+    // a file uploaded with $tt can be viewed or traded with /textview and /texttrade, and vice versa.
+    internal static readonly ConcurrentDictionary<ulong, List<string>> _pendingTextTrades = new();
     private static readonly ConcurrentDictionary<ulong, bool> _usersInQueue = new();
     private static readonly ConcurrentDictionary<ulong, bool> _batchQueueMessageSent = new();
 
@@ -1487,7 +1489,10 @@ public partial class TradeModule<T> : ModuleBase<SocketCommandContext> where T :
     /// This allows Pokemon to be injected with the user's correct trainer data immediately.
     /// Respects the UseTradePartnerInfo setting - if disabled, Pokemon keep bot's configured defaults.
     /// </summary>
-    private static void TryApplyEarlyAutoOT(T pk, ulong userID, bool ignoreAutoOT = false, bool hasExplicitLanguage = false)
+    // Visibility widened from private so the slash-command trade path can reuse this instead of
+    // duplicating it. The shiny PID rebuild below is subtle enough that a second copy would drift.
+    // Body unchanged.
+    internal static void TryApplyEarlyAutoOT(T pk, ulong userID, bool ignoreAutoOT = false, bool hasExplicitLanguage = false)
     {
         // Check if AutoOT is enabled and StoreTradeCodes is enabled
         if (ignoreAutoOT ||
