@@ -109,6 +109,23 @@ public static class AutoLegalityWrapper
         if (Directory.Exists(externalSource))
             TrainerSettings.LoadTrainerDatabaseFromPath(externalSource);
 
+        // Point ALM's own fallback trainer at our configured OT/TID/SID.
+        // ALM resolves trainer data through TrainerSettings.DefaultFallback (OT "ALM",
+        // TID 54321, SID 12345) rather than the ITrainerInfo we pass to GetLegalFromSet,
+        // so without this every generated Pokemon comes back with ALM's IDs and has to be
+        // patched afterwards. That patch rewrites the PID to preserve shininess, which
+        // breaks any encounter whose PID is tied to the trainer IDs — most visibly SWSH
+        // overworld wild slots, where PKHeX validates the EC->PID correlation and a Star
+        // shiny (ShinyXor 1-15) then fails with "PID+ correlation does not match what was
+        // expected for the Encounter's type." Generating with the right IDs up front keeps
+        // the correlation intact and makes the fixup path in GetLegal a no-op.
+        var configuredOT = cfg.GenerateOT;
+        if (configuredOT.Length == 0)
+            configuredOT = "Blank"; // Will fail if actually left blank.
+        TrainerSettings.DefaultOT = configuredOT;
+        TrainerSettings.DefaultTID16 = cfg.GenerateTID16;
+        TrainerSettings.DefaultSID16 = cfg.GenerateSID16;
+
         // Seed the Trainer Database with enough fake save files so that we return a generation sensitive format when needed.  
         var fallback = GetDefaultTrainer(cfg);
         for (byte generation = 1; generation <= GameUtil.get_Generation(GameVersion.Gen9); generation++)
@@ -367,12 +384,17 @@ public static class AutoLegalityWrapper
             // NET10 Fix: Replace ALM defaults with configured defaults after generation
             if (pk != null && ConfiguredSettings != null)
             {
-                // Check if Pokemon has ALM defaults
+                // Safety net for ALM's fallback trainer. InitializeTrainerDatabase points
+                // TrainerSettings.DefaultOT/TID16/SID16 at the configured values, so this
+                // should not trigger; it only fires if ALM hands back its own OT anyway.
                 if (pk.OriginalTrainerName == "ALM")
                 {
                     var OT = ConfiguredSettings.GenerateOT;
                     if (OT.Length == 0)
                         OT = "Blank";
+
+                    var beforeOverride = pk.Clone();
+                    bool wasLegal = new LegalityAnalysis(pk).Valid;
 
                     // Capture shiny state before overwriting TID/SID. Reading pk.IsShiny
                     // afterwards reflects the new trainer IDs against the old PID and would
@@ -380,9 +402,13 @@ public static class AutoLegalityWrapper
                     bool wasShiny = pk.IsShiny;
                     uint originalShinyXor = pk.ShinyXor;
 
-                    // Replace with configured defaults
+                    // Replace with configured defaults. Assign TID16/SID16 directly — writing
+                    // the packed 32-bit ID into TrainerTID7 (the displayed 7-digit ID) makes
+                    // PKHeX recompute ID32 from it and yields neither the configured TID nor SID.
+                    pk.OriginalTrainerTrash.Clear();
                     pk.OriginalTrainerName = OT;
-                    pk.TrainerTID7 = (uint)((ConfiguredSettings.GenerateSID16 << 16) | ConfiguredSettings.GenerateTID16);
+                    pk.TID16 = ConfiguredSettings.GenerateTID16;
+                    pk.SID16 = ConfiguredSettings.GenerateSID16;
                     pk.Language = (int)ConfiguredSettings.GenerateLanguage;
 
                     // Rebuild PID against the new TID/SID so the original shiny type is preserved.
@@ -390,6 +416,13 @@ public static class AutoLegalityWrapper
                         pk.PID = (uint)((pk.TID16 ^ pk.SID16 ^ (pk.PID & 0xFFFF) ^ originalShinyXor) << 16) | (pk.PID & 0xFFFF);
 
                     pk.RefreshChecksum();
+
+                    // Rewriting the trainer IDs (and with them the PID) invalidates encounters
+                    // whose PID is derived from the trainer IDs — e.g. SWSH overworld wild slots,
+                    // where PKHeX checks the EC->PID correlation. Keep ALM's trainer rather than
+                    // ship an illegal Pokemon.
+                    if (wasLegal && !new LegalityAnalysis(pk).Valid)
+                        pk = beforeOverride;
                 }
 
                 // CRITICAL FIX: Force shiny if requested but not generated.
