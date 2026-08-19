@@ -1745,18 +1745,73 @@ public class PokeTradeBotSWSH(PokeTradeHub<PK8> hub, PokeBotState config) : Poke
         if (!toSend.IsNicknamed)
             cln.ClearNickname();
 
-        if (toSend.IsShiny)
-            cln.PID = (uint)((cln.TID16 ^ cln.SID16 ^ (cln.PID & 0xFFFF) ^ toSend.ShinyXor) << 16) | (cln.PID & 0xFFFF);
+        // AutoOT is expected to stick whenever the host has it enabled, so rather than give up the
+        // moment the first result is illegal, walk a ladder of progressively looser candidates. The
+        // first rung is exactly what this method has always produced, so trades that already worked
+        // are unaffected; the later rungs only run when the alternative is dropping the partner's
+        // info and shipping the mon with the host's own OT.
+        //
+        //  - Square shiny: SWSH overworld wild slots (EncounterSlot8) derive the EC and the PID from
+        //    a single encounter seed and PKHeX validates that correlation, accepting only the raw
+        //    seed PID or the PID the game's forced-shiny formula produces — which is always Square.
+        //    Rebuilding the PID to preserve a Star shiny (ShinyXor 1-15) against the partner's IDs
+        //    therefore fails with "PID+ correlation does not match what was expected for the
+        //    Encounter's type". Square keeps the species, spread and shininess. Only the shiny type
+        //    changes, and Star is simply not reachable for these encounters under arbitrary IDs.
+        //  - Partner language: JPN and KOR entities cap the OT name at 6 characters, so preserving a
+        //    user-requested Japanese language while writing a 7-12 character partner OT trips
+        //    "OT Name too long." Falling back to the partner's own language lifts the cap.
+        var languages = cln.Language == data[5]
+            ? [cln.Language]
+            : new[] { cln.Language, (int)data[5] };
 
-        if (!toSend.ChecksumValid)
-            cln.RefreshChecksum();
+        var shinyTypes = toSend.IsShiny && toSend.ShinyXor != 0
+            ? new uint[] { toSend.ShinyXor, 0 }
+            : [toSend.ShinyXor];
 
-        var tradeswsh = new LegalityAnalysis(cln);
-        if (tradeswsh.Valid)
+        uint pidLow = toSend.PID & 0xFFFF;
+        PK8? chosen = null;
+
+        foreach (var language in languages)
+        {
+            foreach (var shinyXor in shinyTypes)
+            {
+                var candidate = cln.Clone();
+                candidate.Language = language;
+
+                // A non-nicknamed entity stores its species name for its own language, so changing
+                // the language leaves the previous language's name behind and trips "Nickname does
+                // not match species name." Re-stamp it in the language actually being used.
+                if (!toSend.IsNicknamed)
+                    candidate.ClearNickname();
+
+                if (toSend.IsShiny)
+                    candidate.PID = (uint)((candidate.TID16 ^ candidate.SID16 ^ pidLow ^ shinyXor) << 16) | pidLow;
+
+                if (!toSend.ChecksumValid)
+                    candidate.RefreshChecksum();
+
+                if (!new LegalityAnalysis(candidate).Valid)
+                    continue;
+
+                if (language != cln.Language)
+                    Log($"Requested language kept the partner's OT illegal. Using the partner's language ({(LanguageID)language}) instead.");
+                if (toSend.IsShiny && shinyXor != toSend.ShinyXor)
+                    Log("Star shiny broke the encounter's PID correlation under the partner's trainer info. Using Square instead.");
+
+                chosen = candidate;
+                break;
+            }
+
+            if (chosen is not null)
+                break;
+        }
+
+        if (chosen is not null)
         {
             Log("Pokemon is valid with Trade Partner Info applied. Swapping details.");
-            await SetBoxPokemon(cln, 0, 0, token, sav).ConfigureAwait(false);
-            return cln;
+            await SetBoxPokemon(chosen, 0, 0, token, sav).ConfigureAwait(false);
+            return chosen;
         }
         else
         {
