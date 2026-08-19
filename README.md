@@ -345,23 +345,129 @@ An independently evolved fork that shares ideas, structure, and inspiration with
 
 ## 🧭 Slash Command Support
 
-FusionBot supports **modern Discord Slash Commands**.
+FusionBot supports **modern Discord Slash Commands** with guided interactions, autocomplete, file uploads, and support for all supported Pokémon games.
 
 ### 🎮 Available Slash Commands
 
-| Slash Command | Game |
-|--------------|------|
-| `/create-sv` | Scarlet / Violet |
-| `/create-swsh` | Sword / Shield |
-| `/create-bdsp` | Brilliant Diamond / Shining Pearl |
-| `/create-pla` | Legends: Arceus |
-| `/create-plza` | Legends: Z-A |
-| `/create-lgpe` | Let’s Go Pikachu / Eevee |
+| Slash Command | Description |
+|--------------|-------------|
+| `/trade` | Trade a Pokémon from a Showdown set or uploaded PKM file |
+| `/hidetrade` | Trade a Pokémon privately without displaying the request in the channel |
+| `/egg` | Trade a Pokémon egg |
+| `/itemtrade` | Trade a Pokémon holding a requested item |
+| `/clone` | Clone a Pokémon you show the bot |
+| `/dump` | Dump a Pokémon you show the bot |
+| `/fixot` | Fix OT and nickname information if an advert is detected |
+| `/create` | Guided Pokémon builder with dropdowns and game-specific options |
+| `/mysteryegg` | Generate and trade a random shiny 6IV egg |
+| `/mysterymon` | Generate and trade a completely random Pokémon |
+| `/pokepaste` | Build a team from a PokéPaste link and receive the generated files by DM |
+| `/dittotrade` | Trade a Ditto with customizable IVs, language, nature, and shininess |
 
-### 🔹 Notes
-- Slash commands provide **guided Pokémon creation** without needing manual Showdown formatting.
-- Fully compatible with **AutoOT** and **language handling**.
-- Ideal for newer users or servers that want a **clean, modern interaction flow**.
+### 📦 Batch Trading
+
+| Slash Command | Description |
+|--------------|-------------|
+| `/batch trade` | Trade multiple Pokémon from Showdown sets separated by `---` |
+| `/batch zip` | Trade multiple Pokémon from a `.zip`, `.rar`, or `.7z` archive |
+| `/batch mysteryegg` | Trade multiple randomly generated shiny 6IV eggs |
+| `/batch mysterymon` | Trade multiple randomly generated Pokémon |
+| `/batch item` | Trade multiple Pokémon holding the same requested item |
+
+### 📄 TXT / File Trading
+
+| Slash Command | Description |
+|--------------|-------------|
+| `/texttrade upload` | Upload a `.txt`, `.csv`, `.rtf`, `.docx`, or `.pdf` containing Showdown sets |
+| `/texttrade view` | Preview a Pokémon set from an uploaded file |
+| `/texttrade trade` | Trade one set or multiple selected sets from an uploaded file |
+| `/textview` | Preview a set from an uploaded file |
+
+### 📚 File Libraries
+
+| Slash Command | Description |
+|--------------|-------------|
+| `/events list` | Browse available event files |
+| `/events request` | Request an event file for trade |
+| `/battleready list` | Browse available Battle-Ready files |
+| `/battleready request` | Request a Battle-Ready file for trade |
+| `/homeready list` | Browse available HOME-Ready files |
+| `/homeready request` | Request a HOME-Ready file for trade |
+| `/wondercard list` | Browse the Mystery Gift database |
+| `/wondercard request` | Queue a Mystery Gift for trade |
+| `/wondercard download` | Download a Mystery Gift file |
+
+### ⚖️ Legality Tools
+
+| Slash Command | Description |
+|--------------|-------------|
+| `/convert` | Convert a Showdown set into a RegenTemplate |
+| `/legalize` | Attempt to legalize an uploaded PKM file |
+| `/validate` | Check an uploaded PKM file for legality |
+| `/verbose` | Perform a legality check with detailed output |
+
+### 📋 Queue & Account
+
+| Slash Command | Description |
+|--------------|-------------|
+| `/queue clear` | Remove yourself from the trade queue |
+| `/queue status` | Check your current queue position |
+| `/changetradecode` | Change your stored trade code |
+| `/deletetradecode` | Delete your stored trade code |
+| `/myinfo` | Display your FusionBot profile information |
+
+### 🛠️ General Commands
+
+| Slash Command | Description |
+|--------------|-------------|
+| `/help` | Display the complete list of available commands by category |
+| `/info` | Display information about the bot |
+| `/hello` | Say hello to the bot |
+| `/joke` | Get a random joke |
+
+### 🎮 Game-Specific Pokémon Builders
+
+The `/create` command automatically registers the correct Pokémon builder for the game the bot is running.
+
+| Bot Game | Slash Command |
+|----------|---------------|
+| Scarlet / Violet | `/create` |
+| Sword / Shield | `/create` |
+| Brilliant Diamond / Shining Pearl | `/create` |
+| Legends: Arceus | `/create` |
+| Legends: Z-A | `/create` |
+| Let's Go Pikachu / Eevee | `/create` |
+
+Only the appropriate game-specific builder is registered, preventing incompatible commands from appearing on the wrong bot.
+
+### 🔹 Slash Command Features
+
+- **Guided Pokémon creation** with dropdown menus and autocomplete.
+- **Game-aware registration** ensures only the correct `/create` builder appears for the bot's current game.
+- **Item autocomplete** automatically filters items based on the current game.
+- **Multi-line Showdown input** is available through pop-up boxes for `/trade`, `/hidetrade`, `/egg`, and `/batch trade`.
+- Showdown sets pasted into Discord's single-line fields are automatically reconstructed into their proper multi-line format.
+- Fully compatible with **AutoOT**, language handling, legality checks, and existing trade settings.
+- Slash commands respect **ban lists, blocked users, channel whitelists, queue roles, and queue-open settings** where applicable.
+- Most slash-command responses are private, keeping busy trade channels clean.
+- `/hidetrade` is completely private and visible only to the requesting user.
+- Trade codes are never publicly posted by `/changetradecode` or `/deletetradecode`.
+- `/help` automatically builds its command list from the currently registered commands, keeping the help menu synchronized with the bot.
+
+### 💬 Three Ways to Send Commands
+
+| Method | Example | Message Content Intent |
+|--------|---------|-------------------------|
+| Message Commands | `$trade` | Required |
+| Mention Commands | `@FusionBot trade` | Not required |
+| Slash Commands | `/trade` | Not required |
+
+Slash commands and mention commands provide modern alternatives as Discord moves away from the **Message Content Intent** required by traditional prefix commands.
+
+### 📝 Notes
+
+- Slash commands are designed to work alongside existing message commands rather than replacing them.
+- Staff and administrative commands were intentionally not duplicated as slash commands and remain available through mention commands.
 
 ---
 
