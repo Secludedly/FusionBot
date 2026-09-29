@@ -145,7 +145,7 @@ public abstract class TradeExtensions<T> where T : PKM, new()
     {
         var dittoStats = new string[] { "atk", "spe", "spa" };
         var nickname = pkm.Nickname.ToLower();
-        pkm.StatNature = pkm.Nature;
+        pkm.StatAlignment = pkm.Nature;
         pkm.MetLocation = pkm switch
         {
             PB8 => 400,

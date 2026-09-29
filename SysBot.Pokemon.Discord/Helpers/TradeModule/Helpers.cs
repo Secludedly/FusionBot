@@ -773,14 +773,14 @@ public static class Helpers<T> where T : PKM, new()
         // For ZA (PA9) Pokemon, honor the user's requested nature if it passes legality.
         // If the requested nature is illegal for the encounter (e.g. Zeraora must be Brave),
         // keep PKHeX's legal nature as the actual Nature and apply the requested nature as
-        // StatNature only (mint effect).
+        // StatAlignment only (mint effect).
         //
         // Example 1: Zeraora (ZA native, forced Brave) + user requests Adamant
-        //            → Nature=Brave, StatNature=Adamant
+        //            → Nature=Brave, StatAlignment=Adamant
         // Example 2: Charmander (SWSH via HOME fallback) + user requests Timid
-        //            → Nature=Timid, StatNature=Timid
-        // Example 3: No nature requested, only StatNature via batch (.StatNature=X)
-        //            → Nature=PKHeX default, StatNature=X (already set by ALM)
+        //            → Nature=Timid, StatAlignment=Timid
+        // Example 3: No nature requested, only StatAlignment via batch (.StatAlignment=X)
+        //            → Nature=PKHeX default, StatAlignment=X (already set by ALM)
         // Example 4: Nothing requested → ALM picks, no change.
         // ============================================================================
         if (pk is PA9)
@@ -789,27 +789,27 @@ public static class Helpers<T> where T : PKM, new()
             Nature requestedNature = set.Nature;
             bool userRequestedNature = requestedNature != Nature.Random;
 
-            // Detect if the user explicitly set a StatNature via .StatNature= batch command.
-            // IMPORTANT: We parse the content string directly rather than comparing pk.StatNature != pk.Nature.
-            // After ALM generation and/or HOME conversion the StatNature byte can differ from Nature as
+            // Detect if the user explicitly set a StatAlignment via .StatAlignment= batch command.
+            // IMPORTANT: We parse the content string directly rather than comparing pk.StatAlignment != pk.Nature.
+            // After ALM generation and/or HOME conversion the StatAlignment byte can differ from Nature as
             // a format-conversion artifact — checking PKM fields would misidentify that as a user request.
-            Nature? userExplicitStatNature = null;
+            Nature? userExplicitStatAlignment = null;
             foreach (var line in contentLines)
             {
                 var trimmed = line.Trim();
-                if (trimmed.StartsWith(".StatNature=", StringComparison.OrdinalIgnoreCase))
+                if (trimmed.StartsWith(".StatAlignment=", StringComparison.OrdinalIgnoreCase))
                 {
-                    var value = trimmed[".StatNature=".Length..].Trim();
+                    var value = trimmed[".StatAlignment=".Length..].Trim();
                     if (Enum.TryParse<Nature>(value, ignoreCase: true, out var parsedSN))
                     {
-                        userExplicitStatNature = parsedSN;
+                        userExplicitStatAlignment = parsedSN;
                         break;
                     }
                 }
             }
 
-            bool hasExplicitStatNature = userExplicitStatNature.HasValue;
-            Nature userStatNature = userExplicitStatNature ?? Nature.Random;
+            bool hasExplicitStatAlignment = userExplicitStatAlignment.HasValue;
+            Nature userStatAlignment = userExplicitStatAlignment ?? Nature.Random;
 
             if (userRequestedNature && requestedNature != pk.Nature)
             {
@@ -817,14 +817,14 @@ public static class Helpers<T> where T : PKM, new()
                 // Test whether the user's requested nature is legal for this encounter.
                 var clone = (PA9)pk.Clone();
                 clone.Nature = requestedNature;
-                clone.StatNature = hasExplicitStatNature ? userStatNature : requestedNature;
+                clone.StatAlignment = hasExplicitStatAlignment ? userStatAlignment : requestedNature;
                 clone.RefreshChecksum();
 
                 if (new LegalityAnalysis(clone).Valid)
                 {
-                    // Legal — apply the requested nature to both Nature and StatNature.
+                    // Legal — apply the requested nature to both Nature and StatAlignment.
                     pk.Nature = clone.Nature;
-                    pk.StatNature = clone.StatNature;
+                    pk.StatAlignment = clone.StatAlignment;
                     pk.RefreshChecksum();
                     LogUtil.LogInfo(
                         $"{(Species)pk.Species}: Requested nature of {requestedNature} is legal for the set and is applied.",
@@ -833,47 +833,47 @@ public static class Helpers<T> where T : PKM, new()
                 else
                 {
                     // Requested nature is illegal for this encounter.
-                    // Try minting: keep the forced Nature but apply requested nature as StatNature.
+                    // Try minting: keep the forced Nature but apply requested nature as StatAlignment.
                     // Verify the mint itself is legal before applying — some encounters (e.g. certain
-                    // HOME-converted WC8 events) restrict StatNature via shiny/nature correlation checks
-                    // and will also reject a mismatched StatNature.
-                    var wantedStatNature = hasExplicitStatNature ? userStatNature : requestedNature;
+                    // HOME-converted WC8 events) restrict StatAlignment via shiny/nature correlation checks
+                    // and will also reject a mismatched StatAlignment.
+                    var wantedStatAlignment = hasExplicitStatAlignment ? userStatAlignment : requestedNature;
                     var cloneMint = (PA9)pk.Clone();
-                    cloneMint.StatNature = wantedStatNature;
+                    cloneMint.StatAlignment = wantedStatAlignment;
                     cloneMint.RefreshChecksum();
 
                     if (new LegalityAnalysis(cloneMint).Valid)
                     {
                         // Mint is legal — apply it.
-                        pk.StatNature = wantedStatNature;
+                        pk.StatAlignment = wantedStatAlignment;
                         pk.RefreshChecksum();
                         LogUtil.LogInfo(
                             $"{(Species)pk.Species}: Requested nature of {requestedNature} is illegal for this encounter." +
-                            $"Mint Applied! Nature: {pk.Nature} | Stat Nature: {pk.StatNature}.",
+                            $"Mint Applied! Nature: {pk.Nature} | Stat Nature: {pk.StatAlignment}.",
                             "ZANature");
                     }
                     else
                     {
-                        // Minting is also restricted (e.g. shiny-correlation check ties StatNature to Nature).
-                        // Leave Nature and StatNature exactly as PKHeX produced them — both forced.
+                        // Minting is also restricted (e.g. shiny-correlation check ties StatAlignment to Nature).
+                        // Leave Nature and StatAlignment exactly as PKHeX produced them — both forced.
                         LogUtil.LogInfo(
                             $"{(Species)pk.Species}: Requested nature of {requestedNature} is illegal and minting is " +
-                            $"restricted for this encounter. Keeping forced nature of {pk.Nature} with Stat Nature of {pk.StatNature}.",
+                            $"restricted for this encounter. Keeping forced nature of {pk.Nature} with Stat Nature of {pk.StatAlignment}.",
                             "ZANature");
                     }
                 }
             }
             else if (userRequestedNature && requestedNature == pk.Nature)
             {
-                // User's requested nature matches what was generated — mirror to StatNature
-                // unless the user already set a different StatNature via batch command.
-                if (!hasExplicitStatNature)
+                // User's requested nature matches what was generated — mirror to StatAlignment
+                // unless the user already set a different StatAlignment via batch command.
+                if (!hasExplicitStatAlignment)
                 {
-                    pk.StatNature = pk.Nature;
+                    pk.StatAlignment = pk.Nature;
                     pk.RefreshChecksum();
                 }
             }
-            // Else: no nature was requested — leave Nature and StatNature exactly as ALM set them.
+            // Else: no nature was requested — leave Nature and StatAlignment exactly as ALM set them.
         }
         // ============================================================================
         // END OF ZA NATURE LEGALITY ENFORCEMENT

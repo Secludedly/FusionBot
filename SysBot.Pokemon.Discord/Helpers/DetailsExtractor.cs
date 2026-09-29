@@ -49,7 +49,7 @@ public static class DetailsExtractor<T> where T : PKM, new()
             (SysCord<T>.Runner.Config.Trade.TradeEmbedSettings.ShowMetLocation ? $"**Met Location:** {embedData.MetLocation}\n" : "") +
             (SysCord<T>.Runner.Config.Trade.TradeEmbedSettings.ShowAbility ? $"**Ability:** {embedData.Ability}\n" : "") +
             (SysCord<T>.Runner.Config.Trade.TradeEmbedSettings.ShowNature ? $"**{embedData.Nature}** Nature\n" : "") +
-            (SysCord<T>.Runner.Config.Trade.TradeEmbedSettings.ShowNature && !string.IsNullOrEmpty(embedData.StatNature) ? $"**Stat Nature:** {embedData.StatNature}\n" : "") +
+            (SysCord<T>.Runner.Config.Trade.TradeEmbedSettings.ShowNature && !string.IsNullOrEmpty(embedData.StatAlignment) ? $"**Stat Nature:** {embedData.StatAlignment}\n" : "") +
             (SysCord<T>.Runner.Config.Trade.TradeEmbedSettings.ShowLanguage ? $"**Language**: {embedData.Language}\n" : "") +
             (SysCord<T>.Runner.Config.Trade.TradeEmbedSettings.ShowIVs ? $"**IVs**: {embedData.IVsDisplay}\n" : "") +
             (SysCord<T>.Runner.Config.Trade.TradeEmbedSettings.ShowEVs && !string.IsNullOrWhiteSpace(embedData.EVsDisplay) ? $"**EVs**: {embedData.EVsDisplay}\n" : "");
@@ -138,9 +138,9 @@ public static class DetailsExtractor<T> where T : PKM, new()
         embedData.Nature = GetNatureName(pk, strings);
 
         // Extract Stat Nature if it differs from regular Nature (applies to any minted Pokémon)
-        if (pk.StatNature != pk.Nature)
+        if (pk.StatAlignment != pk.Nature)
         {
-            embedData.StatNature = strings.natures[(int)pk.StatNature];
+            embedData.StatAlignment = strings.natures[(int)pk.StatAlignment];
         }
 
         embedData.SpeciesName = strings.Species[pk.Species];
@@ -504,7 +504,7 @@ public class EmbedData
     public string? Nature { get; set; }
 
     /// <summary>Stat Nature name (for minted Natures in PLZA).</summary>
-    public string? StatNature { get; set; }
+    public string? StatAlignment { get; set; }
 
     /// <summary>Displayed Pokémon name (nickname or species).</summary>
     public string? PokemonDisplayName { get; set; }

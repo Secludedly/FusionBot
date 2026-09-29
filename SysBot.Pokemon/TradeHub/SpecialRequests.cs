@@ -414,7 +414,7 @@ namespace SysBot.Pokemon.TradeHub
                 return SpecialTradeType.FailReturn;
             }
 
-            pk.Nature = pk.StatNature = result;
+            pk.Nature = pk.StatAlignment = result;
             ApplyCommonModifications(ref pk, rewardItem);
 
             if (!CheckLegalityAfterModification(pk, caller, detail))

@@ -153,12 +153,12 @@ public static class CreatePokemonHelper
 
         // Set Nature - apply directly for non-ZA Pokemon.
         // For ZA (PA9), ProcessShowdownSetAsync already handled the legality-aware nature logic
-        // (mint: StatNature = requested, Nature = legal encounter value when the requested is illegal).
+        // (mint: StatAlignment = requested, Nature = legal encounter value when the requested is illegal).
         // Overriding here would undo that mint, so we skip the assignment for PA9.
         if (pk is not PA9 && !string.IsNullOrWhiteSpace(finalNature) && Enum.TryParse<Nature>(finalNature, true, out var parsedNature))
         {
             pk.Nature = parsedNature;
-            pk.StatNature = parsedNature;
+            pk.StatAlignment = parsedNature;
         }
 
         // Refresh stats after IV/Nature changes
