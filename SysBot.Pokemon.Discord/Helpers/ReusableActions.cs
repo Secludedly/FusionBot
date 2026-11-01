@@ -120,17 +120,8 @@ public static class ReusableActions
         // =============================
         // FIXED IV PLACEMENT LOGIC
         // =============================
-        if (pkm.IVs is int[] pkmIVs && pkmIVs.Length == 6)
         {
-            // Map PKHeX IV order (HP, Atk, Def, Spe, SpA, SpD) → Showdown (HP, Atk, Def, SpA, SpD, Spe)
-            int hp = pkmIVs[0];
-            int atk = pkmIVs[1];
-            int def = pkmIVs[2];
-            int spe = pkmIVs[3];
-            int spa = pkmIVs[4];
-            int spd = pkmIVs[5];
-
-            string ivLine = $"IVs: {hp} HP / {atk} Atk / {def} Def / {spa} SpA / {spd} SpD / {spe} Spe";
+            string ivLine = $"IVs: {FormatIVs(pkm)}";
 
             // Remove old IV line if exists
             int oldIVIndex = lines.FindIndex(l => l.StartsWith("IVs:"));
@@ -157,6 +148,33 @@ public static class ReusableActions
         return Format.Code(string.Join("\n", lines).TrimEnd());
     }
 
+
+    /// <summary>
+    /// Formats the raw IVs in Showdown order: "31 HP / 31 Atk / 31 Def / 31 SpA / 31 SpD / 31 Spe".
+    /// </summary>
+    public static string FormatIVs(PKM pkm)
+    {
+        // PKM.IVs is set-only in PKHeX.Core; GetIVs order is HP, Atk, Def, Spe, SpA, SpD
+        Span<int> ivs = stackalloc int[6];
+        pkm.GetIVs(ivs);
+        return $"{ivs[0]} HP / {ivs[1]} Atk / {ivs[2]} Def / {ivs[4]} SpA / {ivs[5]} SpD / {ivs[3]} Spe";
+    }
+
+    /// <summary>True when every raw IV is 31.</summary>
+    public static bool IsPerfectIVs(PKM pkm)
+    {
+        Span<int> ivs = stackalloc int[6];
+        pkm.GetIVs(ivs);
+        foreach (var iv in ivs)
+        {
+            if (iv != 31)
+                return false;
+        }
+        return true;
+    }
+
+    /// <summary>True when any stat on the Pokémon has been Hyper Trained.</summary>
+    public static bool IsHyperTrained(PKM pkm) => pkm is IHyperTrain { HyperTrainFlags: not 0 };
 
     public static IReadOnlyList<string> GetListFromString(string str)
     {
