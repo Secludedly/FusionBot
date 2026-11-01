@@ -88,6 +88,13 @@ public static class AutoLegalityExtensionsDiscord
                 LogUtil.LogInfo($"Convert TrainerOverride = NO OVERRIDE requested in content. ALM's defaults consequentially applied. Trainer Override: {(trainerOverride is null ? "null" : "empty")}", "TrainerOverride");
             }
 
+            // Z-A: requested IVs are seed-correlated; search for a matching seed (non-31s from the
+            // seed, 31s via Hyper Training). No-op when only 31s were requested or the encounter has fixed IVs.
+            // "Hypertrain: False" (→ .HyperTrainFlags=0) disables Hyper Training; requested 31s must then come from the seed.
+            bool allowHT = userHTPreferences is null || !userHTPreferences.TryGetValue("ALL", out var htAll) || htAll;
+            if (!isEggRequest && pkm is PA9 pa9IVs && ZAIVSeedSearch.TryApplyRequestedIVs(ref pa9IVs, set.IVs, set.Nature, allowHT))
+                pkm = pa9IVs;
+
             var la = new LegalityAnalysis(pkm);
             var spec = GameInfo.Strings.Species[set.Species];
 

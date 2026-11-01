@@ -552,12 +552,19 @@ namespace SysBot.Pokemon.Discord.Helpers
             return $".MetLocation={val}";
         }
 
-        // .HyperTrainFlags= → HyperTrain: or HyperTrainFlags:
-        // Value is "true" or "false"
-        private static string ProcessHyperTrainFlags(string val) =>
-            TryParseBoolean(val, out var b)
-                ? $".HyperTrainFlags={b}"
-                : string.Empty;
+        // .HyperTrainFlags= → Hypertrain: or HyperTrainFlags:
+        // "True"  → $suggest: Hyper Train every stat below 31 (when the level allows it).
+        //           (HyperTrainFlags is a bitmask, so a literal 1 would only train HP.)
+        // "False" → 0: no Hyper Training.
+        // A number (0-63) is passed through as an explicit bitmask.
+        private static string ProcessHyperTrainFlags(string val)
+        {
+            if (TryParseBoolean(val, out var b))
+                return b == 1 ? ".HyperTrainFlags=$suggest" : ".HyperTrainFlags=0";
+            if (byte.TryParse(val, out var mask) && mask <= 0x3F)
+                return $".HyperTrainFlags={mask}";
+            return string.Empty;
+        }
 
         // .StatAlignment= → Stat Nature:
         // Value is a Nature enum name or "Random"

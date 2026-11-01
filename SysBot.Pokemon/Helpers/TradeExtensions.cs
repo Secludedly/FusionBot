@@ -168,8 +168,9 @@ public abstract class TradeExtensions<T> where T : PKM, new()
         }
 
         pkm.Ball = 21;
+        // customIVs arrive in Showdown order (HP/Atk/Def/SpA/SpD/Spe); PKM.IVs expects PKHeX order (HP/Atk/Def/Spe/SpA/SpD).
         pkm.IVs = customIVs is { Length: 6 }
-            ? customIVs
+            ? [customIVs[0], customIVs[1], customIVs[2], customIVs[5], customIVs[3], customIVs[4]]
             : [31, nickname.Contains(dittoStats[0]) ? 0 : 31, 31, nickname.Contains(dittoStats[1]) ? 0 : 31, nickname.Contains(dittoStats[2]) ? 0 : 31, 31];
 
         // Create LA once and pass to TrashBytes to reuse it

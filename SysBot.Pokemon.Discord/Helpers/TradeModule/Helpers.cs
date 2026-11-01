@@ -768,6 +768,30 @@ public static class Helpers<T> where T : PKM, new()
         }
 
         // ============================================================================
+        // ZA CUSTOM IV SEED SEARCH
+        // ============================================================================
+        // Z-A IVs are seed-correlated (EC/PID → IVs), so writing IVs directly is illegal
+        // and the generic re-application below always reverts for Z-A. Instead, search
+        // for a seed whose rolled IVs match the requested non-31 values; requested 31s
+        // are Hyper Trained (Lv50+). Runs before the nature block so that block can
+        // mint the requested nature if the seed's nature differs.
+        // ============================================================================
+        bool zaIVsApplied = false;
+        if (userSpecifiedIVs && pk is PA9 pa9IVs)
+        {
+            // "Hypertrain: False" normalizes to ".HyperTrainFlags=0" — then requested 31s must come from the seed.
+            bool allowHT = !contentLines.Any(l => l.Trim().Equals(".HyperTrainFlags=0", StringComparison.OrdinalIgnoreCase));
+            if (ZAIVSeedSearch.TryApplyRequestedIVs(ref pa9IVs, set.IVs, set.Nature, allowHT))
+            {
+                pk = (T)(PKM)pa9IVs;
+                zaIVsApplied = true;
+            }
+        }
+        // ============================================================================
+        // END OF ZA CUSTOM IV SEED SEARCH
+        // ============================================================================
+
+        // ============================================================================
         // ZA NATURE LEGALITY ENFORCEMENT
         // ============================================================================
         // For ZA (PA9) Pokemon, honor the user's requested nature if it passes legality.
@@ -889,7 +913,7 @@ public static class Helpers<T> where T : PKM, new()
         // same reliability as the direct batch command approach.
         // Only reverts if the user's IV spread is genuinely illegal for this encounter
         // ============================================================================
-        if (userSpecifiedIVs)
+        if (userSpecifiedIVs && !zaIVsApplied)
         {
             int[] requestedIVs = ParseShowdownIVLine(contentLines);
             if (requestedIVs.Any(v => v >= 0))

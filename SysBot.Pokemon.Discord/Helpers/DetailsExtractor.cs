@@ -52,6 +52,7 @@ public static class DetailsExtractor<T> where T : PKM, new()
             (SysCord<T>.Runner.Config.Trade.TradeEmbedSettings.ShowNature && !string.IsNullOrEmpty(embedData.StatAlignment) ? $"**Stat Nature:** {embedData.StatAlignment}\n" : "") +
             (SysCord<T>.Runner.Config.Trade.TradeEmbedSettings.ShowLanguage ? $"**Language**: {embedData.Language}\n" : "") +
             (SysCord<T>.Runner.Config.Trade.TradeEmbedSettings.ShowIVs ? $"**IVs**: {embedData.IVsDisplay}\n" : "") +
+            (SysCord<T>.Runner.Config.Trade.TradeEmbedSettings.ShowIVs && embedData.HyperTrained is { } hyperTrained ? $"**Hypertrain**: {hyperTrained}\n" : "") +
             (SysCord<T>.Runner.Config.Trade.TradeEmbedSettings.ShowEVs && !string.IsNullOrWhiteSpace(embedData.EVsDisplay) ? $"**EVs**: {embedData.EVsDisplay}\n" : "");
 
         leftSideContent = leftSideContent.TrimEnd('\n');
@@ -149,32 +150,11 @@ public static class DetailsExtractor<T> where T : PKM, new()
         embedData.HeldItem = strings.itemlist[pk.HeldItem];
         embedData.Ball = strings.balllist[pk.Ball];
 
-        Span<int> ivs = stackalloc int[6];
-        pk.GetIVs(ivs);
+        // Raw IVs in Showdown order (HP/Atk/Def/SpA/SpD/Spe), or "6IV" when all are 31.
+        embedData.IVsDisplay = ReusableActions.IsPerfectIVs(pk) ? "6IV" : ReusableActions.FormatIVs(pk);
 
-        // Map PKHeX order to display order: HP / Atk / Def / SpA / SpD / Spe
-        int[] displayOrder = { 0, 1, 2, 4, 5, 3 }; // indices in ivs[]
-        string[] labels = { "HP", "Atk", "Def", "SpA", "SpD", "Spe" };
-
-        // Count perfect IVs
-        int perfectIVCount = 0;
-        for (int i = 0; i < ivs.Length; i++)
-        {
-            if (ivs[i] == 31)
-                perfectIVCount++;
-        }
-
-        // Build IV display strings
-        var ivStrings = new List<string>();
-        for (int i = 0; i < displayOrder.Length; i++)
-        {
-            int idx = displayOrder[i];
-            ivStrings.Add($"{ivs[idx]} {labels[i]}");
-        }
-
-        // Compose final display
-        string ivsDisplay = perfectIVCount == 6 ? "6IV" : string.Join(" / ", ivStrings);
-        embedData.IVsDisplay = ivsDisplay;
+        // "Hypertrain: True/False" — same wording BatchCommandNormalizer accepts, so it can be pasted into a set.
+        embedData.HyperTrained = pk is IHyperTrain ? ReusableActions.IsHyperTrained(pk) : null;
 
 
         int[] evs = GetEVs(pk);
@@ -478,6 +458,8 @@ public class EmbedData
 
     /// <summary>Formatted IVs display string.</summary>
     public string? IVsDisplay { get; set; }
+    /// <summary>Whether any stat is Hyper Trained; null for formats without Hyper Training.</summary>
+    public bool? HyperTrained { get; set; }
 
     /// <summary>Pokémon language.</summary>
     public string? Language { get; set; }
