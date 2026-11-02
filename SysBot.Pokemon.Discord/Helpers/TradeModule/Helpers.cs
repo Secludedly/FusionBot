@@ -204,6 +204,20 @@ public static class Helpers<T> where T : PKM, new()
 
         var template = AutoLegalityWrapper.GetTemplate(set);
 
+        // ============================================================================
+        // PA9 VIVILLON TEMPLATE FORM FIX
+        // ============================================================================
+        // ALM's RegenTemplate constructor rewrites Vivillon's form to Meadow (6) no matter
+        // which pattern was parsed (set.Form is correct, template.Form is not). Every
+        // generation attempt for Z-A then targets Meadow, and the native Meadow encounter
+        // is accepted as legal. Restoring the requested pattern lets ALM find the encounter
+        // that actually provides it (Z-A event, or a HOME-transferred origin). A batch
+        // ".Form=" line only "fixed" this by accident: it failed the Meadow result and
+        // forced the HOME fallback, which then re-applied the species-line form.
+        // ============================================================================
+        if (typeof(T) == typeof(PA9) && set.Species == (ushort)Species.Vivillon && template.Form != set.Form)
+            template.Form = set.Form;
+
         // Filter out batch commands (.) and filters (~) from invalid lines - these are handled by ALM
         // Also filter out custom fields like Language: and Alpha: which are ALM-specific
         var actualInvalidLines = set.InvalidLines.Where(line =>
@@ -280,7 +294,9 @@ public static class Helpers<T> where T : PKM, new()
             if (fixedOtCheck.Valid && AutoLegalityWrapper.IsFixedOT(fixedOtCheck.EncounterOriginal, pkm))
             {
                 var wildAlt = AutoLegalityWrapper.TryGetAsWildOrEgg(sav, template);
-                if (wildAlt != null)
+                // Never trade away the requested form for a non-fixed-OT encounter
+                // (e.g. a Vivillon pattern only obtainable from an event -> wild Meadow).
+                if (wildAlt != null && wildAlt.Form == pkm.Form)
                 {
                     pkm = wildAlt;
                     result = "Regenerated";
