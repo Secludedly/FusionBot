@@ -145,6 +145,12 @@ public sealed partial class SysCord<T> : IDisposable where T : PKM, new()
             LogLevel = LogSeverity.Info,
             GatewayIntents = Guilds | GuildMessages | DirectMessages | GuildMembers | GuildPresences | MessageContent,
             //MessageCacheSize = 50,
+
+            // Discord.Net checks the 3-second interaction window locally by comparing the PC clock to the
+            // interaction's snowflake timestamp. A host clock running >3s fast makes EVERY DeferAsync/RespondAsync
+            // throw "Cannot defer an interaction after 3 seconds!" instantly ("The application did not respond").
+            // False = measure from when the interaction was received instead, so clock drift can't break slash commands.
+            UseInteractionSnowflakeDate = false,
         });
 
         // ===== DM Relay Setup =====
@@ -416,6 +422,7 @@ public sealed partial class SysCord<T> : IDisposable where T : PKM, new()
         _client.Ready += RegisterSlashCommandsAsync;
         _client.MessageReceived += HandleMessageAsync;
         _client.InteractionCreated += HandleInteractionAsync;
+        _interactions.InteractionExecuted += OnInteractionExecutedAsync;
     }
 
     private async Task RegisterSlashCommandsAsync()
@@ -459,7 +466,13 @@ public sealed partial class SysCord<T> : IDisposable where T : PKM, new()
         try
         {
             var context = new SocketInteractionContext(_client, interaction);
-            await _interactions.ExecuteCommandAsync(context, _services).ConfigureAwait(false);
+            var result = await _interactions.ExecuteCommandAsync(context, _services).ConfigureAwait(false);
+
+            // An unknown command never reaches a module, so InteractionExecuted won't report it. This happens when
+            // Discord still shows a command this process didn't register (stale global cache, or a command from a
+            // different game mode). Without a reply, Discord just shows "The application did not respond".
+            if (!result.IsSuccess && result.Error == global::Discord.Interactions.InteractionCommandError.UnknownCommand)
+                await ReplyInteractionErrorAsync(interaction, "❌ That command isn't available on this bot right now. Discord may be showing an outdated command list, so try again in a few minutes.").ConfigureAwait(false);
         }
         catch (Exception ex)
         {
@@ -472,6 +485,53 @@ public sealed partial class SysCord<T> : IDisposable where T : PKM, new()
                 else
                     await interaction.RespondAsync("An error occurred while processing the command.", ephemeral: true).ConfigureAwait(false);
             }
+        }
+    }
+
+    /// <summary>
+    /// With <c>RunMode.Async</c>, failed preconditions, bad arguments and exceptions thrown inside slash commands
+    /// never reach the try/catch in <see cref="HandleInteractionAsync"/>. They are only reported here. Without this
+    /// handler the user gets no reply and Discord shows "The application did not respond".
+    /// </summary>
+    private async Task OnInteractionExecutedAsync(ICommandInfo command, IInteractionContext context, global::Discord.Interactions.IResult result)
+    {
+        if (result.IsSuccess || result.Error == global::Discord.Interactions.InteractionCommandError.UnknownCommand)
+            return;
+
+        var name = command?.Name ?? "unknown";
+        var ex = (result as global::Discord.Interactions.ExecuteResult?)?.Exception;
+        await Log(new LogMessage(
+            result.Error == global::Discord.Interactions.InteractionCommandError.UnmetPrecondition ? LogSeverity.Info : LogSeverity.Error,
+            "Interactions",
+            $"/{name} by {context.User.Username} ({context.User.Id}) failed: {result.Error}: {result.ErrorReason}",
+            ex)).ConfigureAwait(false);
+
+        var message = result.Error switch
+        {
+            global::Discord.Interactions.InteractionCommandError.UnmetPrecondition => $"❌ {result.ErrorReason}",
+            global::Discord.Interactions.InteractionCommandError.Exception => "❌ An error occurred while processing the command.",
+            _ => $"❌ {result.ErrorReason}",
+        };
+        await ReplyInteractionErrorAsync(context.Interaction, message).ConfigureAwait(false);
+    }
+
+    private async Task ReplyInteractionErrorAsync(IDiscordInteraction interaction, string message)
+    {
+        // Autocomplete can only answer with suggestions, not a message.
+        if (interaction is IAutocompleteInteraction)
+            return;
+
+        try
+        {
+            if (interaction.HasResponded)
+                await interaction.FollowupAsync(message, ephemeral: true).ConfigureAwait(false);
+            else
+                await interaction.RespondAsync(message, ephemeral: true).ConfigureAwait(false);
+        }
+        catch (Exception ex)
+        {
+            // The interaction token may have expired (3s initial / 15min follow-up). Nothing else to do.
+            await Log(new LogMessage(LogSeverity.Warning, "Interactions", $"Could not send interaction error reply: {ex.Message}")).ConfigureAwait(false);
         }
     }
 
@@ -529,6 +589,7 @@ public sealed partial class SysCord<T> : IDisposable where T : PKM, new()
         }
         _commands.Log -= Log;
         _interactions.Log -= Log;
+        _interactions.InteractionExecuted -= OnInteractionExecutedAsync;
 
         // Unsubscribe per-bot connection events
         foreach (var unsubscribe in _tradeBotUnsubscribers)
