@@ -46,6 +46,25 @@ public sealed partial class SysCord<T> : IDisposable where T : PKM, new()
     private DMRelayService? _dmRelayService;
     private bool _disposed;
 
+    // Discord gateway close code 4014 = "Disallowed intent(s)": the bot asked for a privileged intent
+    // (Message Content / Server Members) that is not enabled for the application in the Developer
+    // Portal. Discord only re-validates intents on a fresh IDENTIFY, not on RESUME, so a bot can run
+    // fine for days and then fail the first time a session can't be resumed. Retrying with the same
+    // intents never succeeds.
+    //
+    // Most SysBot hosts are denied Message Content, a few are approved. Rather than make every host
+    // configure this, MainAsync reads the application's flags over REST before opening the gateway and
+    // drops any privileged intent the app isn't granted. The 4014 handler is a safety net for when the
+    // flags and the gateway disagree. Static so the supervisor's next client (same process, same T)
+    // uses the narrowed set. Only ever narrowed within a process (never widened) so a flags/gateway
+    // disagreement can't cause a rebuild loop; restart the bot after getting approved.
+    private const int DisallowedIntentsCloseCode = 4014;
+    private const GatewayIntents PrivilegedIntents = GuildMembers | MessageContent;
+    private const GatewayIntents BaseIntents = Guilds | GuildMessages | DirectMessages;
+    private static GatewayIntents _allowedPrivilegedIntents = PrivilegedIntents;
+    private readonly GatewayIntents _requestedPrivilegedIntents;
+    private volatile bool _fatalGatewayClose;
+
     private readonly HashSet<string> _validCommands =
     [
      "BatchTrade", "Batchtrade", "batchTrade", "batchtradezip", "battlereadylist", "battlereadyrequest", "brl", "brr",
@@ -140,10 +159,15 @@ public sealed partial class SysCord<T> : IDisposable where T : PKM, new()
         SysCordSettings.Manager = Manager;
         SysCordSettings.HubConfig = Hub.Config;
 
+        // GuildPresences was requested but never used (the PresenceUpdated handler is a no-op), and it is
+        // a privileged intent that can trigger close 4014 on its own, so it is no longer requested.
+        _requestedPrivilegedIntents = _allowedPrivilegedIntents;
+        var intents = BaseIntents | _requestedPrivilegedIntents;
+
         _client = new DiscordSocketClient(new DiscordSocketConfig
         {
             LogLevel = LogSeverity.Info,
-            GatewayIntents = Guilds | GuildMessages | DirectMessages | GuildMembers | GuildPresences | MessageContent,
+            GatewayIntents = intents,
             //MessageCacheSize = 50,
 
             // Discord.Net checks the 3-second interaction window locally by comparing the PC clock to the
@@ -208,8 +232,61 @@ public sealed partial class SysCord<T> : IDisposable where T : PKM, new()
         // wedge the client into a "connected-but-deaf" or disposed state. Persistent
         // failures are detected by MonitorStatusAsync (which returns from MainAsync) and
         // handled by the supervisor loop in PokeBotRunnerImpl, which builds a fresh client.
+        if (IsDisallowedIntentsClose(exception))
+        {
+            // Not transient: Discord will reject every reconnect with the same intents. Flag it so
+            // MonitorStatusAsync ends the session now and the next client connects without them.
+            // Discord doesn't say WHICH intent was refused, so drop every privileged one we asked for.
+            _fatalGatewayClose = true;
+            _allowedPrivilegedIntents &= ~_requestedPrivilegedIntents;
+            LogUtil.LogError("SysCord", $"Discord refused the connection with close code 4014 \"Disallowed intent(s)\" (requested: {_requestedPrivilegedIntents}). " +
+                "Reconnecting without privileged intents.");
+            LogPrivilegedIntentState(BaseIntents | _allowedPrivilegedIntents);
+            return Task.CompletedTask;
+        }
+
         LogUtil.LogText($"Discord connection lost. Reason: {exception?.Message ?? "Unknown"}. Awaiting automatic reconnect.");
         return Task.CompletedTask;
+    }
+
+    // The "...Limited" flags mean the toggle is on in the Developer Portal for an app under 100 servers;
+    // the plain flags mean Discord approved the intent for a verified app. Either one grants it.
+    private static GatewayIntents GetGrantedPrivilegedIntents(ApplicationFlags? flags)
+    {
+        if (flags is not { } f)
+            return PrivilegedIntents; // Unknown: request them; the 4014 handler still covers us.
+
+        var granted = GatewayIntents.None;
+        if ((f & (ApplicationFlags.GatewayMessageContent | ApplicationFlags.GatewayMessageContentLimited)) != 0)
+            granted |= MessageContent;
+        if ((f & (ApplicationFlags.GatewayGuildMembers | ApplicationFlags.GatewayGuildMembersLimited)) != 0)
+            granted |= GuildMembers;
+        return granted;
+    }
+
+    private static void LogPrivilegedIntentState(GatewayIntents intents)
+    {
+        if (intents.HasFlag(MessageContent))
+        {
+            LogUtil.LogInfo("SysCord", "Message Content intent granted: prefix commands and attachment reading are enabled.");
+            return;
+        }
+
+        var mention = SysCordSettings.Settings.AllowMentionPrefix
+            ? "@mention commands (\"@BotName trade ...\") are enabled."
+            : "Enable AllowMentionPrefix in the Discord settings so users can run commands as \"@BotName trade ...\".";
+        LogUtil.LogInfo("SysCord", "Message Content intent NOT granted: running in slash-command mode. Plain prefix commands and reading attachments " +
+            $"in server channels won't work. {mention} If this application gets approved later, restart the bot to use it.");
+    }
+
+    private static bool IsDisallowedIntentsClose(Exception? exception)
+    {
+        for (var ex = exception; ex != null; ex = ex.InnerException)
+        {
+            if (ex is WebSocketClosedException { CloseCode: DisallowedIntentsCloseCode })
+                return true;
+        }
+        return false;
     }
 
     public static PokeBotRunner<T> Runner { get; private set; } = default!;
@@ -540,12 +617,28 @@ public sealed partial class SysCord<T> : IDisposable where T : PKM, new()
         // Centralize the logic for commands into a separate method.
         await InitCommands().ConfigureAwait(false);
 
-        // Login and connect.
+        // Login (REST only) and check which privileged intents this application is actually granted
+        // BEFORE opening the gateway, so hosts that were denied Message Content never hit close 4014.
         await _client.LoginAsync(TokenType.Bot, apiToken).ConfigureAwait(false);
-        await _client.StartAsync().ConfigureAwait(false);
 
         var app = await _client.GetApplicationInfoAsync().ConfigureAwait(false);
         Manager.Owner = app.Owner.Id;
+
+        var granted = GetGrantedPrivilegedIntents(app.Flags);
+        if ((_requestedPrivilegedIntents & ~granted) != 0)
+        {
+            // Intents are fixed when the socket client is constructed, so hand back to the supervisor
+            // and let it build a client with the narrowed set. Happens once per process at most.
+            _allowedPrivilegedIntents &= granted;
+            LogUtil.LogText($"Discord application is not granted: {_requestedPrivilegedIntents & ~granted}. Rebuilding the client without it.");
+            LogPrivilegedIntentState(BaseIntents | _allowedPrivilegedIntents);
+            try { await _client.LogoutAsync().ConfigureAwait(false); } catch { }
+            Dispose();
+            return;
+        }
+        LogPrivilegedIntentState(BaseIntents | _requestedPrivilegedIntents);
+
+        await _client.StartAsync().ConfigureAwait(false);
 
         // Initialize recovery notifications if recovery is enabled
         InitializeRecoveryNotifications();
@@ -879,6 +972,12 @@ public sealed partial class SysCord<T> : IDisposable where T : PKM, new()
             // While connected, keep resetting the timer. If the gateway stays unhealthy for
             // too long, exit so the bot can be rebuilt from scratch rather than silently
             // sitting on a dead/disposed client (which previously required a full app restart).
+            if (_fatalGatewayClose)
+            {
+                LogUtil.LogText("Discord gateway closed with a non-recoverable error. Ending session so a fresh client can be created.");
+                return;
+            }
+
             if (_client.ConnectionState == ConnectionState.Connected)
             {
                 lastConnected = DateTime.Now;
